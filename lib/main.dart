@@ -1,13 +1,12 @@
 import 'dart:async';
-
+import 'package:timeago/timeago.dart' as timeago;
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' show Encoding, json, jsonDecode, jsonEncode;
-
-import 'package:intl/intl.dart';
+import 'dart:html' as html;
 
 
 
@@ -458,10 +457,24 @@ void selectRegion(){
       });
     }else if(response.statusCode==400){
       setState(() {
-        var pointToken = jsonDecode(pointer)['errors']['email'][0];
+        var message = jsonDecode(pointer)['errors']['email'][0];
         Timer(Duration(seconds: 1), () {
           Fluttertoast.showToast(
-              msg:pointToken,
+              msg:message,
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              timeInSecForIosWeb: 2,
+              backgroundColor: Colors.white,
+              textColor: Colors.black,
+              fontSize: 15.0
+          );
+        });
+      });
+    }else if(response.statusCode==500){
+      setState(() {
+        Timer(Duration(seconds: 1), () {
+          Fluttertoast.showToast(
+              msg:"Server internal problem",
               toastLength: Toast.LENGTH_SHORT,
               gravity: ToastGravity.BOTTOM,
               timeInSecForIosWeb: 2,
@@ -608,7 +621,7 @@ String token = "";
       'Accept': 'application/json',
       'Authorization': 'Bearer $token',
     });
-    print(response.statusCode);
+
     if (response.statusCode == 200) {
       data1 = response.body; //store response as string
       _allUsers1.clear();
@@ -620,6 +633,8 @@ String token = "";
         _allUsers1.add(jsonDecode(data1)['results'][i]);
       }
       _foundUsers1 = _allUsers1;
+      refreshing="false";
+
     }
   }
   void filterSearchResults(String query) {
@@ -658,7 +673,7 @@ String token = "";
       'Accept': 'application/json',
       'Authorization': 'Bearer $token',
     });
-    print(response.statusCode);
+
     if (response.statusCode == 200) {
       data2 = response.body; //store response as string
       var getID = jsonDecode(data2)['results'][0]['id'];
@@ -679,6 +694,7 @@ String token = "";
     themeCard=Whitecardcolor;
     themeInput=whiteinput;
     themeInputText=black;
+    themeAppbard=grey;
   }
   void darkTheme(){
     themeBase=DarkbaseColor;
@@ -686,6 +702,15 @@ String token = "";
     themeCard=DarkcardColor;
     themeInput=darkinput;
     themeInputText=white;
+    themeAppbard=white;
+
+  }
+  void gg(){
+    final DateTime time1 = DateTime.parse("2022-03-16T00:45:41.545489Z");
+    final DateTime time2 = DateTime.utc(2019, 1, 17);
+
+    print(timeago.format(time1));
+    print(timeago.format(time2, locale: 'en_short'));
   }
 @override void initState() {
     super.initState();
@@ -693,6 +718,7 @@ String token = "";
       allToken();
       selectRegion();
     });
+
 }
 
   @override
@@ -716,9 +742,9 @@ String token = "";
           child: IntrinsicHeight(
             child: Row( children: [
               Expanded(
-                flex: 0,
+                flex: 5,
                 child:Container(
-                  width: 160,
+
 
                 ),
               ),
@@ -869,7 +895,7 @@ String token = "";
                                                     child: Column(
                                                         crossAxisAlignment: CrossAxisAlignment.start,
                                                         children: [
-                                                          Text("Klackr",style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold,color:Colors.white)),
+                                                          Text("Klackr",style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold,color:_colorFromHex(themeInputText))),
                                                           Text("Follow friends and discover great",style: TextStyle(color:_colorFromHex("#6688A0"),fontSize: 10,fontWeight: FontWeight.bold)),
                                                           Text("things in your vicinity and beyond",style: TextStyle(color:_colorFromHex("#6688A0"),fontSize: 10,fontWeight: FontWeight.bold)),
                                                         ]),
@@ -888,7 +914,7 @@ String token = "";
                                                       lobby="lobby";
                                                     });
                                                     },
-                                                  child:Text('< Back to Klacker.world',style:TextStyle(color:Colors.white)),
+                                                  child:Text('< Back to Klacker.world',style:TextStyle(color:_colorFromHex("#6688A0"))),
                                                 ),
                                                 Row(
                                                   children: [
@@ -962,6 +988,45 @@ String token = "";
                                                     ),
                                                   ],
                                                 ),
+                                                Row(
+                                                  children: [
+                                                    Container(
+                                                      width: 60,
+                                                    ),
+                                                    Flexible(
+                                                      child:  Theme(
+                                                        data: ThemeData(
+                                                          primarySwatch: Colors.blue,
+                                                          unselectedWidgetColor: _colorFromHex("#6688A0"), // Your color
+                                                        ),
+                                                        child: Checkbox(
+                                                          value: themeColor,
+                                                          checkColor: Colors.black,
+                                                          activeColor:_colorFromHex("#6688A0"),
+                                                          onChanged: (value) {
+                                                            setState(() {
+                                                              if(themeColor==false){
+                                                                themeColor=true;
+                                                                darkTheme();
+                                                              }else{
+                                                                themeColor=false;
+                                                                whiteTheme();
+                                                              }
+                                                            });
+                                                          },),
+                                                      ),
+                                                    ),
+
+                                                    Flexible(
+                                                      flex:9,
+                                                      child:      Text("  Dark Theme",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                                    ),
+                                                    Container(
+                                                      width: 10,
+                                                    ),
+                                                  ],
+                                                ),
+
                                               ]
                                           ),
                                         ),
@@ -1016,7 +1081,7 @@ Expanded(
                                                         child: Column(
                                                             crossAxisAlignment: CrossAxisAlignment.start,
                                                             children: [
-                                                              Text("Edit Profile",style: TextStyle(fontSize: 25,color:Colors.white)),
+                                                              Text("Edit Profile",style: TextStyle(fontSize: 25,color:_colorFromHex("#6688A0"))),
                                                               Text("Follow friends and discover great",style: TextStyle(color:Colors.transparent,fontSize: 10,fontWeight: FontWeight.bold)),
                                                               Text("things in your vicinity and beyond",style: TextStyle(color:Colors.transparent,fontSize: 10,fontWeight: FontWeight.bold)),
                                                             ]),
@@ -1143,16 +1208,11 @@ Expanded(
                 ]),
               ),
 
-
-
-
-
-
-
             if(lobby=="lobby")//LOBBY
             IntrinsicHeight(
               child: Row( children: [
                   Expanded(//LOBBY POSTING
+                    flex:one,
                     child:Container(
                       child: Column(children: [
                         SizedBox(
@@ -1164,6 +1224,7 @@ Expanded(
                               return Container(
                                   child:   IntrinsicHeight(
                                     child: Column( children: [
+                                      if(info=="false")
                                       Expanded(
                                         child: Column(
                                             children: [
@@ -1201,13 +1262,11 @@ Expanded(
                                               ),
 
 
-                                              Container(
-                                                height: 20,
-                                              ),
                                             IntrinsicHeight(
                                                       child: Row( crossAxisAlignment: CrossAxisAlignment.start,children: [
+
                                                         Expanded(
-                                                          flex:1,
+                                                          flex:0,
                                                           child: Container(
                                                                   height:40,
                                                                   width:40,
@@ -1216,81 +1275,50 @@ Expanded(
                                                                 ),
 
                                                         ),
+                                                        Expanded(
+                                                          flex:0,
+                                                          child:Container(
 
+                                                          ),
+                                                        ),
+                                                        Container(
+                                                          width:10,
+                                                        ),
                                                         Expanded(
                                                           flex:9,
-                                                            child: Container(
-                                                                child: Column(
-                                                                  children: <Widget>[
-                                                                      Theme( //new
-                                                                        data:theme, //new
-                                                                        child:ExpansionTile(
-                                                                          title: IntrinsicHeight(
-                                                                            child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                                                                              Expanded(
-                                                                                child: Column(children: [
-                                                                                  Container(
-                                                                                    alignment: Alignment.topLeft,
-                                                                                    child:   Padding(
-                                                                                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                                                      child:  Text(username,style: TextStyle(color:_colorFromHex("#6688A0"),fontWeight: FontWeight.bold,fontSize: 15)),
-                                                                                    ),
-                                                                                  ),
-                                                                                Expanded(
-                                                                                   child: Container(
-                                                                                     height: 15,
-                                                                                      alignment: Alignment.topLeft,
-                                                                                    child:TextButton(
-                                                                                      style: TextButton.styleFrom(
-                                                                                        textStyle: TextStyle(),
-                                                                                      ),
-                                                                                      onPressed: (){
-                                                                                        setState(() {
-                                                                                          lobby="editprofile";
-                                                                                        });
-                                                                                      },
-                                                                                      child:Text('Edit profile',style:TextStyle(color:Colors.grey)),
-                                                                                    ),
-                                                                                ),
-                                                                                ),
-                                                                                ]
-                                                                                ),
-                                                                              ),
-                                                                            ]),
+                                                            child: IntrinsicHeight(
+                                                              child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                                                                Expanded(
+                                                                  child: Column(children: [
+                                                                    Container(
+                                                                      alignment: Alignment.topLeft,
+                                                                      child:   Padding(
+                                                                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                                        child:  Text(username,style: TextStyle(color:_colorFromHex("#6688A0"),fontWeight: FontWeight.bold,fontSize: 13)),
+                                                                      ),
+                                                                    ),
+                                                                    Expanded(
+                                                                      child: Container(
+                                                                        height: 15,
+                                                                        alignment: Alignment.topLeft,
+                                                                        child:TextButton(
+                                                                          style: TextButton.styleFrom(
+                                                                            textStyle: TextStyle(),
                                                                           ),
-                                                                          children: <Widget>[
-                                                                            ListTile(
-                                                                                title: ButtonTheme(
-                                                                                  child: TextButton(
-                                                                                    child: Align(
-                                                                                      alignment: Alignment.centerLeft,
-                                                                                      child: Text(
-                                                                                        "logout",
-                                                                                        style: TextStyle(
-                                                                                          color:_colorFromHex("#6688A0"),
-                                                                                        ),
-                                                                                        textAlign: TextAlign.left,
-                                                                                      ),
-                                                                                    ),
-                                                                                    onPressed: () {
-                                                                                      setState(() {
-                                                                                        lobby="main";
-                                                                                        lobbySize=75;
-                                                                                      });
-                                                                                    },
-                                                                                  ),
-                                                                                )
-                                                                            ),
-                                                                          ],
-                                                                          iconColor: _colorFromHex("#6688A0"),
-                                                                          collapsedIconColor:_colorFromHex("#6688A0"),
-
+                                                                          onPressed: (){
+                                                                            setState(() {
+                                                                              lobby="editprofile";
+                                                                            });
+                                                                          },
+                                                                          child:Text('Edit profile',style:TextStyle(color:Colors.grey)),
                                                                         ),
                                                                       ),
-
-                                                                  ],
+                                                                    ),
+                                                                  ]
+                                                                  ),
                                                                 ),
-                                                          ),
+                                                              ]),
+                                                            ),
                                                         ),
 
                                                       ]),
@@ -1348,20 +1376,62 @@ Expanded(
                                                 ),
                                               ),
                                               Container(
-                                              height: 10,
+                                                height: 10,
                                               ),
                                               Container(
                                                 alignment: Alignment.topLeft,
                                                 child:   Padding(
                                                   padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                  child:   Text("231 Stats for Klackr private posts",style: TextStyle(color: _colorFromHex(themeInputText))),
+                                                  child:TextButton(
+                                                    style: TextButton.styleFrom(
+                                                      textStyle: TextStyle(),
+                                                    ),
+                                                    onPressed: (){
+                                                      setState(() {
+                                                        if(role=="influencer"){
+                                                          info="1";
+                                                        }
+                                                      });
+                                                    },
+                                                    child:Text('Klackr private posts',style:TextStyle(color:_colorFromHex(themeInputText),fontWeight: FontWeight.bold)),
+                                                  ),
                                                 ),
                                               ),
                                               Container(
                                                 alignment: Alignment.topLeft,
                                                 child:   Padding(
                                                   padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                  child:   Text("432 Stats for Klackr ads & commercial posts",style: TextStyle(color: _colorFromHex(themeInputText))),
+                                                  child:TextButton(
+                                                    style: TextButton.styleFrom(
+                                                      textStyle: TextStyle(),
+                                                    ),
+                                                    onPressed: (){
+                                                      setState(() {
+                                                        if(role=="influencer"){
+                                                          info="2";
+                                                        }
+                                                      });
+                                                    },
+                                                    child:Text('Klackr ads & commercial posts',style:TextStyle(color:_colorFromHex(themeInputText),fontWeight: FontWeight.bold)),
+                                                  ),
+                                                ),
+                                              ),
+                                              if(role=="influencer")
+                                              Container(
+                                                alignment: Alignment.topLeft,
+                                                child:   Padding(
+                                                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                  child:TextButton(
+                                                    style: TextButton.styleFrom(
+                                                      textStyle: TextStyle(),
+                                                    ),
+                                                    onPressed: (){
+                                                      setState(() {
+                                                        info="3";
+                                                      });
+                                                    },
+                                                    child:Text('Klackr Influencer placements',style:TextStyle(color:_colorFromHex(themeInputText),fontWeight: FontWeight.bold)),
+                                                  ),
                                                 ),
                                               ),
                                               Container(
@@ -1369,7 +1439,7 @@ Expanded(
                                               ),
                                               Container(
                                                 height: 30,
-                                                alignment: Alignment.topRight,
+                                                alignment: Alignment.center,
                                                 child:   Padding(
                                                   padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
                                                   child:ElevatedButton(
@@ -1405,12 +1475,1400 @@ Expanded(
                                                   ),
                                                 ),
                                               ),
-
+                                              Container(
+                                                height: 40,
+                                              ),
+                                              Container(
+                                                alignment: Alignment.topLeft,
+                                                child:   Padding(
+                                                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                  child:TextButton(
+                                                    style: TextButton.styleFrom(
+                                                      textStyle: TextStyle(),
+                                                    ),
+                                                    onPressed: (){
+                                                      setState(() {
+                                                        info="4";
+                                                      });
+                                                    },
+                                                    child:Text('STATS Klackr private posts',style:TextStyle(color:_colorFromHex(themeInputText),fontWeight: FontWeight.bold)),
+                                                  ),
+                                                ),
+                                              ),
+                                              Container(
+                                                alignment: Alignment.topLeft,
+                                                child:   Padding(
+                                                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                  child:TextButton(
+                                                    style: TextButton.styleFrom(
+                                                      textStyle: TextStyle(),
+                                                    ),
+                                                    onPressed: (){
+                                                      setState(() {
+                                                        info="5";
+                                                      });
+                                                    },
+                                                    child:Text('STATS Klackr ads & commercial posts',style:TextStyle(color:_colorFromHex(themeInputText),fontWeight: FontWeight.bold)),
+                                                  ),
+                                                ),
+                                              ),
+                                              Container(
+                                                alignment: Alignment.topLeft,
+                                                child:   Padding(
+                                                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                  child:TextButton(
+                                                    style: TextButton.styleFrom(
+                                                      textStyle: TextStyle(),
+                                                    ),
+                                                    onPressed: (){
+                                                      setState(() {
+                                                        info="6";
+                                                      });
+                                                    },
+                                                    child:Text('STATS Klackr Influencer placements',style:TextStyle(color:_colorFromHex(themeInputText),fontWeight: FontWeight.bold)),
+                                                  ),
+                                                ),
+                                              ),
 
                                             ]
                                         ),
                                       ),
+                                      if(info=="1")
+                                          Expanded(
+                                            child:Container(
+                                              child: Column(children: [
+                                                SizedBox(
+                                                  height: MediaQuery.of(context).size.height-95,
+                                                  child:ListView.builder(
+                                                    controller: ScrollController(),
+                                                    itemCount: 1,
+                                                    itemBuilder: (BuildContext context, int index) {
+                                                      return Container(
+                                                          child:   IntrinsicHeight(
+                                                            child: Column( children: [
+                                                              Expanded(
+                                                                child: Column(
+                                                                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                                                                    children: [
+                                                                      Container(
+                                                                        height: 10,
+                                                                      ),
+                                                                      Container(
+                                                                        width: 500,
+                                                                        alignment: Alignment.topLeft,
+                                                                        child: IntrinsicHeight(
+                                                                          child: Row( children: [
+                                                                            Container(
+                                                                              width: 5,
+                                                                            ),
+                                                                            Expanded(
+                                                                              flex: 0,
+                                                                              child:Container(
+                                                                                  alignment: Alignment.topLeft,
+                                                                                  width: 50,
+                                                                                  child:Image.asset('assets/logo/klackr_logo.png')),
+                                                                            ),
+                                                                            Expanded(
+                                                                              flex: 10,
+                                                                              child: Column(
+                                                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                  children: [
+                                                                                    Text("Klackr",style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold,color:_colorFromHex(themeInputText))),
+                                                                                    Text("Follow friends and discover great",style: TextStyle(color:_colorFromHex("#6688A0"),fontSize: 10,fontWeight: FontWeight.bold)),
+                                                                                    Text("things in your vicinity and beyond",style: TextStyle(color:_colorFromHex("#6688A0"),fontSize: 10,fontWeight: FontWeight.bold)),
+                                                                                  ]),
+                                                                            ),
+                                                                            Expanded(
+                                                                              flex: 10,
+                                                                              child: Column(
+                                                                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                                                                  children: [
+                                                                                    Text("Klackr",style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold,color:Colors.transparent)),
+                                                                                    Text("Inventor & Administrator            ",style: TextStyle(color:_colorFromHex("#6688A0"),fontSize: 10,fontWeight: FontWeight.bold)),
+                                                                                    Text("Leandro Kuya Jun Verceles Jr.  ",style: TextStyle(color:_colorFromHex("#6688A0"),fontSize: 10,fontWeight: FontWeight.bold)),
+                                                                                  ]),
+                                                                            ),
+                                                                          ]),
+                                                                        ),
+                                                                      ),
+                                                                      Container(
+                                                                        height: 30,
+                                                                      ),
+                                                                      Container(
+                                                                        alignment: Alignment.topLeft,
+                                                                        child:   Padding(
+                                                                          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                                          child:   Text("Klackr private posts ",style: TextStyle(color:_colorFromHex("#6688A0"),fontWeight: FontWeight.bold)),
+                                                                        ),
+                                                                      ),
+                                                                      Container(
+                                                                        height: 10,
+                                                                      ),
+                                                                      Container(
+                                                                        alignment: Alignment.topLeft,
+                                                                        child:   Padding(
+                                                                          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                                          child:   Text("[TO HOME BARANGAY & FOLLOWERS]",style: TextStyle(color:_colorFromHex("#6688A0"),fontWeight: FontWeight.bold)),
+                                                                        ),
+                                                                      ),
+                                                                      Container(
+                                                                        height: 10,
+                                                                      ),
+                                                                      Container(
+                                                                        alignment: Alignment.topLeft,
+                                                                        child:   Padding(
+                                                                          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                                          child:   Text("Private posts are FREE for subscribers-users and have no limit of frequency of publication (subject to reasonable use). Private posts exclude Klackr ads & commercial posts. ",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                                                        ),
+                                                                      ),
+                                                                      Container(
+                                                                        height: 20,
+                                                                      ),
+                                                                      Container(
+                                                                        alignment: Alignment.topLeft,
+                                                                        child:   Padding(
+                                                                          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                                          child:   Text("Private posts should not aim to advertise or promote businesses, products, services in the commercial sense; otherwise, they should be treated in the other category: Klackr ads & commercial posts. ",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                                                        ),
+                                                                      ),
+                                                                      Container(
+                                                                        height: 10,
+                                                                      ),
+                                                                      Container(
+                                                                        alignment: Alignment.topLeft,
+                                                                        child:   Padding(
+                                                                          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                                          child:   Text("Ads & commercial posts in the guise of private posts but actually election campaign or partisan political activity to support or defeat a candidate at any time is strictly prohibited. ",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                                                        ),
+                                                                      ),
+                                                                      Container(
+                                                                        height: 10,
+                                                                      ),
+                                                                      Container(
+                                                                        alignment: Alignment.topLeft,
+                                                                        child:   Padding(
+                                                                          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                                          child:   Text("Private posts should not aim to advertise or promote businesses, products, services in the commercial sense; otherwise, they should be treated in the other category: Klackr ads & commercial posts. ",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                                                        ),
+                                                                      ),
+                                                                      Container(
+                                                                        height: 10,
+                                                                      ),
+                                                                      Container(
+                                                                        alignment: Alignment.topLeft,
+                                                                        child:   Padding(
+                                                                          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                                          child:   Text("Also strictly prohibited are fake news and language that are abusive, cursing, cussing, profaning, blaspheming, racist, anti-minority, white supremancy, and intending to destroy the reputation of any person or group whether the latter is a public or government personality, celebrity, private individual, company, business, public or private institution. The defamatory, cyber libel, and other libel rules of the particular jurisdiction shall supplement the liability for fake news and prohibited language indicated herein.  ",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                                                        ),
+                                                                      ),
+                                                                      Container(
+                                                                        height: 10,
+                                                                      ),
+                                                                      Container(
+                                                                        alignment: Alignment.topLeft,
+                                                                        child:   Padding(
+                                                                          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                                          child:   Text("The klackr company policies and rules against fake news and prohibited language, or any violation of this rulle may lead to a suspension or total ban on the use of the Klackr platform. ",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                                                        ),
+                                                                      ),
 
+                                                                      Container(
+                                                                        height: 15,
+                                                                      ),
+                                                                      Container(
+                                                                        alignment: Alignment.topLeft,
+                                                                        child:   Padding(
+                                                                          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                                          child:   Text("Private posts do not require pre-approval by the Klackr administrator and do not incur any waiting period to get published unlike ads & commercial posts. ",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                                                        ),
+                                                                      ),
+                                                                      Container(
+                                                                        height: 10,
+                                                                      ),
+                                                                      Container(
+                                                                        alignment: Alignment.topLeft,
+                                                                        child:   Padding(
+                                                                          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                                          child:   Text("The Klackr platform is merely the vessel of your private posts. Hence, the the Klackr company bears no responsibility to the contents of said private posts and the publisher saves harmless from all liabilities and damages the Klackr company, its equity holders, officers, directors, managers, employees, and assigns.  ",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                                                        ),
+                                                                      ),
+                                                                      Container(
+                                                                        height: 10,
+                                                                      ),
+                                                                      Container(
+                                                                        alignment: Alignment.topLeft,
+                                                                        child:   Padding(
+                                                                          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                                          child:   Text("There are no algorithms on the platfrom so private posts reach 100% the subscribers-users upon their opening of the app. The ads & commercial posts are viewable for 72 hours from the time the material is downloaded. Sharing to followers or to any body else after the subscriber-user receives the original private post is not automatic. If manually shared, it is viewable for another 72 hours from the time of sharing.",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                                                        ),
+                                                                      ),
+                                                                      Container(
+                                                                        height: 10,
+                                                                      ),
+                                                                      Container(
+                                                                        alignment: Alignment.topLeft,
+                                                                        child:   Padding(
+                                                                          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                                          child:   Text("Trolling is strictly prohibited on the platform. An immediate permanent ban awaits the trollers once discovered.",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                                                        ),
+                                                                      ),
+                                                                      Container(
+                                                                        height: 35,
+                                                                      ),
+                                                                      Container(
+                                                                        height: 25,
+                                                                        child:    Padding(
+                                                                          padding: const EdgeInsets.only(
+                                                                              left: 120, right:120, bottom: 0,top:0),
+                                                                          child:ElevatedButton(
+                                                                            child: Text('Back'),
+                                                                            onPressed: () {
+                                                                              setState(() {
+                                                                                info="false";
+                                                                              });
+                                                                            },
+                                                                            style: ElevatedButton.styleFrom(
+                                                                                primary: _colorFromHex("#2786C9"),
+                                                                                padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                                                                                textStyle: TextStyle(
+                                                                                    fontWeight: FontWeight.bold)),
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                      Container(
+                                                                        height: 20,
+                                                                      ),
+                                                                    ]
+                                                                ),
+                                                              ),
+
+                                                            ]),
+                                                          ),
+                                                      );
+                                                    },
+                                                  ),
+                                                ),
+
+                                              ]
+                                              ),
+                                            ),
+                                          ),
+                                      if(info=="2")
+                                        Expanded(
+                                          child:Container(
+                                            child: Column(children: [
+                                              SizedBox(
+                                                height: MediaQuery.of(context).size.height-95,
+                                                child:ListView.builder(
+                                                  controller: ScrollController(),
+                                                  itemCount: 1,
+                                                  itemBuilder: (BuildContext context, int index) {
+                                                    return Container(
+                                                      child:   IntrinsicHeight(
+                                                        child: Column( children: [
+                                                          Expanded(
+                                                            child: Column(
+                                                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                                                children: [
+                                                                  Container(
+                                                                    height: 10,
+                                                                  ),
+                                                                  Container(
+                                                                    width: 500,
+                                                                    alignment: Alignment.topLeft,
+                                                                    child: IntrinsicHeight(
+                                                                      child: Row( children: [
+                                                                        Container(
+                                                                          width: 5,
+                                                                        ),
+                                                                        Expanded(
+                                                                          flex: 0,
+                                                                          child:Container(
+                                                                              alignment: Alignment.topLeft,
+                                                                              width: 50,
+                                                                              child:Image.asset('assets/logo/klackr_logo.png')),
+                                                                        ),
+                                                                        Expanded(
+                                                                          flex: 10,
+                                                                          child: Column(
+                                                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                                                              children: [
+                                                                                Text("Klackr",style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold,color:_colorFromHex(themeInputText))),
+                                                                                Text("Follow friends and discover great",style: TextStyle(color:_colorFromHex("#6688A0"),fontSize: 10,fontWeight: FontWeight.bold)),
+                                                                                Text("things in your vicinity and beyond",style: TextStyle(color:_colorFromHex("#6688A0"),fontSize: 10,fontWeight: FontWeight.bold)),
+                                                                              ]),
+                                                                        ),
+                                                                        Expanded(
+                                                                          flex: 10,
+                                                                          child: Column(
+                                                                              crossAxisAlignment: CrossAxisAlignment.end,
+                                                                              children: [
+                                                                                Text("Klackr",style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold,color:Colors.transparent)),
+                                                                                Text("Inventor & Administrator            ",style: TextStyle(color:_colorFromHex("#6688A0"),fontSize: 10,fontWeight: FontWeight.bold)),
+                                                                                Text("Leandro Kuya Jun Verceles Jr.  ",style: TextStyle(color:_colorFromHex("#6688A0"),fontSize: 10,fontWeight: FontWeight.bold)),
+                                                                              ]),
+                                                                        ),
+                                                                      ]),
+                                                                    ),
+                                                                  ),
+                                                                  Container(
+                                                                    height: 30,
+                                                                  ),
+                                                                  Container(
+                                                                    alignment: Alignment.topLeft,
+                                                                    child:   Padding(
+                                                                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                                      child:   Text("Klackr ads & commercial posts ",style: TextStyle(color:_colorFromHex("#6688A0"),fontWeight: FontWeight.bold)),
+                                                                    ),
+                                                                  ),
+                                                                  Container(
+                                                                    height: 10,
+                                                                  ),
+                                                                  Container(
+                                                                    alignment: Alignment.topLeft,
+                                                                    child:   Padding(
+                                                                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                                      child:   Text("[TO HOME BARANGAY & FOLLOWERS]",style: TextStyle(color:_colorFromHex("#6688A0"),fontWeight: FontWeight.bold)),
+                                                                    ),
+                                                                  ),
+                                                                  Container(
+                                                                    height: 10,
+                                                                  ),
+                                                                  Container(
+                                                                    alignment: Alignment.topLeft,
+                                                                    child:   Padding(
+                                                                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                                      child:   Text("Your advertisments and commercial posts are FREE for this beta test. ",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                                                    ),
+                                                                  ),
+                                                                  Container(
+                                                                    height: 20,
+                                                                  ),
+                                                                  Container(
+                                                                    alignment: Alignment.topLeft,
+                                                                    child:   Padding(
+                                                                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                                      child:   Text("An ad or commercial post is evaluated by the Klackr.world administrator and if within 48 hours there is no reply, it is deemed as approved and will automatically be posted unless there is a violation of company rules then which it may be taken down at anytime. ",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                                                    ),
+                                                                  ),
+                                                                  Container(
+                                                                    height: 10,
+                                                                  ),
+                                                                  Container(
+                                                                    alignment: Alignment.topLeft,
+                                                                    child:   Padding(
+                                                                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                                      child:   Text("Ads & commercial posts in the guise of private posts but actually election campaign or partisan political activity to support or defeat a candidate at any time is strictly prohibited. ",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                                                    ),
+                                                                  ),
+                                                                  Container(
+                                                                    height: 10,
+                                                                  ),
+                                                                  Container(
+                                                                    alignment: Alignment.topLeft,
+                                                                    child:   Padding(
+                                                                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                                      child:   Text("Ads & commercial posts in the context of an election campaign or partisan political activity to support or defeat a candidate or partylist party at any time are strictly prohibited  without the approval of the Klackr administrator.",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                                                    ),
+                                                                  ),
+                                                                  Container(
+                                                                    height: 10,
+                                                                  ),
+                                                                  Container(
+                                                                    alignment: Alignment.topLeft,
+                                                                    child:   Padding(
+                                                                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                                      child:   Text("The post may be in the nature of a discount.  ",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                                                    ),
+                                                                  ),
+                                                                  Container(
+                                                                    height: 10,
+                                                                  ),
+                                                                  Container(
+                                                                    alignment: Alignment.topLeft,
+                                                                    child:   Padding(
+                                                                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                                      child:   Text("Publication by the same person, store, outlet, company, or business outfit shall be limited to two posts per week. The ad or commercial post expires in 72 hours from the time of publication. ",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                                                    ),
+                                                                  ),
+
+                                                                  Container(
+                                                                    height: 15,
+                                                                  ),
+                                                                  Container(
+                                                                    alignment: Alignment.topLeft,
+                                                                    child:   Padding(
+                                                                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                                      child:   Text("Any strategy to duplicate persons or entities acting as separate publishers but discovered to be actually the same person or entity just to avoid the two posts per week limitation shall be dealt with severely and may lead to an immediate permanent ban from further publishing and/or use of the platform.  ",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                                                    ),
+                                                                  ),
+                                                                  Container(
+                                                                    height: 10,
+                                                                  ),
+                                                                  Container(
+                                                                    alignment: Alignment.topLeft,
+                                                                    child:   Padding(
+                                                                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                                      child:   Text("The publisher of the ad or  commercial post shall have the total responsibility of securing the necessary clearance or permit from the regulating agencies for the posting, if required. The publisher shall save free from any liability the Klackr company or any of its equity holders, officers, directors, administrator, managers, employees, and assigns because of the post.  ",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                                                    ),
+                                                                  ),
+                                                                  Container(
+                                                                    height: 10,
+                                                                  ),
+                                                                  Container(
+                                                                    alignment: Alignment.topLeft,
+                                                                    child:   Padding(
+                                                                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                                      child:   Text("Strictly prohibited are fake news and language that are abusive, cursing, cussing, profaning, blaspheming, racist, anti-minority, white supremancy, and intending to destroy the reputation of any person or group whether the latter is a public or government personality, celebrity, private individual, company, business, public or private institution. The defamatory, cyber libel, and other libel rules of the particular jurisdiction shall supplement the liability for fake news and prohibited language indicated herein.  ",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                                                    ),
+                                                                  ),
+                                                                  Container(
+                                                                    height: 10,
+                                                                  ),
+                                                                  Container(
+                                                                    alignment: Alignment.topLeft,
+                                                                    child:   Padding(
+                                                                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                                      child:   Text("The klackr company policies and rules against fake news and prohibited language may lead to a suspension or total ban on the use of the Klackr platform.",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                                                    ),
+                                                                  ),
+                                                                  Container(
+                                                                    height: 10,
+                                                                  ),
+                                                                  Container(
+                                                                    alignment: Alignment.topLeft,
+                                                                    child:   Padding(
+                                                                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                                      child:   Text("The Klackr platform is merely the vessel of your ads & commercial posts. Hence, the the Klackr company bears no responsibility to the contents of said ads & commercial posts and the publisher saves harmless from all liabilities and damages the Klackr company, its equity holders, officers, directors, managers, employees, and assigns.     ",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                                                    ),
+                                                                  ),
+                                                                  Container(
+                                                                    height: 10,
+                                                                  ),
+                                                                  Container(
+                                                                    alignment: Alignment.topLeft,
+                                                                    child:   Padding(
+                                                                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                                      child:   Text("There are no algorithms on the platfrom so ads & commerical posts reach 100% the subscribers-users upon their opening of the app. The ads & commercial posts are viewable for 72 hours from the time the material is downloaded. Sharing to followers or to any body else after the subscriber-user receives the original ad or commericial post is not automatic. If manually shared, it is viewable for another 72 hours from the time of sharing.",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                                                    ),
+                                                                  ),
+                                                                  Container(
+                                                                    height: 10,
+                                                                  ),
+                                                                  Container(
+                                                                    alignment: Alignment.topLeft,
+                                                                    child:   Padding(
+                                                                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                                      child:   Text("Trolling is strictly prohibited on the platform. An immediate permanent ban awaits the trollers once discovered.",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                                                    ),
+                                                                  ),
+                                                                  Container(
+                                                                    height: 10,
+                                                                  ),
+                                                                  Container(
+                                                                    alignment: Alignment.topLeft,
+                                                                    child:   Padding(
+                                                                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                                      child:   Text("Once the ad or commercial post is approved or denied with 48 hours, the administrator shall send a direct message (no reply) to the email address of the personal publisher. If there is no message within the 48 hours, the ad or commerical post is deemed approved of publication. This is automatic, no intervention from the publisher necessary. ",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                                                    ),
+                                                                  ),
+                                                                  Container(
+                                                                    height: 35,
+                                                                  ),
+                                                                  Container(
+                                                                    height: 25,
+                                                                    child:    Padding(
+                                                                      padding: const EdgeInsets.only(
+                                                                          left: 120, right:120, bottom: 0,top:0),
+                                                                      child:ElevatedButton(
+                                                                        child: Text('Back'),
+                                                                        onPressed: () {
+                                                                          setState(() {
+                                                                            info="false";
+                                                                          });
+                                                                        },
+                                                                        style: ElevatedButton.styleFrom(
+                                                                            primary: _colorFromHex("#2786C9"),
+                                                                            padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                                                                            textStyle: TextStyle(
+                                                                                fontWeight: FontWeight.bold)),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                  Container(
+                                                                    height: 20,
+                                                                  ),
+                                                                ]
+                                                            ),
+                                                          ),
+
+                                                        ]),
+                                                      ),
+                                                    );
+                                                  },
+                                                ),
+                                              ),
+
+                                            ]
+                                            ),
+                                          ),
+                                        ),
+                                      if(info=="3")
+                                        Expanded(
+                                          child:Container(
+                                            child: Column(children: [
+                                              SizedBox(
+                                                height: MediaQuery.of(context).size.height-95,
+                                                child:ListView.builder(
+                                                  controller: ScrollController(),
+                                                  itemCount: 1,
+                                                  itemBuilder: (BuildContext context, int index) {
+                                                    return Container(
+                                                      child:   IntrinsicHeight(
+                                                        child: Column( children: [
+                                                          Expanded(
+                                                            child: Column(
+                                                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                                                children: [
+                                                                  Container(
+                                                                    height: 10,
+                                                                  ),
+                                                                  Container(
+                                                                    width: 500,
+                                                                    alignment: Alignment.topLeft,
+                                                                    child: IntrinsicHeight(
+                                                                      child: Row( children: [
+                                                                        Container(
+                                                                          width: 5,
+                                                                        ),
+                                                                        Expanded(
+                                                                          flex: 0,
+                                                                          child:Container(
+                                                                              alignment: Alignment.topLeft,
+                                                                              width: 50,
+                                                                              child:Image.asset('assets/logo/klackr_logo.png')),
+                                                                        ),
+                                                                        Expanded(
+                                                                          flex: 10,
+                                                                          child: Column(
+                                                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                                                              children: [
+                                                                                Text("Klackr",style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold,color:_colorFromHex(themeInputText))),
+                                                                                Text("Follow friends and discover great",style: TextStyle(color:_colorFromHex("#6688A0"),fontSize: 10,fontWeight: FontWeight.bold)),
+                                                                                Text("things in your vicinity and beyond",style: TextStyle(color:_colorFromHex("#6688A0"),fontSize: 10,fontWeight: FontWeight.bold)),
+                                                                              ]),
+                                                                        ),
+                                                                        Expanded(
+                                                                          flex: 10,
+                                                                          child: Column(
+                                                                              crossAxisAlignment: CrossAxisAlignment.end,
+                                                                              children: [
+                                                                                Text("Klackr",style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold,color:Colors.transparent)),
+                                                                                Text("Inventor & Administrator            ",style: TextStyle(color:_colorFromHex("#6688A0"),fontSize: 10,fontWeight: FontWeight.bold)),
+                                                                                Text("Leandro Kuya Jun Verceles Jr.  ",style: TextStyle(color:_colorFromHex("#6688A0"),fontSize: 10,fontWeight: FontWeight.bold)),
+                                                                              ]),
+                                                                        ),
+                                                                      ]),
+                                                                    ),
+                                                                  ),
+                                                                  Container(
+                                                                    height: 30,
+                                                                  ),
+                                                                  Container(
+                                                                    alignment: Alignment.topLeft,
+                                                                    child:   Padding(
+                                                                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                                      child:   Text("Klackr Influencer placements",style: TextStyle(color:_colorFromHex("#6688A0"),fontWeight: FontWeight.bold)),
+                                                                    ),
+                                                                  ),
+                                                                  Container(
+                                                                    height: 10,
+                                                                  ),
+                                                                  Container(
+                                                                    alignment: Alignment.topLeft,
+                                                                    child:   Padding(
+                                                                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                                      child:   Text("[TO MAXIMUM AREA PER CONTRACT OR SMALLER IPAs INSIDE THEREOF & FOLLOWERS]",style: TextStyle(color:_colorFromHex("#6688A0"),fontWeight: FontWeight.bold)),
+                                                                    ),
+                                                                  ),
+
+                                                                  Container(
+                                                                    height: 10,
+                                                                  ),
+                                                                  Row(children: [
+                                                                    Flexible(
+                                                                      flex:7,
+                                                                      child:    Container(
+                                                                  alignment: Alignment.topLeft,
+                                                                    child:   Padding(
+                                                                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                                      child:    Text("Construct your INFLUENCIAL PLACEMENT AREA/S (IPAs)",style: TextStyle(color:_colorFromHex("#6688A0"),fontWeight: FontWeight.w500)
+                                                                    ),
+                                                                  ),),
+                                                                    ),
+                                                                    Flexible(
+                                                                      flex:2,
+                                                                      child: Container(
+                                                                        alignment: Alignment.topLeft,
+                                                                        child:   Padding(
+                                                                          padding: EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+                                                                          child:TextButton(
+                                                                            style: TextButton.styleFrom(
+                                                                              textStyle: TextStyle(),
+                                                                            ),
+                                                                            onPressed: (){
+                                                                              setState(() {
+
+                                                                              });
+                                                                            },
+                                                                            child:Text('click to go',style:TextStyle(color:Colors.red))),
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                  ]
+                                                                  ),
+                                                                  Row(children: [
+                                                                    Flexible(
+
+                                                                      child:    Container(
+                                                                        alignment: Alignment.topLeft,
+                                                                        child:   Padding(
+                                                                          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                                          child:    Text("IPA in play 3",style: TextStyle(color:_colorFromHex("#6688A0"),fontWeight: FontWeight.w500)
+                                                                          ),
+                                                                        ),),
+                                                                    ),
+                                                                    Flexible(
+
+                                                                      child:    Container(
+                                                                        alignment: Alignment.topLeft,
+                                                                        child:   Padding(
+                                                                          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                                          child:    Text("scroll 1-10 etc.",style: TextStyle(color:Colors.red)
+                                                                          ),
+                                                                        ),),
+                                                                    ),
+                                                                  ]
+                                                                  ),
+                                                                  Container(
+                                                                    height: 20,
+                                                                  ),
+                                                                  Container(
+                                                                    alignment: Alignment.topLeft,
+                                                                    child:   Padding(
+                                                                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                                      child:   Text("Influencers (i.e., candidates and/or partlylist parties for the May 2022 elections) may publish their propaganda in their conracted area or any part inside thereof as Influencer placements.  ",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                                                    ),
+                                                                  ),
+                                                                  Container(
+                                                                    height: 10,
+                                                                  ),
+                                                                  Container(
+                                                                    alignment: Alignment.topLeft,
+                                                                    child:   Padding(
+                                                                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                                      child:   Text("The Klackr platform is merely the vessel of your Influencer placements. Hence, the the Klackr company bears no responsibility to the contents of said Influencer placements and the Influencer publisher saves harmless from all liabilities and damages the Klackr company, its equity holders, officers, directors,  employees, managers, and asssigns.",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                                                    ),
+                                                                  ),
+                                                                  Container(
+                                                                    height: 10,
+                                                                  ),
+                                                                  Container(
+                                                                    alignment: Alignment.topLeft,
+                                                                    child:   Padding(
+                                                                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                                      child:   Text("Until May 7, 2022 or two days before election day,  the Influencer considered as a single candidate group will be entitled to four propaganda placements published per week. An Influencer group with a maximum of 10 Influencers in the group, however, will be entitled to 12 propaganda placements published per week. The propaganda placements are cumulative and unused placements may be carried over to the next week, and so forth. ",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                                                    ),
+                                                                  ),
+                                                                  Container(
+                                                                    height: 10,
+                                                                  ),
+                                                                  Container(
+                                                                    alignment: Alignment.topLeft,
+                                                                    child:   Padding(
+                                                                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                                      child:   Text("Strictly prohibited are fake news and language that are abusive, cursing, cussing, profaning, blaspheming, racist, anti-minority, white supremancy, and intending to destroy the reputation of any person or group whether the latter is a public or government personality, celebrity, private individual, company, business, public or private institution. The defamatory, cyber libel, and other libel rules of the particular jurisdiction shall supplement the liability for fake news and prohibited language indicated herein.  ",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                                                    ),
+                                                                  ),
+                                                                  Container(
+                                                                    height: 10,
+                                                                  ),
+                                                                  Container(
+                                                                    alignment: Alignment.topLeft,
+                                                                    child:   Padding(
+                                                                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                                      child:   Text("The Influencer placements do not require pre-approval by the Klackr administrator or incur any waiting period before their publication unlike ads & commerical posts.",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                                                    ),
+                                                                  ),
+
+                                                                  Container(
+                                                                    height: 15,
+                                                                  ),
+                                                                  Container(
+                                                                    alignment: Alignment.topLeft,
+                                                                    child:   Padding(
+                                                                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                                      child:   Text("There are no algorithms on the platfrom so Influencer placements reach 100% the subscribers-users upon their opening of the app. The placements are viewable for 72 hours from the time the material is downloaded. Sharing to followers or to any body else after the subscriber-user receives the original placement is not automatic. If manually shared, it is viewable for another 72 hours from the time of sharing. ",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                                                    ),
+                                                                  ),
+                                                                  Container(
+                                                                    height: 10,
+                                                                  ),
+                                                                  Container(
+                                                                    alignment: Alignment.topLeft,
+                                                                    child:   Padding(
+                                                                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                                      child:   Text("Trolling is strictly prohibited on the platform. An immediate permanent ban awaits the trollers once discovered.  ",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                                                    ),
+                                                                  ),
+                                                                  Container(
+                                                                    height: 10,
+                                                                  ),
+                                                                  Container(
+                                                                    alignment: Alignment.topLeft,
+                                                                    child:   Padding(
+                                                                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                                      child:   Text("Strictly prohibited are fake news and language that are abusive, cursing, cussing, profaning, blaspheming, racist, anti-minority, white supremancy, and intending to destroy the reputation of any person or group whether the latter is a public or government personality, celebrity, private individual, company, business, public or private institution. The defamatory, cyber libel, and other libel rules of the particular jurisdiction shall supplement the liability for fake news and prohibited language indicated herein.  ",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                                                    ),
+                                                                  ),
+                                                                  Container(
+                                                                    height: 10,
+                                                                  ),
+                                                                  Container(
+                                                                    alignment: Alignment.topLeft,
+                                                                    child:   Padding(
+                                                                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                                      child:   Text("The klackr company policies and rules against fake news and prohibited language may lead to a suspension or total ban on the use of the Klackr platform.",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                                                    ),
+                                                                  ),
+                                                                  Container(
+                                                                    height: 10,
+                                                                  ),
+                                                                  Container(
+                                                                    alignment: Alignment.topLeft,
+                                                                    child:   Padding(
+                                                                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                                      child:   Text("The Klackr platform is merely the vessel of your ads & commercial posts. Hence, the the Klackr company bears no responsibility to the contents of said ads & commercial posts and the publisher saves harmless from all liabilities and damages the Klackr company, its equity holders, officers, directors, managers, employees, and assigns.     ",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                                                    ),
+                                                                  ),
+                                                                  Container(
+                                                                    height: 10,
+                                                                  ),
+                                                                  Container(
+                                                                    alignment: Alignment.topLeft,
+                                                                    child:   Padding(
+                                                                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                                      child:   Text("There are no algorithms on the platfrom so ads & commerical posts reach 100% the subscribers-users upon their opening of the app. The ads & commercial posts are viewable for 72 hours from the time the material is downloaded. Sharing to followers or to any body else after the subscriber-user receives the original ad or commericial post is not automatic. If manually shared, it is viewable for another 72 hours from the time of sharing.",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                                                    ),
+                                                                  ),
+                                                                  Container(
+                                                                    height: 10,
+                                                                  ),
+                                                                  Container(
+                                                                    alignment: Alignment.topLeft,
+                                                                    child:   Padding(
+                                                                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                                      child:   Text("Trolling is strictly prohibited on the platform. An immediate permanent ban awaits the trollers once discovered.",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                                                    ),
+                                                                  ),
+                                                                  Container(
+                                                                    height: 10,
+                                                                  ),
+                                                                  Container(
+                                                                    alignment: Alignment.topLeft,
+                                                                    child:   Padding(
+                                                                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                                      child:   Text("Once the ad or commercial post is approved or denied with 48 hours, the administrator shall send a direct message (no reply) to the email address of the personal publisher. If there is no message within the 48 hours, the ad or commerical post is deemed approved of publication. This is automatic, no intervention from the publisher necessary. ",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                                                    ),
+                                                                  ),
+                                                                  Container(
+                                                                    height: 35,
+                                                                  ),
+                                                                  Container(
+                                                                    height: 25,
+                                                                    child:    Padding(
+                                                                      padding: const EdgeInsets.only(
+                                                                          left: 120, right:120, bottom: 0,top:0),
+                                                                      child:ElevatedButton(
+                                                                        child: Text('Back'),
+                                                                        onPressed: () {
+                                                                          setState(() {
+                                                                            info="false";
+                                                                          });
+                                                                        },
+                                                                        style: ElevatedButton.styleFrom(
+                                                                            primary: _colorFromHex("#2786C9"),
+                                                                            padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                                                                            textStyle: TextStyle(
+                                                                                fontWeight: FontWeight.bold)),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                  Container(
+                                                                    height: 20,
+                                                                  ),
+                                                                ]
+                                                            ),
+                                                          ),
+
+                                                        ]),
+                                                      ),
+                                                    );
+                                                  },
+                                                ),
+                                              ),
+
+                                            ]
+                                            ),
+                                          ),
+                                        ),
+                                      if(info=="4")
+                                        Expanded(
+                                          child:Container(
+                                            child: Column(children: [
+                                              SizedBox(
+                                                height: MediaQuery.of(context).size.height-95,
+                                                child:ListView.builder(
+                                                  controller: ScrollController(),
+                                                  itemCount: 1,
+                                                  itemBuilder: (BuildContext context, int index) {
+                                                    return Container(
+                                                      child:   IntrinsicHeight(
+                                                        child: Column( children: [
+                                                          Expanded(
+                                                            child: Column(
+                                                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                                                children: [
+                                                                  Container(
+                                                                    height: 10,
+                                                                  ),
+                                                                 /* Container(
+                                                                    width: 500,
+                                                                    alignment: Alignment.topLeft,
+                                                                    child: IntrinsicHeight(
+                                                                      child: Row( children: [
+                                                                        Container(
+                                                                          width: 5,
+                                                                        ),
+                                                                        Expanded(
+                                                                          flex: 0,
+                                                                          child:Container(
+                                                                              alignment: Alignment.topLeft,
+                                                                              width: 50,
+                                                                              child:Image.asset('assets/logo/klackr_logo.png')),
+                                                                        ),
+                                                                        Expanded(
+                                                                          flex: 10,
+                                                                          child: Column(
+                                                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                                                              children: [
+                                                                                Text("Klackr",style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold,color:_colorFromHex(themeInputText))),
+                                                                                Text("Follow friends and discover great",style: TextStyle(color:_colorFromHex("#6688A0"),fontSize: 10,fontWeight: FontWeight.bold)),
+                                                                                Text("things in your vicinity and beyond",style: TextStyle(color:_colorFromHex("#6688A0"),fontSize: 10,fontWeight: FontWeight.bold)),
+                                                                              ]),
+                                                                        ),
+                                                                        Expanded(
+                                                                          flex: 10,
+                                                                          child: Column(
+                                                                              crossAxisAlignment: CrossAxisAlignment.end,
+                                                                              children: [
+                                                                                Text("Klackr",style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold,color:Colors.transparent)),
+                                                                                Text("Inventor & Administrator            ",style: TextStyle(color:_colorFromHex("#6688A0"),fontSize: 10,fontWeight: FontWeight.bold)),
+                                                                                Text("Leandro Kuya Jun Verceles Jr.  ",style: TextStyle(color:_colorFromHex("#6688A0"),fontSize: 10,fontWeight: FontWeight.bold)),
+                                                                              ]),
+                                                                        ),
+                                                                      ]),
+                                                                    ),
+                                                                  ),*/
+                                                                  Container(
+                                                                    height: 30,
+                                                                  ),
+                                                                  Container(
+                                                                    alignment: Alignment.topLeft,
+                                                                    child:   Padding(
+                                                                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                                      child:   Text("STATS",style: TextStyle(color:_colorFromHex(themeInputText),fontWeight: FontWeight.bold)),
+                                                                    ),
+                                                                  ),
+                                                                  Container(
+                                                                    height: 10,
+                                                                  ),
+                                                                  Container(
+                                                                    alignment: Alignment.topLeft,
+                                                                    child:   Padding(
+                                                                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                                      child:   Text("Klackr private posts",style: TextStyle(color:_colorFromHex(themeInputText),fontWeight: FontWeight.bold)),
+                                                                    ),
+                                                                  ),
+                                                                  Container(
+                                                                    height: 10,
+                                                                  ),
+                                                                  Container(
+                                                                    alignment: Alignment.topLeft,
+                                                                    child:   Padding(
+                                                                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                                      child:   Text("Duration from: N/A",style: TextStyle(color:_colorFromHex(themeInputText),fontWeight: FontWeight.bold)),
+                                                                    ),
+                                                                  ),
+                                                                  Container(
+                                                                    alignment: Alignment.topLeft,
+                                                                    child:   Padding(
+                                                                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                                      child:   Text("to: N/A",style: TextStyle(color:_colorFromHex(themeInputText),fontWeight: FontWeight.bold)),
+                                                                    ),
+                                                                  ),
+                                                                  Container(
+                                                                    alignment: Alignment.topLeft,
+                                                                    child:   Padding(
+                                                                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                                      child:   Text("Followers/Native Boost: 3,123",style: TextStyle(color:_colorFromHex(themeInputText),fontWeight: FontWeight.bold)),
+                                                                    ),
+                                                                  ),
+                                                                  Container(
+                                                                    height: 5,
+                                                                  ),
+                                                                  Container(
+                                                                    alignment: Alignment.topLeft,
+                                                                    child:   Padding(
+                                                                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                                      child:   Text("Posts allowed per week : unlimited",style: TextStyle(color:_colorFromHex(themeInputText),fontWeight: FontWeight.bold)),
+                                                                    ),
+                                                                  ),
+                                                                  Container(
+                                                                    alignment: Alignment.topLeft,
+                                                                    child:   Padding(
+                                                                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                                      child:   Text("Duration of post : 72 hours",style: TextStyle(color:_colorFromHex(themeInputText),fontWeight: FontWeight.bold)),
+                                                                    ),
+                                                                  ),
+                                                                  Container(
+                                                                    height: 10,
+                                                                  ),
+                                                                  Container(
+                                                                    alignment: Alignment.topLeft,
+                                                                    child:   Padding(
+                                                                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                                      child:   Text("Posting History",style: TextStyle(color:_colorFromHex(themeInputText),fontWeight: FontWeight.bold)),
+                                                                    ),
+                                                                  ),
+                                                                  Container(
+                                                                    height: 150,
+                                                                      child:   Padding(
+                                                                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                                  child:Card(
+
+                                                                  ),
+                                                                      ),
+                                                                  ),
+                                                                  Container(
+                                                                    height: 20,
+                                                                  ),
+                                                                  Container(
+                                                                    child:    Padding(
+                                                                      padding: const EdgeInsets.only(
+                                                                          left: 125, right:125, bottom: 0,top:0),
+                                                                      child:ElevatedButton(
+                                                                        child: Text('Back'),
+                                                                        onPressed: () {
+                                                                          setState(() {
+                                                                            info="false";
+                                                                          });
+                                                                        },
+                                                                        style: ElevatedButton.styleFrom(
+                                                                            primary: _colorFromHex("#2786C9"),
+                                                                            padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                                                                            textStyle: TextStyle(
+                                                                                fontWeight: FontWeight.bold)),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                  Container(
+                                                                    height: 20,
+                                                                  ),
+                                                                ]
+                                                            ),
+                                                          ),
+
+                                                        ]),
+                                                      ),
+                                                    );
+                                                  },
+                                                ),
+                                              ),
+
+                                            ]
+                                            ),
+                                          ),
+                                        ),
+                                      if(info=="5")
+                                        Expanded(
+                                          child:Container(
+                                            child: Column(children: [
+                                              SizedBox(
+                                                height: MediaQuery.of(context).size.height-95,
+                                                child:ListView.builder(
+                                                  controller: ScrollController(),
+                                                  itemCount: 1,
+                                                  itemBuilder: (BuildContext context, int index) {
+                                                    return Container(
+                                                      child:   IntrinsicHeight(
+                                                        child: Column( children: [
+                                                          Expanded(
+                                                            child: Column(
+                                                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                                                children: [
+                                                                  Container(
+                                                                    height: 10,
+                                                                  ),
+                                                                  /* Container(
+                                                                    width: 500,
+                                                                    alignment: Alignment.topLeft,
+                                                                    child: IntrinsicHeight(
+                                                                      child: Row( children: [
+                                                                        Container(
+                                                                          width: 5,
+                                                                        ),
+                                                                        Expanded(
+                                                                          flex: 0,
+                                                                          child:Container(
+                                                                              alignment: Alignment.topLeft,
+                                                                              width: 50,
+                                                                              child:Image.asset('assets/logo/klackr_logo.png')),
+                                                                        ),
+                                                                        Expanded(
+                                                                          flex: 10,
+                                                                          child: Column(
+                                                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                                                              children: [
+                                                                                Text("Klackr",style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold,color:_colorFromHex(themeInputText))),
+                                                                                Text("Follow friends and discover great",style: TextStyle(color:_colorFromHex("#6688A0"),fontSize: 10,fontWeight: FontWeight.bold)),
+                                                                                Text("things in your vicinity and beyond",style: TextStyle(color:_colorFromHex("#6688A0"),fontSize: 10,fontWeight: FontWeight.bold)),
+                                                                              ]),
+                                                                        ),
+                                                                        Expanded(
+                                                                          flex: 10,
+                                                                          child: Column(
+                                                                              crossAxisAlignment: CrossAxisAlignment.end,
+                                                                              children: [
+                                                                                Text("Klackr",style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold,color:Colors.transparent)),
+                                                                                Text("Inventor & Administrator            ",style: TextStyle(color:_colorFromHex("#6688A0"),fontSize: 10,fontWeight: FontWeight.bold)),
+                                                                                Text("Leandro Kuya Jun Verceles Jr.  ",style: TextStyle(color:_colorFromHex("#6688A0"),fontSize: 10,fontWeight: FontWeight.bold)),
+                                                                              ]),
+                                                                        ),
+                                                                      ]),
+                                                                    ),
+                                                                  ),*/
+                                                                  Container(
+                                                                    height: 30,
+                                                                  ),
+                                                                  Container(
+                                                                    alignment: Alignment.topLeft,
+                                                                    child:   Padding(
+                                                                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                                      child:   Text("STATS",style: TextStyle(color:_colorFromHex(themeInputText),fontWeight: FontWeight.bold)),
+                                                                    ),
+                                                                  ),
+                                                                  Container(
+                                                                    height: 10,
+                                                                  ),
+                                                                  Container(
+                                                                    alignment: Alignment.topLeft,
+                                                                    child:   Padding(
+                                                                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                                      child:   Text("Klackr ads & commercial posts",style: TextStyle(color:_colorFromHex(themeInputText),fontWeight: FontWeight.bold)),
+                                                                    ),
+                                                                  ),
+                                                                  Container(
+                                                                    height: 10,
+                                                                  ),
+                                                                  Container(
+                                                                    alignment: Alignment.topLeft,
+                                                                    child:   Padding(
+                                                                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                                      child:   Text("Juan de la Cruz Bakery, 5% discount pandesal ",style: TextStyle(color:_colorFromHex(themeInputText),fontWeight: FontWeight.bold)),
+                                                                    ),
+                                                                  ),
+                                                                  Container(
+                                                                    height: 10,
+                                                                  ),
+                                                                  Container(
+                                                                    alignment: Alignment.topLeft,
+                                                                    child:   Padding(
+                                                                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                                      child:   Text("Duration from: N/A",style: TextStyle(color:_colorFromHex(themeInputText),fontWeight: FontWeight.bold)),
+                                                                    ),
+                                                                  ),
+                                                                  Container(
+                                                                    alignment: Alignment.topLeft,
+                                                                    child:   Padding(
+                                                                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                                      child:   Text("to: N/A",style: TextStyle(color:_colorFromHex(themeInputText),fontWeight: FontWeight.bold)),
+                                                                    ),
+                                                                  ),
+                                                                  Container(
+                                                                    alignment: Alignment.topLeft,
+                                                                    child:   Padding(
+                                                                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                                      child:   Text("Native Boost : 120,000",style: TextStyle(color:_colorFromHex(themeInputText),fontWeight: FontWeight.bold)),
+                                                                    ),
+                                                                  ),
+                                                                  Container(
+                                                                    height: 10,
+                                                                  ),
+                                                                  Container(
+                                                                    alignment: Alignment.topLeft,
+                                                                    child:   Padding(
+                                                                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                                      child:   Text("Posts allowed per week : 2",style: TextStyle(color:_colorFromHex(themeInputText),fontWeight: FontWeight.bold)),
+                                                                    ),
+                                                                  ),
+                                                                  Container(
+                                                                    alignment: Alignment.topLeft,
+                                                                    child:   Padding(
+                                                                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                                      child:   Text("Duration of post : 72 hours",style: TextStyle(color:_colorFromHex(themeInputText),fontWeight: FontWeight.bold)),
+                                                                    ),
+                                                                  ),
+                                                                  Container(
+                                                                    height: 10,
+                                                                  ),
+                                                                  Container(
+                                                                    alignment: Alignment.topLeft,
+                                                                    child:   Padding(
+                                                                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                                      child:   Text("Posting History",style: TextStyle(color:_colorFromHex(themeInputText),fontWeight: FontWeight.bold)),
+                                                                    ),
+                                                                  ),
+                                                                  Container(
+                                                                    height: 150,
+                                                                    child:   Padding(
+                                                                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                                      child:Card(
+
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                  Container(
+                                                                    height: 20,
+                                                                  ),
+                                                                  Container(
+                                                                    child:    Padding(
+                                                                      padding: const EdgeInsets.only(
+                                                                          left: 125, right:125, bottom: 0,top:0),
+                                                                      child:ElevatedButton(
+                                                                        child: Text('Back'),
+                                                                        onPressed: () {
+                                                                          setState(() {
+                                                                            info="false";
+                                                                          });
+                                                                        },
+                                                                        style: ElevatedButton.styleFrom(
+                                                                            primary: _colorFromHex("#2786C9"),
+                                                                            padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                                                                            textStyle: TextStyle(
+                                                                                fontWeight: FontWeight.bold)),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                  Container(
+                                                                    height: 20,
+                                                                  ),
+                                                                ]
+                                                            ),
+                                                          ),
+
+                                                        ]),
+                                                      ),
+                                                    );
+                                                  },
+                                                ),
+                                              ),
+
+                                            ]
+                                            ),
+                                          ),
+                                        ),
+                                      if(info=="6")
+                                        Expanded(
+                                          child:Container(
+                                            child: Column(children: [
+                                              SizedBox(
+                                                height: MediaQuery.of(context).size.height-95,
+                                                child:ListView.builder(
+                                                  controller: ScrollController(),
+                                                  itemCount: 1,
+                                                  itemBuilder: (BuildContext context, int index) {
+                                                    return Container(
+                                                      child:   IntrinsicHeight(
+                                                        child: Column( children: [
+                                                          Expanded(
+                                                            child: Column(
+                                                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                                                children: [
+                                                                  Container(
+                                                                    height: 10,
+                                                                  ),
+                                                                  /* Container(
+                                                                    width: 500,
+                                                                    alignment: Alignment.topLeft,
+                                                                    child: IntrinsicHeight(
+                                                                      child: Row( children: [
+                                                                        Container(
+                                                                          width: 5,
+                                                                        ),
+                                                                        Expanded(
+                                                                          flex: 0,
+                                                                          child:Container(
+                                                                              alignment: Alignment.topLeft,
+                                                                              width: 50,
+                                                                              child:Image.asset('assets/logo/klackr_logo.png')),
+                                                                        ),
+                                                                        Expanded(
+                                                                          flex: 10,
+                                                                          child: Column(
+                                                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                                                              children: [
+                                                                                Text("Klackr",style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold,color:_colorFromHex(themeInputText))),
+                                                                                Text("Follow friends and discover great",style: TextStyle(color:_colorFromHex("#6688A0"),fontSize: 10,fontWeight: FontWeight.bold)),
+                                                                                Text("things in your vicinity and beyond",style: TextStyle(color:_colorFromHex("#6688A0"),fontSize: 10,fontWeight: FontWeight.bold)),
+                                                                              ]),
+                                                                        ),
+                                                                        Expanded(
+                                                                          flex: 10,
+                                                                          child: Column(
+                                                                              crossAxisAlignment: CrossAxisAlignment.end,
+                                                                              children: [
+                                                                                Text("Klackr",style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold,color:Colors.transparent)),
+                                                                                Text("Inventor & Administrator            ",style: TextStyle(color:_colorFromHex("#6688A0"),fontSize: 10,fontWeight: FontWeight.bold)),
+                                                                                Text("Leandro Kuya Jun Verceles Jr.  ",style: TextStyle(color:_colorFromHex("#6688A0"),fontSize: 10,fontWeight: FontWeight.bold)),
+                                                                              ]),
+                                                                        ),
+                                                                      ]),
+                                                                    ),
+                                                                  ),*/
+                                                                  Container(
+                                                                    height: 30,
+                                                                  ),
+                                                                  Container(
+                                                                    alignment: Alignment.topLeft,
+                                                                    child:   Padding(
+                                                                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                                      child:   Text("STATS",style: TextStyle(color:_colorFromHex(themeInputText),fontWeight: FontWeight.bold)),
+                                                                    ),
+                                                                  ),
+                                                                  Container(
+                                                                    height: 10,
+                                                                  ),
+                                                                  Container(
+                                                                    alignment: Alignment.topLeft,
+                                                                    child:   Padding(
+                                                                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                                      child:   Text("  Klackr Influencer placements",style: TextStyle(color:_colorFromHex(themeInputText),fontWeight: FontWeight.bold)),
+                                                                    ),
+                                                                  ),
+                                                                  Container(
+                                                                    height: 10,
+                                                                  ),
+                                                                  Container(
+                                                                    alignment: Alignment.topLeft,
+                                                                    child:   Padding(
+                                                                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                                      child:   Text("Duration from :  Feb 1, 2022, 12:01am",style: TextStyle(color:_colorFromHex(themeInputText),fontWeight: FontWeight.bold)),
+                                                                    ),
+                                                                  ),
+                                                                  Container(
+                                                                    alignment: Alignment.topLeft,
+                                                                    child:   Padding(
+                                                                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                                      child:   Text("to :  May 31, 2022, 11:59pm",style: TextStyle(color:_colorFromHex(themeInputText),fontWeight: FontWeight.bold)),
+                                                                    ),
+                                                                  ),
+                                                                  Container(
+                                                                    height: 10,
+                                                                  ),
+                                                                  Container(
+                                                                    alignment: Alignment.topLeft,
+                                                                    child:   Padding(
+                                                                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                                      child:   Text("Native Boost : 123,456  ",style: TextStyle(color:_colorFromHex(themeInputText),fontWeight: FontWeight.bold)),
+                                                                    ),
+                                                                  ),
+                                                                  Container(
+                                                                    height: 10,
+                                                                  ),
+                                                                  Container(
+                                                                    alignment: Alignment.topLeft,
+                                                                    child:   Padding(
+                                                                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                                      child:   Text("Posts allowed per week :  4",style: TextStyle(color:_colorFromHex(themeInputText),fontWeight: FontWeight.bold)),
+                                                                    ),
+                                                                  ),
+                                                                  Container(
+                                                                    alignment: Alignment.topLeft,
+                                                                    child:   Padding(
+                                                                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                                      child:   Text("  Duration of each post : until May 7, 2022",style: TextStyle(color:_colorFromHex(themeInputText),fontWeight: FontWeight.bold)),
+                                                                    ),
+                                                                  ),
+                                                                  Container(
+                                                                    height: 10,
+                                                                  ),
+                                                                  Container(
+                                                                    alignment: Alignment.topLeft,
+                                                                    child:   Padding(
+                                                                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                                      child:   Text("Posting History",style: TextStyle(color:_colorFromHex(themeInputText),fontWeight: FontWeight.bold)),
+                                                                    ),
+                                                                  ),
+                                                                  Container(
+                                                                    height: 150,
+                                                                    child:   Padding(
+                                                                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                                      child:Card(
+
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                  Container(
+                                                                    height: 20,
+                                                                  ),
+                                                                  Container(
+                                                                    child:    Padding(
+                                                                      padding: const EdgeInsets.only(
+                                                                          left: 125, right:125, bottom: 0,top:0),
+                                                                      child:ElevatedButton(
+                                                                        child: Text('Back'),
+                                                                        onPressed: () {
+                                                                          setState(() {
+                                                                            info="false";
+                                                                          });
+                                                                        },
+                                                                        style: ElevatedButton.styleFrom(
+                                                                            primary: _colorFromHex("#2786C9"),
+                                                                            padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                                                                            textStyle: TextStyle(
+                                                                                fontWeight: FontWeight.bold)),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                  Container(
+                                                                    height: 20,
+                                                                  ),
+                                                                ]
+                                                            ),
+                                                          ),
+
+                                                        ]),
+                                                      ),
+                                                    );
+                                                  },
+                                                ),
+                                              ),
+
+                                            ]
+                                            ),
+                                          ),
+                                        ),
                                     ]),
                                   ),
                               );
@@ -1423,27 +2881,31 @@ Expanded(
                     ),
                   ),
 
-                  Expanded(//LOBBY GET POST
+                  Expanded(
+                    flex:two,//LOBBY GET POST
                     child:Container(
+                      color:_colorFromHex(themeCard),
                       alignment: Alignment.topLeft,
                       child:IntrinsicHeight(
                         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                           Expanded(
                             flex:0,
                             child:  Container(
-                                height: 30.0, color: _colorFromHex(themeBase),
+                                height: 30.0, color: _colorFromHex(themeAppbard),
                                 child:IntrinsicHeight(
                                   child: Row( children: [
-
+                                    Container(
+                                      width:10,
+                                    ),
                                     Expanded(
-
+                                      flex:0,
                                       child:Container(
-
+                                        height: 20,
                                           alignment: Alignment.topLeft,
                                           child:Image.asset('assets/logo/klackr_logo.png')),
                                     ),
                                     Expanded(
-                                      flex:3,
+                                      flex:10,
                                       child:  Container(
                                         alignment: Alignment.topLeft,
                                         child:   Padding(
@@ -1469,6 +2931,10 @@ flex:8,
 
                           ),
                           if(noPost=="true")
+                          Container(
+                            height: 30,
+                          ),
+                          if(noPost=="true")
                             Expanded(
                               child:  Padding(
                                   padding: const EdgeInsets.only(
@@ -1489,11 +2955,9 @@ flex:8,
                                 controller: ScrollController(),
                                 itemCount: _foundUsers1.length,
                                 itemBuilder: (BuildContext context, int index) {
-                                  DateTime parseDate4;
-                                  parseDate4 = new DateFormat("yyyy-MM-dd'T'hh:mm").parse(_foundUsers1[_foundUsers1.length-1-index]["date_posted"].toString());
-                                  var inputDate4 = DateTime.parse(parseDate4.toString());
-                                  var outputFormat4 = DateFormat('MMM dd, yyyy');
-                                  var dt4 = outputFormat4.format(inputDate4);
+                                  final DateTime time1 = DateTime.parse(_foundUsers1[_foundUsers1.length-1-index]["date_posted"].toString());
+                                  String dt4 = timeago.format(time1);
+
                                   return Container(
                                     child:   IntrinsicHeight(
                                       child: Column( children: [
@@ -1504,7 +2968,7 @@ flex:8,
                                                 IntrinsicHeight(
                                                   child: Row( children: [
                                                     Expanded(
-                                                      flex: 2,
+                                                      flex: 0,
                                                       child: Column(children: [
                                                         Container(
                                                           alignment: Alignment.topLeft,
@@ -1512,21 +2976,23 @@ flex:8,
                                                         ),
                                                       ]),
                                                     ),
+                                                    Container(
+                                                      width: 20,
+                                                    ),
                                                     Expanded(
-                                                      flex: 8,
+                                                      flex: 10,
                                                       child: Padding(
                                                         padding: const EdgeInsets.only(
                                                             left: 0, right: 0, bottom: 0,top:15),
                                                         child: Column(children: [
                                                           Container(
                                                             alignment: Alignment.topLeft,
-                                                            child:
-                                                            Text(_foundUsers1[_foundUsers1.length-1-index]["author"].toString(),style: TextStyle(fontWeight: FontWeight.bold,fontSize: 15,color:  _colorFromHex(themeInputText))),
+                                                            child: Text(_foundUsers1[_foundUsers1.length-1-index]["author"].toString(),style: TextStyle(fontWeight: FontWeight.bold,fontSize: 15,color:  _colorFromHex(themeInputText))),
                                                           ),
                                                           Container(
                                                             alignment: Alignment.topLeft,
                                                             child: Row( children: [
-                                                              Text(dt4,style: TextStyle(color: _colorFromHex(themeInputText))),
+                                                             Text(dt4,style: TextStyle(color: _colorFromHex(themeInputText))),
                                                               Text(" · ",style: TextStyle(color:  _colorFromHex(themeInputText))),
                                                               Icon(Icons.public,size: 15,color:  _colorFromHex(themeInputText)),
                                                             ],
@@ -1551,11 +3017,41 @@ flex:8,
                                                   ),
                                                 ),
                                                 Container(
-                                                    height:15
+                                                  height:10,
+                                                ),
+                                                Row(children: [
+                                                  IconButton(
+                                                    icon: Icon(
+                                                      Icons.thumb_up,color: _colorFromHex(themeInputText),size: 18
+                                                    ),
+                                                    onPressed: () {
+                                                      
+                                                    },
+                                                  ),
+                                                  IconButton(
+                                                    icon: Icon(
+                                                      Icons.comment,color: _colorFromHex(themeInputText),size: 18
+                                                    ),
+                                                    onPressed: () {
+
+                                                    },
+                                                  ),
+                                                  IconButton(
+                                                    icon: Icon(
+                                                      Icons.share,color: _colorFromHex(themeInputText),size: 18,
+                                                    ),
+                                                    onPressed: () {
+
+                                                    },
+                                                  ),
+                                                ]
                                                 ),
                                                 Container(
-                                                  height: 1.5,
-                                                  color:_colorFromHex("#363A48"),
+                                                    height:2
+                                                ),
+                                                Container(
+                                                  height: 1,
+                                                  color:_colorFromHex(themeBase),
                                                 ),
 
                                               ]
@@ -1579,6 +3075,7 @@ flex:8,
 
 
                 Expanded(//LOBBY HOME
+                  flex:third,
                   child:Container(
                     child: Column(children: [
                       SizedBox(
@@ -1598,32 +3095,61 @@ flex:8,
                                         child: Row( children: [
 
                                           Expanded(
-
+                                            flex:0,
                                             child:Container(
-
+                                              height: 20,
                                                 alignment: Alignment.topLeft,
                                                 child:Image.asset('assets/logo/klackr_logo.png')),
                                           ),
                                           Expanded(
-                                            flex:3,
+                                            flex:10,
                                             child:  Container(
                                               alignment: Alignment.topLeft,
                                               child:   Padding(
-                                                padding: EdgeInsets.symmetric(horizontal: 5, vertical: 3),
+                                                padding: EdgeInsets.symmetric(horizontal: 1, vertical: 3),
                                                 child: Text("Street",style: TextStyle(fontSize: 20,color:Colors.blue)),
                                               ),
                                             ),
                                           ),
+                                          if(refreshing=="false")
                                           Expanded(
-                                            flex:8,
-                                            child:Container(
+                                            flex:0,
+                                            child:  Container(
                                               alignment: Alignment.topRight,
-                                              child:   Padding(
-                                                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                child: Text("                   ",style: TextStyle(color:Colors.white)),
+                                                  child: IconButton(
+                                                    icon: Icon(
+                                                      Icons.refresh,color: _colorFromHex(themeInputText),size: 28,
+                                                    ),
+                                                    onPressed: () {
+
+                                                      if(allow=="on"){
+                                                        allow="off";
+                                                        setState(() {
+                                                          refreshing="true";
+                                                        });
+                                                        Timer(Duration(seconds: 2), () {
+                                                          allow="on";
+                                                          fetchData1();
+                                                        });
+                                                      }
+                                                    },
                                               ),
                                             ),
                                           ),
+                                          if(refreshing=="true")
+                                            Expanded(
+                                              flex:0,
+                                              child:  Container(
+                                                alignment: Alignment.topRight,
+                                               child: SizedBox(
+                                                 height: 20,
+                                                 width:20,
+                                                child: CircularProgressIndicator(
+                                                    color: _colorFromHex(themeInputText),
+                                                ),
+                                                ),
+                                              ),
+                                            ),
                                         ]),
                                       ),
                                       ),
@@ -1631,9 +3157,6 @@ flex:8,
                                     Row(children: [
                                       Container(
                                         width: 10,
-                                      ),
-                                      Flexible(
-                                        child: Text("Vicinity",style: TextStyle(color:_colorFromHex("#6688A0"))),
                                       ),
                                       Flexible(
                                         child: Theme(
@@ -1668,9 +3191,6 @@ flex:8,
                                         width: 10,
                                       ),
                                       Flexible(
-                                        child: Text("OutVicinity",style: TextStyle(color:_colorFromHex("#6688A0"))),
-                                      ),
-                                      Flexible(
                                         child: Theme(
                                           data: ThemeData(
                                             primarySwatch: Colors.blue,
@@ -1692,7 +3212,7 @@ flex:8,
                                         ),
                                       ),
                                       Flexible(
-                                        child: Text(" barangay",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                        child: Text(" home municipality",style: TextStyle(color:_colorFromHex("#6688A0"))),
                                       ),
 
                                       //  Container(height: 100.0, color: Colors.cyan),
@@ -1709,9 +3229,7 @@ flex:8,
                                       Container(
                                         width: 10,
                                       ),
-                                      Flexible(
-                                        child: Text("Out Vicinity+",style: TextStyle(color:_colorFromHex("#6688A0"))),
-                                      ),
+
                                       Flexible(
                                         child: Theme(
                                           data: ThemeData(
@@ -1745,9 +3263,6 @@ flex:8,
                                         width: 10,
                                       ),
                                       Flexible(
-                                        child: Text("OutVicinity+",style: TextStyle(color:_colorFromHex("#6688A0"))),
-                                      ),
-                                      Flexible(
                                         child: Theme(
                                           data: ThemeData(
                                             primarySwatch: Colors.blue,
@@ -1774,6 +3289,35 @@ flex:8,
 
                                       //  Container(height: 100.0, color: Colors.cyan),
                                     ]
+                                    ),
+
+                                    Container(
+                                      height: 20,
+                                    ),
+                                    Container(
+                                      height: 20,
+                                      alignment: Alignment.center,
+                                      child:TextButton(
+                                        style: TextButton.styleFrom(
+                                          textStyle: TextStyle(),
+                                        ),
+                                        onPressed: (){
+                                          setState(() {
+                                            lobby="main";
+                                          });
+                                        },
+                                        child:Text('logout',style:TextStyle(color:_colorFromHex("#6688A0"))),
+                                      ),
+                                    ),
+                                    Container(
+                                      height: 20,
+                                    ),
+                                    Container(
+                                      alignment: Alignment.center,
+                                      child:   Padding(
+                                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                        child:   Text("Compliance with the Philippine Data Privacy Act",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                      ),
                                     ),
                                   ]),
                                 ),
@@ -1843,7 +3387,7 @@ flex:8,
                                                     child: Column(
                                                         crossAxisAlignment: CrossAxisAlignment.start,
                                                         children: [
-                                                          Text("Klackr",style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold,color:Colors.white)),
+                                                          Text("Klackr",style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold,color:_colorFromHex(themeInputText))),
                                                           Text("Follow friends and discover great",style: TextStyle(color:_colorFromHex("#6688A0"),fontSize: 10,fontWeight: FontWeight.bold)),
                                                           Text("things in your vicinity and beyond",style: TextStyle(color:_colorFromHex("#6688A0"),fontSize: 10,fontWeight: FontWeight.bold)),
                                                         ]),
@@ -2006,7 +3550,7 @@ flex:8,
                                                         child: Column(
                                                             crossAxisAlignment: CrossAxisAlignment.start,
                                                             children: [
-                                                              Text("Klackr",style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold,color:Colors.white)),
+                                                              Text("Klackr",style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold,color:_colorFromHex(themeInputText))),
                                                               Text("Follow friends and discover great",style: TextStyle(color:_colorFromHex("#6688A0"),fontSize: 10,fontWeight: FontWeight.bold)),
                                                               Text("things in your vicinity and beyond",style: TextStyle(color:_colorFromHex("#6688A0"),fontSize: 10,fontWeight: FontWeight.bold)),
                                                             ]),
@@ -3527,6 +5071,22 @@ flex:8,
                                                             allow="on";
                                                           });
                                                         }
+                                                      }if(confirmpasswordRegisterController.text.length<6){
+                                                        if(allow=="on"){
+                                                          allow="off";
+                                                          Fluttertoast.showToast(
+                                                              msg: "Ensure the password has at least 6 characters.",
+                                                              toastLength: Toast.LENGTH_SHORT,
+                                                              gravity: ToastGravity.BOTTOM,
+                                                              timeInSecForIosWeb: 3,
+                                                              backgroundColor: Colors.red,
+                                                              textColor: Colors.black,
+                                                              fontSize: 15.0
+                                                          );
+                                                          Timer(Duration(seconds: 3), () {
+                                                            allow="on";
+                                                          });
+                                                        }
                                                       }else{
                                                         setState(() {
                                                           if(barangayTypeRegisterController.text==""){
@@ -4100,6 +5660,7 @@ String darkinput="#191B22";
 String whiteinput="#ebebeb";
 String black = "#000000";
 String white = "#ffffff";
+String grey = "#c4c4c4";
 String Whitecardcolor="#d6d6d6";
 String Whiteblack="#000000";
 String Whitebasecolor = "#cccccc";
@@ -4111,8 +5672,14 @@ String themeBase = Whitecardcolor;
 String themeInputText = black;
 String themeTitle = black;
 String themeInput = whiteinput;
+String themeAppbard = grey;
 bool themeColor = false;
 
+
+int one = 3;
+int two = 5;
+int third = 2;
+String refreshing = "false";
 String APItoken = "http://klackr.teravibe.com:5000/auth/login/";
 String APIlocation = "http://klackr.teravibe.com:5000/auth/location/";
 String APIregister = "http://klackr.teravibe.com:5000/auth/register/";
@@ -4120,5 +5687,7 @@ String APIlogin = "http://klackr.teravibe.com:5000/auth/login/";
 String APIposting = "http://klackr.teravibe.com:5000/homepage/posts/";
 String APIgetpost = "http://klackr.teravibe.com:5000/homepage/posts/?limit=30&offset=0";
 String APIgetprofile = "http://klackr.teravibe.com:5000/homepage/profile/";
+String role = "influencer";
+String info = "false";//false
 String lobby = "main";//main,lobby,editprofile
-double lobbySize = 75;
+double lobbySize = 75;//75
