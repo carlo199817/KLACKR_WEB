@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'package:klackr/website.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/gestures.dart';
@@ -22,12 +24,25 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return RefreshConfiguration(
+        footerTriggerDistance: 15,
+        dragSpeedRatio: 0.91,
+        headerBuilder: () => MaterialClassicHeader(),
+    footerBuilder: () => ClassicFooter(),
+    enableLoadingWhenNoData: false,
+    enableRefreshVibrate: false,
+    enableLoadMoreVibrate: false,
+    shouldFooterFollowWhenNotFull: (state) {
+    // If you want load more with noMoreData state ,may be you should return false
+    return false;
+    },
+     child: MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
       home:  MyHomePage(),
+     ),
     );
   }
 }
@@ -72,8 +87,8 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<void> allToken() async {
     var request = new
     http.MultipartRequest("POST",Uri.parse(APItoken));
-    request.fields['email'] = 'carlo.parungao@teravibe.com';
-    request.fields['password'] = '123456';
+    request.fields['email'] = 'carloparungao17@gmail.com';
+    request.fields['password'] = 'carlo12345';
     http.Response response = await http.Response.fromStream(await
     request.send());
     if (response.statusCode == 200) {
@@ -446,6 +461,7 @@ class _MyHomePageState extends State<MyHomePage> {
     if (response.statusCode == 201) {
       setState(() {
         clickContinue="finish";
+        getUser();
         Fluttertoast.showToast(
             msg: "succesfully registered",
             toastLength: Toast.LENGTH_SHORT,
@@ -551,7 +567,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
   void profile() async{
     final response = await http.put(
-      Uri.parse("http://klackr.teravibe.com:5000/homepage/profile/$profileID/"),
+      Uri.parse("https://klackr.teravibe.com:5000/homepage/profile/$profileID/"),
       headers: {
         "Accept": "application/json",
         "Content-Type": "application/x-www-form-urlencoded",
@@ -642,6 +658,73 @@ class _MyHomePageState extends State<MyHomePage> {
 
     }
   }
+  void updateposting() async{
+    final response = await http.put(
+      Uri.parse("https://klackr.teravibe.com:5000/homepage/posts/$IDpost/"),
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/x-www-form-urlencoded",
+        'Authorization': 'Bearer $token'
+      },
+      encoding: Encoding.getByName('utf-8'),
+      body: {"caption": UpostController.text},
+    );
+    if (response.statusCode == 200) {
+      edit="false";
+      lobbyselect="lobbygetpost";
+      fetchData1();
+      UpostController.text="";
+      if(allow=="on"){
+        allow="off";
+        Fluttertoast.showToast(
+            msg: "successfuly save",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 2,
+            backgroundColor: Colors.red,
+            textColor: Colors.black,
+            fontSize: 15.0
+        );
+        Timer(Duration(seconds: 2), () {
+          allow="on";
+        });
+      }
+    }
+  }
+  void deletedposting() async{
+    final response = await http.delete(
+      Uri.parse("https://klackr.teravibe.com:5000/homepage/posts/$IDpost/"),
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/x-www-form-urlencoded",
+        'Authorization': 'Bearer $token'
+      },
+    );
+    if (response.statusCode == 204) {
+      fetchData1();
+      lobbyselect="lobbygetpost";
+      UpostController.text="";
+      UpostController.text="";
+      IDpost="";
+      CPpost="";
+      edit="false";
+      if(allow=="on"){
+        allow="off";
+        Fluttertoast.showToast(
+            msg: "deleted",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 2,
+            backgroundColor: Colors.red,
+            textColor: Colors.black,
+            fontSize: 15.0
+        );
+        Timer(Duration(seconds: 2), () {
+          allow="on";
+        });
+      }
+    }
+  }
   void filterSearchResults(String query) {
     List<Map<String, dynamic>> results = [];
     if (query.isEmpty) {
@@ -701,7 +784,7 @@ class _MyHomePageState extends State<MyHomePage> {
     themeInputText=black;
     themeAppbard=grey;
   }
-  void darkTheme(){
+  Future<void> darkTheme() async {
     themeBase=DarkbaseColor;
     themeTitle =white;
     themeCard=DarkcardColor;
@@ -710,31 +793,116 @@ class _MyHomePageState extends State<MyHomePage> {
     themeAppbard=white;
 
   }
- void OSindentifyer(){
-   final userAgent = html.window.navigator.userAgent.toString().toLowerCase();
-   // smartphone
-   if( userAgent.contains("android")||userAgent.contains("iphone")||userAgent.contains("ipad")) {
-     setState(() {
-       plattform="androidiphone";
-     });
-   }else{
-     Navigator.pushAndRemoveUntil<dynamic>(
-       context,
-       MaterialPageRoute<dynamic>(
-         //  builder: (BuildContext context) =>  SignInDemo(),
-         builder: (BuildContext context) =>  website(),
-       ),
-           (route) => false,//if you want to disable back feature set to false
-     );
-   }
- }
 
+
+  void deleteposting() async{
+    return await showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            content: Container(
+              height: 90,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("Are you sure ?",style: TextStyle(color: Colors.black),),
+                  SizedBox(height: 20),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                            deletedposting();
+                          },
+                          child: Text("ok",style: TextStyle(color: Colors.white),),
+                          style: ElevatedButton.styleFrom(
+                              primary:Colors.red),
+                        ),
+                      ),
+                      SizedBox(width: 15),
+                      Expanded(
+                          child: ElevatedButton(
+                            onPressed: () {
+
+                              Navigator.of(context).pop();
+                            },
+                            child: Text("cancel", style: TextStyle(color: Colors.black)),
+                            style: ElevatedButton.styleFrom(
+                              primary: Colors.white,
+                            ),
+                          ))
+                    ],
+                  )
+                ],
+              ),
+            ),
+          );
+        });
+
+  }
+
+  void _onRefresh() async{
+    // monitor network fetch
+    await Future.delayed(Duration(milliseconds: 1000));
+    // if failed,use refreshFailed()
+ fetchData1();
+    _refreshController.refreshCompleted();
+  }
+
+  void _onLoading() async{
+    // monitor network fetch
+    await Future.delayed(Duration(milliseconds: 1000));
+    // if failed,use loadFailed(),if no data return,use LoadNodata()
+    if(mounted)
+      setState(() {
+
+      });
+    _refreshController.loadComplete();
+  }
+
+
+  void getUser() async {
+    var response = await http.get(Uri.parse(APIgetuser), headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+    });
+    var pointer = response.body;
+    if(response.statusCode==200) {
+      getUserCount=jsonDecode(pointer)["users_count"].toString();
+    }
+
+  }
+
+  void OSindentifyer(){
+    final userAgent = html.window.navigator.userAgent.toString().toLowerCase();
+    // smartphone
+    if( userAgent.contains("android")||userAgent.contains("iphone")||userAgent.contains("ipad")) {
+      setState(() {
+        plattform="androidiphone";
+        allToken();
+        selectRegion();
+        getUser();
+
+      });
+    }else{
+      Navigator.pushAndRemoveUntil<dynamic>(
+        context,
+        MaterialPageRoute<dynamic>(
+          //  builder: (BuildContext context) =>  SignInDemo(),
+          builder: (BuildContext context) =>  website(),
+        ),
+            (route) => false,//if you want to disable back feature set to false
+      );
+    }
+
+
+  }
   @override void initState() {
     super.initState();
     Timer(Duration(seconds: 0), () {
       OSindentifyer();
-      allToken();
-      selectRegion();
+
     });
 
   }
@@ -1316,54 +1484,117 @@ if(plattform=="androidiphone")
                                                                       Container(
                                                                         height: 20,
                                                                       ),
-                                                                      Container(
-                                                                        height: 225,
-                                                                        child:   Padding(
-                                                                          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                                          child: TextField(
-                                                                            controller: postingRegisterController,
-                                                                            keyboardType: TextInputType.multiline,
-                                                                            maxLines: 10,
-                                                                            decoration: InputDecoration(
-                                                                              suffixIcon:IntrinsicHeight(
-                                                                                child: Column(children: [
-                                                                                  IconButton(
-                                                                                    onPressed: () {
-                                                                                      setState(() {
+                                                                      if(edit=="true")
+                                                                        Container(
+                                                                          height: 225,
+                                                                          child:   Padding(
+                                                                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                                            child: TextField(
+                                                                              controller: UpostController,
+                                                                              keyboardType: TextInputType.multiline,
+                                                                              maxLines: 10,
+                                                                              decoration: InputDecoration(
+                                                                                suffixIcon:IntrinsicHeight(
+                                                                                  child: Column(children: [
+                                                                                    IconButton(
+                                                                                      onPressed: () {
+                                                                                        setState(() {
+                                                                                          UpostController.text="";
+                                                                                          IDpost="";
+                                                                                          CPpost="";
+                                                                                          edit="false";
+                                                                                          lobbyselect="lobbygetpost";
+                                                                                        });
+                                                                                      },
+                                                                                      icon:Icon(Icons.cancel,color: Colors.black),
+                                                                                    ),
+                                                                                    IconButton(
+                                                                                      onPressed: () {
+                                                                                        setState(() {
 
-                                                                                      });
-                                                                                    },
-                                                                                    icon:Icon(Icons.emoji_emotions,color: Colors.black),
-                                                                                  ),
-                                                                                  IconButton(
-                                                                                    onPressed: () {
-                                                                                      setState(() {
+                                                                                        });
+                                                                                      },
+                                                                                      icon:Icon(Icons.cancel,color: Colors.transparent),
+                                                                                    ),
+                                                                                    IconButton(
+                                                                                      onPressed: () {
+                                                                                        setState(() {
 
-                                                                                      });
-                                                                                    },
-                                                                                    icon:Icon(Icons.attach_file,color: Colors.black),
-                                                                                  ),
-                                                                                  IconButton(
-                                                                                    onPressed: () {
-                                                                                      setState(() {
+                                                                                        });
+                                                                                      },
+                                                                                      icon:Icon(Icons.cancel,color:Colors.transparent),
+                                                                                    ),
 
-                                                                                      });
-                                                                                    },
-                                                                                    icon:Icon(Icons.public,color: Colors.black),
-                                                                                  ),
-                                                                                ]),
+                                                                                    IconButton(
+                                                                                      onPressed: () {
+                                                                                        setState(() {
+                                                                                          deleteposting();
+                                                                                        });
+                                                                                      },
+                                                                                      icon:Icon(Icons.delete,color: Colors.red),
+                                                                                    ),
+                                                                                  ]),
+                                                                                ),
+                                                                                filled: true,
+                                                                                fillColor:Colors.white,
+                                                                                border: OutlineInputBorder(
+                                                                                ),
+                                                                                hintText: "",
+                                                                                hintStyle: TextStyle(color:Colors.grey),
                                                                               ),
-                                                                              filled: true,
-                                                                              fillColor:Colors.white,
-                                                                              border: OutlineInputBorder(
-                                                                              ),
-                                                                              hintText: "What's on your mind ?",
-                                                                              hintStyle: TextStyle(color:Colors.black),
+                                                                              style: TextStyle(color: Colors.black),
                                                                             ),
-                                                                            style: TextStyle(color: Colors.black),
                                                                           ),
                                                                         ),
-                                                                      ),
+                                                                      if(edit=="false")
+                                                                        Container(
+                                                                          height: 225,
+                                                                          child:   Padding(
+                                                                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                                            child: TextField(
+                                                                              controller: postingRegisterController,
+                                                                              keyboardType: TextInputType.multiline,
+                                                                              maxLines: 10,
+                                                                              decoration: InputDecoration(
+                                                                                suffixIcon:IntrinsicHeight(
+                                                                                  child: Column(children: [
+                                                                                    IconButton(
+                                                                                      onPressed: () {
+                                                                                        setState(() {
+
+                                                                                        });
+                                                                                      },
+                                                                                      icon:Icon(Icons.emoji_emotions,color: Colors.black),
+                                                                                    ),
+                                                                                    IconButton(
+                                                                                      onPressed: () {
+                                                                                        setState(() {
+
+                                                                                        });
+                                                                                      },
+                                                                                      icon:Icon(Icons.attach_file,color: Colors.black),
+                                                                                    ),
+                                                                                    IconButton(
+                                                                                      onPressed: () {
+                                                                                        setState(() {
+
+                                                                                        });
+                                                                                      },
+                                                                                      icon:Icon(Icons.public,color: Colors.black),
+                                                                                    ),
+                                                                                  ]),
+                                                                                ),
+                                                                                filled: true,
+                                                                                fillColor:Colors.white,
+                                                                                border: OutlineInputBorder(
+                                                                                ),
+                                                                                hintText: "What's on your mind ?",
+                                                                                hintStyle: TextStyle(color:Colors.black),
+                                                                              ),
+                                                                              style: TextStyle(color: Colors.black),
+                                                                            ),
+                                                                          ),
+                                                                        ),
                                                                       Container(
                                                                         height: 10,
                                                                       ),
@@ -1426,44 +1657,88 @@ if(plattform=="androidiphone")
                                                                       Container(
                                                                         height: 20,
                                                                       ),
-                                                                      Container(
-                                                                        height: 40,
-                                                                        alignment: Alignment.center,
-                                                                        child:   Padding(
-                                                                          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                                          child:ElevatedButton(
-                                                                            child: Text('KLACK!',style:TextStyle(color: _colorFromHex("#FFF200"))),
-                                                                            onPressed: () {
-                                                                              setState(() {
-                                                                                if(postingRegisterController.text==""){
-                                                                                  if(allow=="on"){
-                                                                                    allow="off";
-                                                                                    Fluttertoast.showToast(
-                                                                                        msg: "Blank spaces not allowed",
-                                                                                        toastLength: Toast.LENGTH_SHORT,
-                                                                                        gravity: ToastGravity.BOTTOM,
-                                                                                        timeInSecForIosWeb: 3,
-                                                                                        backgroundColor: Colors.red,
-                                                                                        textColor: Colors.black,
-                                                                                        fontSize: 15.0
-                                                                                    );
-                                                                                    Timer(Duration(seconds: 3), () {
-                                                                                      allow="on";
-                                                                                    });
+                                                                      if(edit=="true")
+                                                                        Container(
+                                                                          height: 45,
+                                                                          alignment: Alignment.center,
+                                                                          child:   Padding(
+                                                                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                                            child:ElevatedButton(
+                                                                              child: Text('SAVE',style:TextStyle(color: _colorFromHex("#FFF200"))),
+                                                                              onPressed: () {
+                                                                                setState(() {
+                                                                                  if(UpostController.text==""){
+                                                                                    if(allow=="on"){
+                                                                                      allow="off";
+                                                                                      Fluttertoast.showToast(
+                                                                                          msg: "Blank spaces not allowed",
+                                                                                          toastLength: Toast.LENGTH_SHORT,
+                                                                                          gravity: ToastGravity.BOTTOM,
+                                                                                          timeInSecForIosWeb: 3,
+                                                                                          backgroundColor: Colors.red,
+                                                                                          textColor: Colors.black,
+                                                                                          fontSize: 15.0
+                                                                                      );
+                                                                                      Timer(Duration(seconds: 3), () {
+                                                                                        allow="on";
+                                                                                      });
+                                                                                    }
+                                                                                  }else{
+                                                                                    updateposting();
                                                                                   }
-                                                                                }else{
-                                                                                  posting();
-                                                                                }
-                                                                              });
-                                                                            },
-                                                                            style: ElevatedButton.styleFrom(
-                                                                                primary: _colorFromHex("#2786C9"),
-                                                                                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                                                                                textStyle: TextStyle(
-                                                                                    fontWeight: FontWeight.bold)),
+                                                                                });
+                                                                              },
+                                                                              style: ElevatedButton.styleFrom(
+                                                                                  primary: _colorFromHex("#2786C9"),
+                                                                                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                                                                                  textStyle: TextStyle(
+                                                                                      fontWeight: FontWeight.bold)),
+                                                                            ),
                                                                           ),
                                                                         ),
+                                                                      Container(
+                                                                        height:5,
                                                                       ),
+
+                                                                      if(edit=="false")
+                                                                        Container(
+                                                                          height: 45,
+                                                                          alignment: Alignment.center,
+                                                                          child:   Padding(
+                                                                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                                            child:ElevatedButton(
+                                                                              child: Text('KLACK!',style:TextStyle(color: _colorFromHex("#FFF200"))),
+                                                                              onPressed: () {
+                                                                                setState(() {
+                                                                                  if(postingRegisterController.text==""){
+                                                                                    if(allow=="on"){
+                                                                                      allow="off";
+                                                                                      Fluttertoast.showToast(
+                                                                                          msg: "Blank spaces not allowed",
+                                                                                          toastLength: Toast.LENGTH_SHORT,
+                                                                                          gravity: ToastGravity.BOTTOM,
+                                                                                          timeInSecForIosWeb: 3,
+                                                                                          backgroundColor: Colors.red,
+                                                                                          textColor: Colors.black,
+                                                                                          fontSize: 15.0
+                                                                                      );
+                                                                                      Timer(Duration(seconds: 3), () {
+                                                                                        allow="on";
+                                                                                      });
+                                                                                    }
+                                                                                  }else{
+                                                                                    posting();
+                                                                                  }
+                                                                                });
+                                                                              },
+                                                                              style: ElevatedButton.styleFrom(
+                                                                                  primary: _colorFromHex("#2786C9"),
+                                                                                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                                                                                  textStyle: TextStyle(
+                                                                                      fontWeight: FontWeight.bold)),
+                                                                            ),
+                                                                          ),
+                                                                        ),
                                                                       Container(
                                                                         height: 40,
                                                                       ),
@@ -2864,250 +3139,283 @@ if(plattform=="androidiphone")
                                                         ),
                                                       ),
                                                     if(lobbyselect=="lobbygetpost")
-                                                      Center(
-                                                        child: Container(
-                                                          height: MediaQuery.of(context).size.height,
-                                                          child: Column(
-                                                            children: <Widget>[
-                                                              Column(
-                                                                children: <Widget>[
-                                                                  Container(
-                                                                    height: 45,
-                                                                    child:   Padding(
-                                                                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                                      child: TextField(
-                                                                        onChanged: (value){
-                                                                          searchRegisterController.text=value;
-                                                                          if(value==""){
-                                                                            filterSearchResults( searchRegisterController.text);
-                                                                          }
-                                                                        },
-                                                                        decoration: InputDecoration(
-                                                                          suffixIcon: IconButton(
-                                                                            onPressed: () {
-                                                                              filterSearchResults( searchRegisterController.text);
-                                                                            },
-                                                                            icon: Icon(Icons.search_outlined,color:_colorFromHex("#6688A0")),
-                                                                          ),
-                                                                          filled: true,
-                                                                          fillColor: _colorFromHex(themeInput),
-                                                                          border: OutlineInputBorder(
-                                                                          ),
-                                                                          hintText: 'Search',
-                                                                          hintStyle: TextStyle(color:_colorFromHex("#6688A0")),
-                                                                        ),
-                                                                        style: TextStyle(color:  _colorFromHex(themeInputText)),
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                  Container(
-                                                                    height: 5,
-                                                                  ),
-                                                                  Container(
-                                                                    height: 30.0, color: _colorFromHex(themeAppbard),
-                                                                    child:IntrinsicHeight(
-                                                                      child: Row( children: [
+                                                      Container(
+                                                        height: MediaQuery.of(context).size.height,
+                                                        child:
+                                                        SmartRefresher(
+                                                          enablePullDown: true,
+                                                          enablePullUp: true,
+                                                          header: WaterDropHeader(),
+                                                          controller: _refreshController,
+                                                          onRefresh: _onRefresh,
+                                                          onLoading: _onLoading,
+                                                          child: ListView.builder(
+                                                            itemBuilder: (c, i) => Center(
+                                                              child: Container(
+
+                                                                child: Column(
+                                                                  children: <Widget>[
+                                                                    Column(
+                                                                      children: <Widget>[
                                                                         Container(
-                                                                          width:10,
-                                                                        ),
-                                                                        Expanded(
-                                                                          flex:0,
-                                                                          child:Container(
-                                                                              height: 20,
-                                                                              alignment: Alignment.topLeft,
-                                                                              child:Image.asset('assets/logo/klackr_logo.png')),
-                                                                        ),
-                                                                        Expanded(
-                                                                          flex:3,
-                                                                          child:  Container(
-                                                                            alignment: Alignment.topLeft,
-                                                                            child:   Padding(
-                                                                              padding: EdgeInsets.symmetric(horizontal: 1, vertical: 3),
-                                                                              child: Text("Street",style: TextStyle(fontSize: 20,color:Colors.blue)),
+                                                                          height: 45,
+                                                                          child:   Padding(
+                                                                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                                            child: TextField(
+                                                                              onChanged: (value){
+                                                                                searchRegisterController.text=value;
+                                                                                if(value==""){
+                                                                                  filterSearchResults( searchRegisterController.text);
+                                                                                }
+                                                                              },
+                                                                              decoration: InputDecoration(
+                                                                                suffixIcon: IconButton(
+                                                                                  onPressed: () {
+                                                                                    filterSearchResults( searchRegisterController.text);
+                                                                                  },
+                                                                                  icon: Icon(Icons.search_outlined,color:_colorFromHex("#6688A0")),
+                                                                                ),
+                                                                                filled: true,
+                                                                                fillColor: _colorFromHex(themeInput),
+                                                                                border: OutlineInputBorder(
+                                                                                ),
+                                                                                hintText: 'Search',
+                                                                                hintStyle: TextStyle(color:_colorFromHex("#6688A0")),
+                                                                              ),
+                                                                              style: TextStyle(color:  _colorFromHex(themeInputText)),
                                                                             ),
                                                                           ),
                                                                         ),
-                                                                        Expanded(
-                                                                          flex:8,
-                                                                          child:Container(
-                                                                            alignment: Alignment.topRight,
-                                                                            child:   Padding(
-                                                                              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-                                                                              child: Text("Klackr account no. 23423",style: TextStyle(color: _colorFromHex(themeInputText),fontSize: 15)),
-                                                                            ),
-                                                                          ),
+
+                                                                        Container(
+                                                                          height: 5,
                                                                         ),
-                                                                      ]),
-                                                                    ),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                              Expanded(
-                                                                child: SizedBox(
-                                                                  child:ListView.builder(
-                                                                    controller: ScrollController(),
-                                                                    itemCount: 1,
-                                                                    itemBuilder: (BuildContext context, int index) {
-                                                                      return Container(
-                                                                        child:  Container(
-                                                                          color:_colorFromHex(themeCard),
-                                                                          alignment: Alignment.topLeft,
+                                                                        Container(
+                                                                          height: 30.0, color: _colorFromHex(themeAppbard),
                                                                           child:IntrinsicHeight(
-                                                                            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-
-                                                                              if(noPost=="true")
-                                                                                Container(
-                                                                                  height: 30,
-                                                                                ),
-                                                                              if(noPost=="true")
-                                                                                Expanded(
-                                                                                  child:  Padding(
-                                                                                    padding: const EdgeInsets.only(
-                                                                                        left: 0, right: 0, bottom: 0,top:40),
-                                                                                    child:Container(
-                                                                                      alignment: Alignment.center,
-                                                                                      child: Text("No Results Found",style:TextStyle(color: _colorFromHex(themeInputText),fontSize: 25)),
-                                                                                    ),
+                                                                            child: Row( children: [
+                                                                              Container(
+                                                                                width:10,
+                                                                              ),
+                                                                              Expanded(
+                                                                                flex:0,
+                                                                                child:Container(
+                                                                                    height: 20,
+                                                                                    alignment: Alignment.topLeft,
+                                                                                    child:Image.asset('assets/logo/klackr_logo.png')),
+                                                                              ),
+                                                                              Expanded(
+                                                                                flex:3,
+                                                                                child:  Container(
+                                                                                  alignment: Alignment.topLeft,
+                                                                                  child:   Padding(
+                                                                                    padding: EdgeInsets.symmetric(horizontal: 1, vertical: 3),
+                                                                                    child: Text("Street",style: TextStyle(fontSize: 20,color:Colors.blue)),
                                                                                   ),
                                                                                 ),
-                                                                              if(noPost=="true")
-                                                                                Container(
-                                                                                  height: 700,
-                                                                                ),
-                                                                              if(noPost=="false")
-                                                                                Container(
-                                                                                  child:Column(children: [
-                                                                                    SizedBox(
-                                                                                      height: MediaQuery.of(context).size.height-95,
-                                                                                      child:ListView.builder(
-                                                                                        controller: ScrollController(),
-                                                                                        itemCount: _foundUsers1.length,
-                                                                                        itemBuilder: (BuildContext context, int index) {
-                                                                                          final DateTime time1 = DateTime.parse(_foundUsers1[_foundUsers1.length-1-index]["date_posted"].toString());
-                                                                                          String dt4 = timeago.format(time1);
-                                                                                          return Container(
-                                                                                            child:   IntrinsicHeight(
-                                                                                              child: Column( children: [
-                                                                                                Expanded(
-                                                                                                  child: Column(
-                                                                                                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                                                                                                      children: [
-                                                                                                        IntrinsicHeight(
-                                                                                                          child: Row( children: [
-                                                                                                            Expanded(
-                                                                                                              flex: 0,
-                                                                                                              child: Column(children: [
-                                                                                                                Container(
-                                                                                                                  alignment: Alignment.topLeft,
-                                                                                                                  child: IconButton(onPressed: (){},icon: Icon(Icons.account_circle_rounded,size: 50,color:  _colorFromHex(themeInputText))),
-                                                                                                                ),
-                                                                                                              ]),
-                                                                                                            ),
-                                                                                                            Container(
-                                                                                                              width: 20,
-                                                                                                            ),
-                                                                                                            Expanded(
-                                                                                                              flex: 10,
-                                                                                                              child: Padding(
-                                                                                                                padding: const EdgeInsets.only(
-                                                                                                                    left: 0, right: 0, bottom: 0,top:15),
-                                                                                                                child: Column(children: [
-                                                                                                                  Container(
-                                                                                                                    alignment: Alignment.topLeft,
-                                                                                                                    child: Text(_foundUsers1[_foundUsers1.length-1-index]["author"].toString(),style: TextStyle(fontWeight: FontWeight.bold,fontSize: 15,color:  _colorFromHex(themeInputText))),
-                                                                                                                  ),
-                                                                                                                  Container(
-                                                                                                                    alignment: Alignment.topLeft,
-                                                                                                                    child: Row( children: [
-                                                                                                                      Text(dt4,style: TextStyle(color: _colorFromHex(themeInputText))),
-                                                                                                                      Text(" · ",style: TextStyle(color:  _colorFromHex(themeInputText))),
-                                                                                                                      Icon(Icons.public,size: 15,color:  _colorFromHex(themeInputText)),
-                                                                                                                    ],
-                                                                                                                    ),
-                                                                                                                  ),
-                                                                                                                ]
-                                                                                                                ),
-                                                                                                              ),
-                                                                                                            ),
-                                                                                                          ]
-                                                                                                          ),
-
-                                                                                                        ),
-                                                                                                        Container(
-                                                                                                          height:20,
-                                                                                                        ),
-                                                                                                        Container(
-                                                                                                          alignment: Alignment.topLeft,
-                                                                                                          child:   Padding(
-                                                                                                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                                                                            child: Text(_foundUsers1[_foundUsers1.length-1-index]["caption"].toString(),style: TextStyle(color: _colorFromHex(themeInputText)),),
-                                                                                                          ),
-                                                                                                        ),
-                                                                                                        Container(
-                                                                                                          height:10,
-                                                                                                        ),
-                                                                                                        Row(children: [
-                                                                                                          IconButton(
-                                                                                                            icon: Icon(
-                                                                                                                Icons.thumb_up,color: _colorFromHex(themeInputText),size: 18
-                                                                                                            ),
-                                                                                                            onPressed: () {
-
-                                                                                                            },
-                                                                                                          ),
-                                                                                                          IconButton(
-                                                                                                            icon: Icon(
-                                                                                                                Icons.comment,color: _colorFromHex(themeInputText),size: 18
-                                                                                                            ),
-                                                                                                            onPressed: () {
-
-                                                                                                            },
-                                                                                                          ),
-                                                                                                          IconButton(
-                                                                                                            icon: Icon(
-                                                                                                              Icons.share,color: _colorFromHex(themeInputText),size: 18,
-                                                                                                            ),
-                                                                                                            onPressed: () {
-
-                                                                                                            },
-                                                                                                          ),
-                                                                                                        ]
-                                                                                                        ),
-                                                                                                        Container(
-                                                                                                            height:2
-                                                                                                        ),
-                                                                                                        Container(
-                                                                                                          height: 1,
-                                                                                                          color:_colorFromHex(themeBase),
-                                                                                                        ),
-
-                                                                                                      ]
-                                                                                                  ),
-                                                                                                ),
-
-                                                                                              ]),
-                                                                                            ),
-                                                                                          );
-                                                                                        },
-                                                                                      ),
-                                                                                    ),
-
-                                                                                  ]
+                                                                              ),
+                                                                              Expanded(
+                                                                                flex:8,
+                                                                                child:Container(
+                                                                                  alignment: Alignment.topRight,
+                                                                                  child:   Padding(
+                                                                                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+                                                                                    child: Text("Klackr account no. 23423",style: TextStyle(color: _colorFromHex(themeInputText),fontSize: 15)),
                                                                                   ),
                                                                                 ),
+                                                                              ),
                                                                             ]),
                                                                           ),
-
                                                                         ),
-                                                                      );
-                                                                    },
-                                                                  ),
+                                                                      ],
+                                                                    ),
+                                                                    Expanded(
+                                                                      child: SizedBox(
+                                                                        child:ListView.builder(
+
+                                                                          itemCount: 1,
+                                                                          itemBuilder: (BuildContext context, int index) {
+                                                                            return Container(
+                                                                              child:  Container(
+                                                                                color:_colorFromHex(themeCard),
+                                                                                alignment: Alignment.topLeft,
+                                                                                child:IntrinsicHeight(
+                                                                                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+
+                                                                                    if(noPost=="true")
+                                                                                      Container(
+                                                                                        height: 30,
+                                                                                      ),
+                                                                                    if(noPost=="true")
+                                                                                      Expanded(
+                                                                                        child:  Padding(
+                                                                                          padding: const EdgeInsets.only(
+                                                                                              left: 0, right: 0, bottom: 0,top:40),
+                                                                                          child:Container(
+                                                                                            alignment: Alignment.center,
+                                                                                            child: Text("No Results Found",style:TextStyle(color: _colorFromHex(themeInputText),fontSize: 25)),
+                                                                                          ),
+                                                                                        ),
+                                                                                      ),
+                                                                                    if(noPost=="true")
+                                                                                      Container(
+                                                                                        height: 700,
+                                                                                      ),
+                                                                                    if(noPost=="false")
+                                                                                      Container(
+                                                                                        child:Column(children: [
+                                                                                          SizedBox(
+                                                                                            height: MediaQuery.of(context).size.height-220,
+                                                                                            child:ListView.builder(
+                                                                                              controller: ScrollController(),
+                                                                                              itemCount: _foundUsers1.length,
+                                                                                              itemBuilder: (BuildContext context, int index) {
+                                                                                                final DateTime time1 = DateTime.parse(_foundUsers1[_foundUsers1.length-1-index]["date_posted"].toString());
+                                                                                                String dt4 = timeago.format(time1);
+                                                                                                return Container(
+                                                                                                  child:   IntrinsicHeight(
+                                                                                                    child: Column( children: [
+                                                                                                      Expanded(
+                                                                                                        child: Column(
+                                                                                                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                                                                                                            children: [
+                                                                                                              IntrinsicHeight(
+                                                                                                                child: Row( children: [
+                                                                                                                  Expanded(
+                                                                                                                    flex: 0,
+                                                                                                                    child: Column(children: [
+                                                                                                                      Container(
+                                                                                                                        alignment: Alignment.topLeft,
+                                                                                                                        child: IconButton(onPressed: (){},icon: Icon(Icons.account_circle_rounded,size: 50,color:  _colorFromHex(themeInputText))),
+                                                                                                                      ),
+                                                                                                                    ]),
+                                                                                                                  ),
+                                                                                                                  Container(
+                                                                                                                    width: 20,
+                                                                                                                  ),
+                                                                                                                  Expanded(
+                                                                                                                    flex: 10,
+                                                                                                                    child: Padding(
+                                                                                                                      padding: const EdgeInsets.only(
+                                                                                                                          left: 0, right: 0, bottom: 0,top:15),
+                                                                                                                      child: Column(children: [
+                                                                                                                        Container(
+                                                                                                                          alignment: Alignment.topLeft,
+                                                                                                                          child: Text(_foundUsers1[_foundUsers1.length-1-index]["author"].toString(),style: TextStyle(fontWeight: FontWeight.bold,fontSize: 15,color:  _colorFromHex(themeInputText))),
+                                                                                                                        ),
+                                                                                                                        Container(
+                                                                                                                          alignment: Alignment.topLeft,
+                                                                                                                          child: Row( children: [
+                                                                                                                            Text(dt4,style: TextStyle(color: _colorFromHex(themeInputText))),
+                                                                                                                            Text(" · ",style: TextStyle(color:  _colorFromHex(themeInputText))),
+                                                                                                                            Icon(Icons.public,size: 15,color:  _colorFromHex(themeInputText)),
+                                                                                                                          ],
+                                                                                                                          ),
+                                                                                                                        ),
+                                                                                                                      ]
+                                                                                                                      ),
+                                                                                                                    ),
+                                                                                                                  ),
+                                                                                                                  if(username==_foundUsers1[_foundUsers1.length-1-index]["author"].toString())
+                                                                                                                    IconButton(
+                                                                                                                      icon: Icon(
+                                                                                                                          Icons.edit,color: _colorFromHex(themeInputText),size: 18
+                                                                                                                      ),
+                                                                                                                      onPressed: () {
+                                                                                                                        setState(() {
+                                                                                                                          edit="true";
+                                                                                                                          IDpost = _foundUsers1[_foundUsers1.length-1-index]["id"].toString();
+                                                                                                                          CPpost = _foundUsers1[_foundUsers1.length-1-index]["caption"].toString();
+                                                                                                                          UpostController.text=CPpost;
+                                                                                                                          lobbyselect="lobbyposting";
+                                                                                                                        });
+                                                                                                                      },
+                                                                                                                    ),
+                                                                                                                ]
+                                                                                                                ),
+
+                                                                                                              ),
+                                                                                                              Container(
+                                                                                                                height:20,
+                                                                                                              ),
+                                                                                                              Container(
+                                                                                                                alignment: Alignment.topLeft,
+                                                                                                                child:   Padding(
+                                                                                                                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                                                                                  child: Text(_foundUsers1[_foundUsers1.length-1-index]["caption"].toString(),style: TextStyle(color: _colorFromHex(themeInputText)),),
+                                                                                                                ),
+                                                                                                              ),
+                                                                                                              Container(
+                                                                                                                height:10,
+                                                                                                              ),
+                                                                                                              Row(children: [
+                                                                                                                IconButton(
+                                                                                                                  icon: Icon(
+                                                                                                                      Icons.thumb_up,color: _colorFromHex(themeInputText),size: 18
+                                                                                                                  ),
+                                                                                                                  onPressed: () {
+
+                                                                                                                  },
+                                                                                                                ),
+                                                                                                                IconButton(
+                                                                                                                  icon: Icon(
+                                                                                                                      Icons.comment,color: _colorFromHex(themeInputText),size: 18
+                                                                                                                  ),
+                                                                                                                  onPressed: () {
+
+                                                                                                                  },
+                                                                                                                ),
+                                                                                                                IconButton(
+                                                                                                                  icon: Icon(
+                                                                                                                    Icons.share,color: _colorFromHex(themeInputText),size: 18,
+                                                                                                                  ),
+                                                                                                                  onPressed: () {
+
+                                                                                                                  },
+                                                                                                                ),
+                                                                                                              ]
+                                                                                                              ),
+                                                                                                              Container(
+                                                                                                                  height:2
+                                                                                                              ),
+                                                                                                              Container(
+                                                                                                                height: 1,
+                                                                                                                color:_colorFromHex(themeBase),
+                                                                                                              ),
+
+                                                                                                            ]
+                                                                                                        ),
+                                                                                                      ),
+
+                                                                                                    ]),
+                                                                                                  ),
+                                                                                                );
+                                                                                              },
+                                                                                            ),
+                                                                                          ),
+
+                                                                                        ]
+                                                                                        ),
+                                                                                      ),
+                                                                                  ]),
+                                                                                ),
+
+                                                                              ),
+                                                                            );
+                                                                          },
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  ],
                                                                 ),
                                                               ),
-                                                            ],
+                                                            ),
+                                                            itemExtent: MediaQuery.of(context).size.height,
+                                                            itemCount: 1,
                                                           ),
                                                         ),
                                                       ),
+                                                      
 
 
                                                     if(lobbyselect=="lobbyhome")
@@ -3138,45 +3446,8 @@ if(plattform=="androidiphone")
                                                                         ),
                                                                       ),
                                                                     ),
-                                                                    if(refreshing=="false")
-                                                                      Expanded(
-                                                                        flex:0,
-                                                                        child:  Container(
-                                                                          alignment: Alignment.topRight,
-                                                                          child: IconButton(
-                                                                            icon: Icon(
-                                                                              Icons.refresh,color: _colorFromHex(themeInputText),size: 28,
-                                                                            ),
-                                                                            onPressed: () {
 
-                                                                              if(allow=="on"){
-                                                                                allow="off";
-                                                                                setState(() {
-                                                                                  refreshing="true";
-                                                                                });
-                                                                                Timer(Duration(seconds: 2), () {
-                                                                                  allow="on";
-                                                                                  fetchData1();
-                                                                                });
-                                                                              }
-                                                                            },
-                                                                          ),
-                                                                        ),
-                                                                      ),
-                                                                    if(refreshing=="true")
-                                                                      Expanded(
-                                                                        flex:0,
-                                                                        child:  Container(
-                                                                          alignment: Alignment.topRight,
-                                                                          child: SizedBox(
-                                                                            height: 20,
-                                                                            width:20,
-                                                                            child: CircularProgressIndicator(
-                                                                              color: _colorFromHex(themeInputText),
-                                                                            ),
-                                                                          ),
-                                                                        ),
-                                                                      ),
+
                                                                   ]),
                                                                 ),
                                                               ),
@@ -4318,7 +4589,7 @@ if(plattform=="androidiphone")
                                                             alignment: Alignment.topLeft,
                                                             child:   Padding(
                                                               padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                              child:  Text("1",style: TextStyle(color:Colors.red)),
+                                                              child:  Text(getUserCount,style: TextStyle(color:Colors.red)),
                                                             ),
                                                           ),
                                                           Container(
@@ -4764,8 +5035,8 @@ if(plattform=="androidiphone")
                                         ),
                                         Container(height: 20),
                                         Container(
-                                          height:150,
-                                        child:Column(children: [
+                                          height:100,
+                                        child:Column(crossAxisAlignment: CrossAxisAlignment.stretch,children: [
                                         Container(
                                               alignment: Alignment.center,
                                               child:   Padding(
@@ -4776,208 +5047,217 @@ if(plattform=="androidiphone")
                                         Container(
                                           height:10,
                                         ),
-                                        Row(children:[
-                                          Container(
-                                          width:MediaQuery.of(context).size.width-242,
-                                          ),
-                                          DropdownButtonHideUnderline(
-                                            child: DropdownButton2(
-                                              isExpanded: true,
-                                              items: month
-                                                  .map((item) =>
-                                                  DropdownMenuItem<String>(
-                                                    value: item.toString(),
-                                                    child:  Container(
-                                                      alignment:Alignment.center,
-                                                      child:Text(
-                                                        item.toString(),
-                                                        style:  TextStyle(
-                                                          fontSize: 14,
-                                                          fontWeight: FontWeight.bold,
-                                                          color:  _colorFromHex(themeInputText),
-                                                        ),
-                                                        overflow: TextOverflow.ellipsis,
-                                                      ),
-                                                    ),
-                                                  ))
-                                                  .toList(),
-                                              value: monthValue,
-                                              onChanged: (value) {
-                                                setState(() {
-                                                  monthValue = value as String;
-                                                });
-                                              },
-                                              iconSize: 14,
-                                              iconEnabledColor:_colorFromHex("#6688A0"),
-                                              iconDisabledColor: Colors.grey,
-                                              buttonHeight: 30,
-                                              buttonWidth: 100,
-                                              buttonDecoration: BoxDecoration(
-                                                borderRadius: BorderRadius.circular(0),
-                                                border: Border.all(
-                                                  color: Colors.black26,
-                                                ),
-                                                color: _colorFromHex(themeInput),
-                                              ),
-                                              buttonElevation: 2,
-                                              itemHeight: 40,
-                                              itemPadding: const EdgeInsets.only(left: 14, right: 14),
-                                              dropdownMaxHeight: 200,
-                                              dropdownWidth: 200,
-                                              dropdownPadding: null,
-                                              dropdownDecoration: BoxDecoration(
-                                                borderRadius: BorderRadius.circular(0),
-                                                color: _colorFromHex(themeCard),
-                                              ),
-                                              dropdownElevation: 8,
-                                              scrollbarRadius: const Radius.circular(40),
-                                              scrollbarThickness: 6,
-                                              scrollbarAlwaysShow: true,
-                                              offset: const Offset(-20, 0),
-                                            ),
-                                          ),
-                                          Container(width: 5),
-                                          Flexible(
-                                            child: Text("Month",style: TextStyle(color:_colorFromHex("#6688A0"))),
-                                          ),
-                                        ]),
-                                          Container(height: 5),
-                                          Row(children:[
+                                          
+                                          Row(children: [
                                             Container(
-                                              width:MediaQuery.of(context).size.width-242,
+                                              width:20,
                                             ),
-                                            DropdownButtonHideUnderline(
-                                              child: DropdownButton2(
-                                                isExpanded: true,
-                                                items: day
-                                                    .map((item) =>
-                                                    DropdownMenuItem<String>(
-                                                      value: item.toString(),
-                                                      child:  Container(
-                                                        alignment:Alignment.center,
-                                                        child:Text(
-                                                          item.toString(),
-                                                          style:  TextStyle(
-                                                            fontSize: 14,
-                                                            fontWeight: FontWeight.bold,
-                                                            color:  _colorFromHex(themeInputText),
+                                            Flexible(
+                                              flex:2,
+                                              child: DropdownButtonHideUnderline(
+                                                child: DropdownButton2(
+                                                  isExpanded: true,
+                                                  items: month
+                                                      .map((item) =>
+                                                      DropdownMenuItem<String>(
+                                                        value: item.toString(),
+                                                        child:  Container(
+                                                          alignment:Alignment.center,
+                                                          child:Text(
+                                                            item.toString(),
+                                                            style:  TextStyle(
+                                                              fontSize: 14,
+                                                              fontWeight: FontWeight.bold,
+                                                              color:  _colorFromHex(themeInputText),
+                                                            ),
+                                                            overflow: TextOverflow.ellipsis,
                                                           ),
-                                                          overflow: TextOverflow.ellipsis,
                                                         ),
-                                                      ),
-                                                    ))
-                                                    .toList(),
-                                                value: dayValue,
-                                                onChanged: (value) {
-                                                  setState(() {
-                                                    dayValue = value as String;
-                                                  });
-                                                },
-
-                                                iconSize: 14,
-                                                iconEnabledColor:_colorFromHex("#6688A0"),
-                                                iconDisabledColor: Colors.grey,
-                                                buttonHeight: 30,
-                                                buttonWidth: 100,
-
-                                                buttonDecoration: BoxDecoration(
-                                                  borderRadius: BorderRadius.circular(0),
-                                                  border: Border.all(
-                                                    color: Colors.black26,
+                                                      ))
+                                                      .toList(),
+                                                  value: monthValue,
+                                                  onChanged: (value) {
+                                                    setState(() {
+                                                      monthValue = value as String;
+                                                    });
+                                                  },
+                                                  iconSize: 14,
+                                                  iconEnabledColor:_colorFromHex("#6688A0"),
+                                                  iconDisabledColor: Colors.grey,
+                                                  buttonHeight: 30,
+                                                  buttonWidth: 100,
+                                                  buttonDecoration: BoxDecoration(
+                                                    borderRadius: BorderRadius.circular(0),
+                                                    border: Border.all(
+                                                      color: Colors.black26,
+                                                    ),
+                                                    color: _colorFromHex(themeInput),
                                                   ),
-                                                  color: _colorFromHex(themeInput),
+                                                  buttonElevation: 2,
+                                                  itemHeight: 40,
+                                                  itemPadding: const EdgeInsets.only(left: 14, right: 14),
+                                                  dropdownMaxHeight: 200,
+                                                  dropdownWidth: 200,
+                                                  dropdownPadding: null,
+                                                  dropdownDecoration: BoxDecoration(
+                                                    borderRadius: BorderRadius.circular(0),
+                                                    color: _colorFromHex(themeCard),
+                                                  ),
+                                                  dropdownElevation: 8,
+                                                  scrollbarRadius: const Radius.circular(40),
+                                                  scrollbarThickness: 6,
+                                                  scrollbarAlwaysShow: true,
+                                                  offset: const Offset(-20, 0),
                                                 ),
-                                                buttonElevation: 2,
-                                                itemHeight: 40,
-                                                itemPadding: const EdgeInsets.only(left: 14, right: 14),
-                                                dropdownMaxHeight: 200,
-                                                dropdownWidth: 200,
-                                                dropdownPadding: null,
-                                                dropdownDecoration: BoxDecoration(
-                                                  borderRadius: BorderRadius.circular(0),
-                                                  color: _colorFromHex(themeCard),
-                                                ),
-                                                dropdownElevation: 8,
-                                                scrollbarRadius: const Radius.circular(40),
-                                                scrollbarThickness: 6,
-                                                scrollbarAlwaysShow: true,
-                                                offset: const Offset(-20, 0),
                                               ),
                                             ),
-                                            Container(width: 5),
+                                            Container(
+                                              width:5,
+                                            ),
                                             Flexible(
+                                                flex:2  ,
+                                              child: Text("Month",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                            ),
+                                            Container(
+                                              width:15,
+                                            ),
+                                            Flexible(
+                                                flex:2,
+                                              child: DropdownButtonHideUnderline(
+                                                child: DropdownButton2(
+                                                  isExpanded: true,
+                                                  items: day
+                                                      .map((item) =>
+                                                      DropdownMenuItem<String>(
+                                                        value: item.toString(),
+                                                        child:  Container(
+                                                          alignment:Alignment.center,
+                                                          child:Text(
+                                                            item.toString(),
+                                                            style:  TextStyle(
+                                                              fontSize: 14,
+                                                              fontWeight: FontWeight.bold,
+                                                              color:  _colorFromHex(themeInputText),
+                                                            ),
+                                                            overflow: TextOverflow.ellipsis,
+                                                          ),
+                                                        ),
+                                                      ))
+                                                      .toList(),
+                                                  value: dayValue,
+                                                  onChanged: (value) {
+                                                    setState(() {
+                                                      dayValue = value as String;
+                                                    });
+                                                  },
+
+                                                  iconSize: 14,
+                                                  iconEnabledColor:_colorFromHex("#6688A0"),
+                                                  iconDisabledColor: Colors.grey,
+                                                  buttonHeight: 30,
+                                                  buttonWidth: 100,
+
+                                                  buttonDecoration: BoxDecoration(
+                                                    borderRadius: BorderRadius.circular(0),
+                                                    border: Border.all(
+                                                      color: Colors.black26,
+                                                    ),
+                                                    color: _colorFromHex(themeInput),
+                                                  ),
+                                                  buttonElevation: 2,
+                                                  itemHeight: 40,
+                                                  itemPadding: const EdgeInsets.only(left: 14, right: 14),
+                                                  dropdownMaxHeight: 200,
+                                                  dropdownWidth: 200,
+                                                  dropdownPadding: null,
+                                                  dropdownDecoration: BoxDecoration(
+                                                    borderRadius: BorderRadius.circular(0),
+                                                    color: _colorFromHex(themeCard),
+                                                  ),
+                                                  dropdownElevation: 8,
+                                                  scrollbarRadius: const Radius.circular(40),
+                                                  scrollbarThickness: 6,
+                                                  scrollbarAlwaysShow: true,
+                                                  offset: const Offset(-20, 0),
+                                                ),
+                                              ),
+                                            ),
+                                            Container(
+                                              width:5,
+                                            ),
+                                            Flexible(
+                                                flex:2,
                                               child: Text("Day",style: TextStyle(color:_colorFromHex("#6688A0"))),
                                             ),
-                                          ]),
-                                          Container(height: 5),
-                                          Row(children:[
-                                            Container(
-                                              width:MediaQuery.of(context).size.width-242,
-                                            ),
-
-                                          DropdownButtonHideUnderline(
-                                              child: DropdownButton2(
-                                                isExpanded: true,
-                                                items: year
-                                                    .map((item) =>
-                                                    DropdownMenuItem<String>(
-                                                      value: item.toString(),
-                                                      child:  Container(
-                                                        alignment:Alignment.center,
-                                                        child:Text(
-                                                          item.toString(),
-                                                          style:  TextStyle(
-                                                            fontSize: 14,
-                                                            fontWeight: FontWeight.bold,
-                                                            color:  _colorFromHex(themeInputText),
+                                            Container(width: 20),
+                                            Flexible(
+                                                flex:3,
+                                              child: DropdownButtonHideUnderline(
+                                                child: DropdownButton2(
+                                                  isExpanded: true,
+                                                  items: year
+                                                      .map((item) =>
+                                                      DropdownMenuItem<String>(
+                                                        value: item.toString(),
+                                                        child:  Container(
+                                                          alignment:Alignment.center,
+                                                          child:Text(
+                                                            item.toString(),
+                                                            style:  TextStyle(
+                                                              fontSize: 14,
+                                                              fontWeight: FontWeight.bold,
+                                                              color:  _colorFromHex(themeInputText),
+                                                            ),
+                                                            overflow: TextOverflow.ellipsis,
                                                           ),
-                                                          overflow: TextOverflow.ellipsis,
                                                         ),
-                                                      ),
-                                                    ))
-                                                    .toList(),
-                                                value: yearValue,
-                                                onChanged: (value) {
-                                                  setState(() {
-                                                    yearValue = value as String;
-                                                  });
-                                                },
+                                                      ))
+                                                      .toList(),
+                                                  value: yearValue,
+                                                  onChanged: (value) {
+                                                    setState(() {
+                                                      yearValue = value as String;
+                                                    });
+                                                  },
 
-                                                iconSize: 14,
-                                                iconEnabledColor:_colorFromHex("#6688A0"),
-                                                iconDisabledColor: Colors.grey,
-                                                buttonHeight: 30,
-                                                buttonWidth: 100,
+                                                  iconSize: 14,
+                                                  iconEnabledColor:_colorFromHex("#6688A0"),
+                                                  iconDisabledColor: Colors.grey,
+                                                  buttonHeight: 30,
+                                                  buttonWidth: 100,
 
-                                                buttonDecoration: BoxDecoration(
-                                                  borderRadius: BorderRadius.circular(0),
-                                                  border: Border.all(
-                                                    color: Colors.black26,
+                                                  buttonDecoration: BoxDecoration(
+                                                    borderRadius: BorderRadius.circular(0),
+                                                    border: Border.all(
+                                                      color: Colors.black26,
+                                                    ),
+                                                    color: _colorFromHex(themeInput),
                                                   ),
-                                                  color: _colorFromHex(themeInput),
+                                                  buttonElevation: 2,
+                                                  itemHeight: 40,
+                                                  itemPadding: const EdgeInsets.only(left: 14, right: 14),
+                                                  dropdownMaxHeight: 200,
+                                                  dropdownWidth: 200,
+                                                  dropdownPadding: null,
+                                                  dropdownDecoration: BoxDecoration(
+                                                    borderRadius: BorderRadius.circular(0),
+                                                    color: _colorFromHex(themeCard),
+                                                  ),
+                                                  dropdownElevation: 8,
+                                                  scrollbarRadius: const Radius.circular(40),
+                                                  scrollbarThickness: 6,
+                                                  scrollbarAlwaysShow: true,
+                                                  offset: const Offset(-20, 0),
                                                 ),
-                                                buttonElevation: 2,
-                                                itemHeight: 40,
-                                                itemPadding: const EdgeInsets.only(left: 14, right: 14),
-                                                dropdownMaxHeight: 200,
-                                                dropdownWidth: 200,
-                                                dropdownPadding: null,
-                                                dropdownDecoration: BoxDecoration(
-                                                  borderRadius: BorderRadius.circular(0),
-                                                  color: _colorFromHex(themeCard),
-                                                ),
-                                                dropdownElevation: 8,
-                                                scrollbarRadius: const Radius.circular(40),
-                                                scrollbarThickness: 6,
-                                                scrollbarAlwaysShow: true,
-                                                offset: const Offset(-20, 0),
                                               ),
                                             ),
                                             Container(width: 5),
                                             Flexible(
+                                                flex:0,
                                               child: Text("Year",style: TextStyle(color:_colorFromHex("#6688A0"))),
                                             ),
-                                          ]),
+                                          ]
+                                          ),
 
                                         ]
                                         ),
@@ -5063,7 +5343,7 @@ if(plattform=="androidiphone")
                                                   itemHeight: 40,
                                                   itemPadding: const EdgeInsets.only(left: 14, right: 14),
                                                   dropdownMaxHeight: 200,
-                                                  dropdownWidth: 200,
+                                                  style: TextStyle(fontSize: 12),
                                                   dropdownPadding: null,
                                                   dropdownDecoration: BoxDecoration(
                                                     borderRadius: BorderRadius.circular(0),
@@ -5147,8 +5427,8 @@ if(plattform=="androidiphone")
                                                   itemHeight: 40,
                                                   itemPadding: const EdgeInsets.only(left: 14, right: 14),
                                                   dropdownMaxHeight: 200,
-                                                  dropdownWidth: 200,
                                                   dropdownPadding: null,
+                                                  style: TextStyle(fontSize: 12),
                                                   dropdownDecoration: BoxDecoration(
                                                     borderRadius: BorderRadius.circular(0),
                                                     color: _colorFromHex(themeCard),
@@ -5231,7 +5511,7 @@ if(plattform=="androidiphone")
                                                   itemHeight: 40,
                                                   itemPadding: const EdgeInsets.only(left: 14, right: 14),
                                                   dropdownMaxHeight: 200,
-                                                  dropdownWidth: 200,
+                                                  style: TextStyle(fontSize: 12),
                                                   dropdownPadding: null,
                                                   dropdownDecoration: BoxDecoration(
                                                     borderRadius: BorderRadius.circular(0),
@@ -5313,7 +5593,7 @@ if(plattform=="androidiphone")
                                                   itemHeight: 40,
                                                   itemPadding: const EdgeInsets.only(left: 14, right: 14),
                                                   dropdownMaxHeight: 200,
-                                                  dropdownWidth: 200,
+                                                  style: TextStyle(fontSize: 12),
                                                   dropdownPadding: null,
                                                   dropdownDecoration: BoxDecoration(
                                                     borderRadius: BorderRadius.circular(0),
@@ -5778,6 +6058,7 @@ final UconfirmpasswordRegisterController = TextEditingController();
 final UbirthdayRegisterController = TextEditingController();
 final UbarangayTypeRegisterController = TextEditingController();
 final UcellphoneRegisterController = TextEditingController();
+final UpostController = TextEditingController();
 List<String> Uregion=[];
 List<String> Uprovince=[];
 List<String> Ucitymunicipality=[];
@@ -5807,18 +6088,25 @@ int one = 3;
 int two = 5;
 int third = 2;
 String refreshing = "false";
-String APItoken = "http://klackr.teravibe.com:5000/auth/login/";
-String APIlocation = "http://klackr.teravibe.com:5000/auth/location/";
-String APIregister = "http://klackr.teravibe.com:5000/auth/register/";
-String APIlogin = "http://klackr.teravibe.com:5000/auth/login/";
-String APIposting = "http://klackr.teravibe.com:5000/homepage/posts/";
-String APIgetpost = "http://klackr.teravibe.com:5000/homepage/posts/?limit=30&offset=0";
-String APIgetprofile = "http://klackr.teravibe.com:5000/homepage/profile/";
+String APItoken = "https://klackr.teravibe.com:5000/auth/login/";
+String APIlocation = "https://klackr.teravibe.com:5000/auth/location/";
+String APIregister = "https://klackr.teravibe.com:5000/auth/register/";
+String APIlogin = "https://klackr.teravibe.com:5000/auth/login/";
+String APIposting = "https://klackr.teravibe.com:5000/homepage/posts/";
+String APIgetpost = "https://klackr.teravibe.com:5000/homepage/posts/?limit=30&offset=0";
+String APIgetprofile = "https://klackr.teravibe.com:5000/homepage/profile/";
+String APIgetuser="https://klackr.teravibe.com:5000/auth/users_count/";
 String role = "influencer";
 String info = "false";//false
-String lobby = "main";//main,lobby,editprofile
-double lobbySize = 75;//75
 const appleType = "apple";
 const androidType = "android";
 String plattform = "web";
-String lobbyselect = "lobbyposting";
+String lobbyselect = "lobbygetpost";
+String edit = "false";
+String IDpost = "";
+String CPpost = "";
+RefreshController _refreshController =
+RefreshController(initialRefresh: false);
+String getUserCount="0";
+String lobby = "main";//main,lobby,editprofile
+double lobbySize = 75;//75
