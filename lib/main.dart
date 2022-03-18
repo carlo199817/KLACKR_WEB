@@ -1176,7 +1176,7 @@ if(plattform=="androidiphone")
                                                     },
                                                     icon: Icon(Icons.add,color:_colorFromHex("#6688A0"),size:35),
                                                   ),
-                                                  Text("ADD POST"),
+                                                  Text("ADD POST",style:TextStyle(color:_colorFromHex(themeInputText))),
                                                 ],
                                               ),
                                             ),
@@ -1194,7 +1194,7 @@ if(plattform=="androidiphone")
                                                     },
                                                     icon: Icon(Icons.public,color:_colorFromHex("#6688A0"),size:35),
                                                   ),
-                                                  Text("STREET"),
+                                                  Text("STREET",style:TextStyle(color:_colorFromHex(themeInputText))),
                                                 ],
                                               ),
                                             ),
@@ -1212,7 +1212,7 @@ if(plattform=="androidiphone")
                                                     },
                                                     icon: Icon(Icons.home,color:_colorFromHex("#6688A0"),size:35),
                                                   ),
-                                                  Text("HOME"),
+                                                  Text("HOME",style:TextStyle(color:_colorFromHex(themeInputText))),
                                                 ],
                                               ),
                                             ),
@@ -1253,8 +1253,8 @@ if(plattform=="androidiphone")
                                                                           Expanded(
                                                                             flex:0,
                                                                             child: Container(
-                                                                              height:40,
-                                                                              width:40,
+                                                                              height:45,
+                                                                              width:45,
                                                                               alignment: Alignment.topLeft,
                                                                               child: IconButton(onPressed: (){},icon: Icon(Icons.account_circle_rounded,size: 50,color:_colorFromHex("#6688A0"))),
                                                                             ),
@@ -1281,7 +1281,7 @@ if(plattform=="androidiphone")
                                                                                         alignment: Alignment.topLeft,
                                                                                         child:   Padding(
                                                                                           padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                                                          child:  Text("carlrein",style: TextStyle(color:_colorFromHex("#6688A0"),fontWeight: FontWeight.bold,fontSize: 13)),
+                                                                                          child:  Text(username,style: TextStyle(color:_colorFromHex("#6688A0"),fontWeight: FontWeight.bold,fontSize: 13)),
                                                                                         ),
                                                                                       ),
                                                                                     ),
@@ -4160,7 +4160,7 @@ if(plattform=="androidiphone")
                                                     child:ElevatedButton(
                                                       child: Text('Login'),
                                                       onPressed: () {
-                                                     /*  setState(() {
+                                                       /*setState(() {
                                                           lobby="lobby";
                                                            lobbySize = 0;
                                                         });*/
