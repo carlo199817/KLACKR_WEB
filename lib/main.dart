@@ -713,11 +713,11 @@ class _MyHomePageState extends State<MyHomePage> {
  void OSindentifyer(){
    final userAgent = html.window.navigator.userAgent.toString().toLowerCase();
    // smartphone
-   if( userAgent.contains("android")||userAgent.contains("iphone")) {
+   if( userAgent.contains("android")||userAgent.contains("iphone")||userAgent.contains("ipad")) {
      setState(() {
        plattform="androidiphone";
      });
-   }/*else{
+   }else{
      Navigator.pushAndRemoveUntil<dynamic>(
        context,
        MaterialPageRoute<dynamic>(
@@ -726,7 +726,7 @@ class _MyHomePageState extends State<MyHomePage> {
        ),
            (route) => false,//if you want to disable back feature set to false
      );
-   }*/
+   }
  }
 
   @override void initState() {
@@ -1518,7 +1518,9 @@ if(plattform=="androidiphone")
                                                                           ),
                                                                         ),
                                                                       ),
-
+                                                                      Container(
+                                                                          height:30
+                                                                      ),
                                                                     ]
                                                                 ),
                                                               ),
@@ -4158,7 +4160,7 @@ if(plattform=="androidiphone")
                                                     child:ElevatedButton(
                                                       child: Text('Login'),
                                                       onPressed: () {
-                                                     /*   setState(() {
+                                                     /*  setState(() {
                                                           lobby="lobby";
                                                            lobbySize = 0;
                                                         });*/
@@ -5818,5 +5820,5 @@ String lobby = "main";//main,lobby,editprofile
 double lobbySize = 75;//75
 const appleType = "apple";
 const androidType = "android";
-String plattform = "androidiphone";
+String plattform = "web";
 String lobbyselect = "lobbyposting";
