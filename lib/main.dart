@@ -814,40 +814,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     ]
                 ),
               ),
-              if(plattform=="web")
-              Container(
-                height: 100,
-                width: 500,
-                alignment: Alignment.center,
-                child: IntrinsicHeight(
-                  child: Row( children: [
-                    Expanded(
-                      flex: 5,
-                      child:Container(
 
-
-                      ),
-                    ),
-                    Expanded(
-                      flex: 0,
-                      child:Container(
-                          width: 50,
-                          child:Image.asset('assets/logo/klackr_logo.png')),
-                    ),
-                    Expanded(
-                      flex: 10,
-                      child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text("Klackr",style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold,color:_colorFromHex(themeTitle))),
-                            Text("Follow friends and discover great",style: TextStyle(color:_colorFromHex("#6688A0"),fontSize: 10,fontWeight: FontWeight.bold)),
-                            Text("things in your vicinity and beyond",style: TextStyle(color:_colorFromHex("#6688A0"),fontSize: 10,fontWeight: FontWeight.bold)),
-                          ]),
-                    ),
-
-                  ]),
-                ),
-              ),
               
             ]
           ),
@@ -4255,7 +4222,10 @@ if(plattform=="androidiphone")
                                                     child:ElevatedButton(
                                                       child: Text('Login'),
                                                       onPressed: () {
-
+                                                       /* setState(() {
+                                                          lobby="lobby";
+                                                           lobbySize = 0;
+                                                        });*/
                                                         if(emailLogin.text==""||passwordLogin.text==""){
                                                           if(allow=="on"){
                                                             allow="off";

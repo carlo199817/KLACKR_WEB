@@ -5278,7 +5278,10 @@ class _MyHomePageState extends State<MyHomePage> {
                                                         child:ElevatedButton(
                                                           child: Text('Login'),
                                                           onPressed: () {
-
+                                                           /* setState(() {
+                                                              lobby="lobby";
+                                                              lobbySize = 0;
+                                                            });*/
                                                             if(emailLogin.text==""||passwordLogin.text==""){
                                                               if(allow=="on"){
                                                                 allow="off";
