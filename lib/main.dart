@@ -611,6 +611,9 @@ class _MyHomePageState extends State<MyHomePage> {
     if (response.statusCode == 201) {
       fetchData1();
       postingRegisterController.text="";
+      setState(() {
+        lobbyselect="lobbygetpost";
+      });
     }
   }
   final List<Map<String, dynamic>> _allUsers1 = [];
@@ -714,7 +717,7 @@ class _MyHomePageState extends State<MyHomePage> {
      setState(() {
        plattform="androidiphone";
      });
-   }else{
+   }/*else{
      Navigator.pushAndRemoveUntil<dynamic>(
        context,
        MaterialPageRoute<dynamic>(
@@ -723,7 +726,7 @@ class _MyHomePageState extends State<MyHomePage> {
        ),
            (route) => false,//if you want to disable back feature set to false
      );
-   }
+   }*/
  }
 
   @override void initState() {
@@ -826,75 +829,7 @@ if(plattform=="androidiphone")
    
             ]),
           ),
-          if(plattform=="web")
-            IntrinsicHeight(
-              child: Row( children: [
-                Text("Filipino",style: TextStyle(color:_colorFromHex("#6688A0"))),
-                Theme(
-                  data: ThemeData(
-                    primarySwatch: Colors.blue,
-                    unselectedWidgetColor: _colorFromHex("#6688A0"), // Your color
-                  ),
-                  child: Checkbox(
-                    value: false,
-                    checkColor: Colors.black,
-                    activeColor: Colors.grey,
-                    onChanged: (value) {
-                      setState(() {
-                        if(pilipino==false){
-                          pilipino=true;
-                          english=false;
-                        }
-                      });
-                    },),
-                ),
-                Text("English",style: TextStyle(color:_colorFromHex("#6688A0"))),
-                Theme(
-                  data: ThemeData(
-                    primarySwatch: Colors.blue,
-                    unselectedWidgetColor: _colorFromHex("#6688A0"), // Your color
-                  ),
-                  child: Checkbox(
-                    value: true,
-                    checkColor: Colors.black,
-                    activeColor: Colors.grey,
-                    // activeColor:_colorFromHex("#6688A0"),
-                    onChanged: (value) {
-                      setState(() {
-                        if(english==false){
-                          english=true;
-                          pilipino=false;
-                        }
-                      });
-                    },),
-                ),
-                Text("Dark Theme",style: TextStyle(color:_colorFromHex("#6688A0"))),
-                Theme(
-                  data: ThemeData(
-                    primarySwatch: Colors.blue,
-                    unselectedWidgetColor: _colorFromHex("#6688A0"), // Your color
-                  ),
-                  child: Checkbox(
-                    value: themeColor,
-                    checkColor: Colors.black,
-                    activeColor:_colorFromHex("#6688A0"),
-                    onChanged: (value) {
-                      setState(() {
-                        if(themeColor==false){
-                          themeColor=true;
-                          darkTheme();
-                        }else{
-                          themeColor=false;
-                          whiteTheme();
-                        }
-                      });
-                    },),
-                )
-
-
-
-              ]),
-            ),
+         
         ],
         toolbarHeight: lobbySize,
       ),
@@ -3394,6 +3329,7 @@ if(plattform=="androidiphone")
                                                                 onPressed: (){
                                                                   setState(() {
                                                                     lobby="main";
+                                                                    lobbySize = 75;
                                                                   });
                                                                 },
                                                                 child:Text('logout',style:TextStyle(color:_colorFromHex("#6688A0"))),
@@ -4222,7 +4158,7 @@ if(plattform=="androidiphone")
                                                     child:ElevatedButton(
                                                       child: Text('Login'),
                                                       onPressed: () {
-                                                       /* setState(() {
+                                                     /*   setState(() {
                                                           lobby="lobby";
                                                            lobbySize = 0;
                                                         });*/
@@ -4583,15 +4519,14 @@ if(plattform=="androidiphone")
                                           ),
                                         ),
                                         Container(
-                                          height: 5,
+                                          height: 15,
                                         ),
+                                        Text("Gender",style: TextStyle(color:_colorFromHex("#6688A0"))),
                                         Row(children: [
                                           Container(
                                             width: 10,
                                           ),
-                                          Flexible(
-                                            child:      Text("Gender",style: TextStyle(color:_colorFromHex("#6688A0"))),
-                                          ),
+
                                           Flexible(
                                             child:Theme(
                                               data: ThemeData(
@@ -5883,5 +5818,5 @@ String lobby = "main";//main,lobby,editprofile
 double lobbySize = 75;//75
 const appleType = "apple";
 const androidType = "android";
-String plattform = "web";
+String plattform = "androidiphone";
 String lobbyselect = "lobbyposting";

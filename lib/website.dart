@@ -3304,6 +3304,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                         onPressed: (){
                                           setState(() {
                                             lobby="main";
+                                            lobbySize = 75;
                                           });
                                         },
                                         child:Text('logout',style:TextStyle(color:_colorFromHex("#6688A0"))),
@@ -5278,7 +5279,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                                         child:ElevatedButton(
                                                           child: Text('Login'),
                                                           onPressed: () {
-                                                           /* setState(() {
+                                                         /*  setState(() {
                                                               lobby="lobby";
                                                               lobbySize = 0;
                                                             });*/
