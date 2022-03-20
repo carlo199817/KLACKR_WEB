@@ -65,11 +65,13 @@ dependencies:
   timeago: ^3.2.2
   universal_html: ^2.0.8
   pull_to_refresh: ^2.0.0
+  url_strategy: ^0.2.0
 
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -93,6 +95,7 @@ flutter:
     - assets/logo/klackr_logo.png
     - assets/background/klackr_background.jpg
     - assets/appstore.png
+    - assets/leandro.png
 
   # To add assets to your application, add an assets section, like this:
   # assets:

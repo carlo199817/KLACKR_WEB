@@ -10,11 +10,13 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' show Encoding, json, jsonDecode, jsonEncode;
 import 'package:universal_html/html.dart' as html;
+import 'package:url_strategy/url_strategy.dart';
 
 
 
 
 void main() {
+  setPathUrlStrategy();
   runApp(const MyApp());
 }
 
@@ -459,9 +461,9 @@ class _MyHomePageState extends State<MyHomePage> {
     request.send());
     var pointer = response.body;
     if (response.statusCode == 201) {
+      getUser();
       setState(() {
         clickContinue="finish";
-        getUser();
         Fluttertoast.showToast(
             msg: "succesfully registered",
             toastLength: Toast.LENGTH_SHORT,
@@ -902,7 +904,6 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
     Timer(Duration(seconds: 0), () {
       OSindentifyer();
-
     });
 
   }
@@ -1254,7 +1255,7 @@ if(plattform=="androidiphone")
                                           alignment: Alignment.topLeft,
                                           child:   Padding(
                                             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                            child:  Text("Klackr account no. 23423",style: TextStyle(color: _colorFromHex(themeInputText))),
+                                            child:  Text("Klackr account no. "+profileID.toString(),style: TextStyle(color: _colorFromHex(themeInputText))),
                                           ),
                                         ),
                                         Container(
@@ -3140,7 +3141,7 @@ if(plattform=="androidiphone")
                                                       ),
                                                     if(lobbyselect=="lobbygetpost")
                                                       Container(
-                                                        height: MediaQuery.of(context).size.height,
+                                                        height: MediaQuery.of(context).size.height+10,
                                                         child:
                                                         SmartRefresher(
                                                           enablePullDown: true,
@@ -3220,7 +3221,7 @@ if(plattform=="androidiphone")
                                                                                   alignment: Alignment.topRight,
                                                                                   child:   Padding(
                                                                                     padding: EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-                                                                                    child: Text("Klackr account no. 23423",style: TextStyle(color: _colorFromHex(themeInputText),fontSize: 15)),
+                                                                                    child: Text("Klackr account no. "+profileID.toString(),style: TextStyle(color: _colorFromHex(themeInputText),fontSize: 15)),
                                                                                   ),
                                                                                 ),
                                                                               ),
@@ -4544,10 +4545,10 @@ if(plattform=="androidiphone")
                                                           Container(height: 5),
                                                           Container(
                                                             alignment: Alignment.topLeft,
-                                                            child:   Padding(
+                                                              child:   Padding(
                                                                 padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                                child: Icon(Icons.account_circle,size: 30,color:_colorFromHex("#6688A0"))
-                                                            ),
+                                                                  child:Image.asset('assets/leandro.png'),
+                                                              ),  
                                                           ),
                                                           Container(
                                                             height: 140,
@@ -4603,7 +4604,7 @@ if(plattform=="androidiphone")
                                                             alignment: Alignment.topLeft,
                                                             child:   Padding(
                                                               padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                              child:  Text("2",style: TextStyle(color:Colors.red)),
+                                                              child:  Text("0",style: TextStyle(color:Colors.red)),
                                                             ),
                                                           ),
                                                           Container(
@@ -4617,7 +4618,7 @@ if(plattform=="androidiphone")
                                                             alignment: Alignment.topLeft,
                                                             child:   Padding(
                                                               padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                              child:  Text("1",style: TextStyle(color:Colors.red)),
+                                                              child:  Text("0",style: TextStyle(color:Colors.red)),
                                                             ),
                                                           ),
                                                           Container(
@@ -4641,7 +4642,7 @@ if(plattform=="androidiphone")
                                                             alignment: Alignment.topLeft,
                                                             child:   Padding(
                                                               padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                              child:  Text("1",style: TextStyle(color:Colors.red)),
+                                                              child:  Text(getUserCount,style: TextStyle(color:Colors.red)),
                                                             ),
                                                           ),
                                                           Container(
@@ -4658,7 +4659,7 @@ if(plattform=="androidiphone")
                                                             alignment: Alignment.topLeft,
                                                             child:   Padding(
                                                               padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                              child:  Text("1",style: TextStyle(color:Colors.red)),
+                                                              child:  Text("0",style: TextStyle(color:Colors.red)),
                                                             ),
                                                           ),
                                                           Container(
@@ -6100,7 +6101,6 @@ String role = "influencer";
 String info = "false";//false
 const appleType = "apple";
 const androidType = "android";
-String plattform = "web";
 String lobbyselect = "lobbygetpost";
 String edit = "false";
 String IDpost = "";
@@ -6108,5 +6108,7 @@ String CPpost = "";
 RefreshController _refreshController =
 RefreshController(initialRefresh: false);
 String getUserCount="0";
+
+String plattform = "web";
 String lobby = "main";//main,lobby,editprofile
 double lobbySize = 75;//75
