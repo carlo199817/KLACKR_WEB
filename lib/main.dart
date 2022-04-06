@@ -11,6 +11,31 @@ import 'package:http/http.dart' as http;
 import 'dart:convert' show Encoding, json, jsonDecode, jsonEncode;
 import 'package:universal_html/html.dart' as html;
 import 'package:url_strategy/url_strategy.dart';
+import 'dart:async';
+import 'dart:typed_data';
+import 'dart:ui';
+import 'package:dio/dio.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter/services.dart';
+import 'package:mime/mime.dart';
+import 'package:timeago/timeago.dart' as timeago;
+import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:flutter/gestures.dart';
+import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert' show Base64Decoder, Encoding, json, jsonDecode, jsonEncode;
+import 'package:universal_html/html.dart' as html;
+import 'package:url_strategy/url_strategy.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:video_player/video_player.dart';
+import 'dart:io';
+import 'package:flutter/foundation.dart';
+import 'package:http_parser/http_parser.dart';
+import 'dart:convert';
+import 'package:async/async.dart';
+
+
 
 
 
@@ -96,6 +121,7 @@ class _MyHomePageState extends State<MyHomePage> {
     if (response.statusCode == 200) {
       var pointer = response.body;
       pointToken = jsonDecode(pointer)['tokens']['access'];
+
       Timer(Duration(seconds: 0), () {
         getRegion();
       });
@@ -103,40 +129,40 @@ class _MyHomePageState extends State<MyHomePage> {
   }
   String? UsRegion;
   void UselectRegion(){
-    if(regionValue=="REGION I"){
+    if(UregionValue=="REGION I"){
       setState(() {
         UsRegion="01";
       });
-    }else  if(regionValue=="REGION II"){
+    }else  if(UregionValue=="REGION II"){
       setState(() {
         UsRegion="02";
       });
-    }else  if(regionValue=="REGION III"){
+    }else  if(UregionValue=="REGION III"){
       setState(() {
         UsRegion="03";
       });
     }
-    else  if(regionValue=="REGION IV-A"){
+    else  if(UregionValue=="REGION IV-A"){
       setState(() {
         UsRegion="4A";
       });
     }
-    else  if(regionValue=="REGION IV-B"){
+    else  if(UregionValue=="REGION IV-B"){
       setState(() {
         UsRegion="4B";
       });
     }
-    else  if(regionValue=="REGION V"){
+    else  if(UregionValue=="REGION V"){
       setState(() {
         UsRegion="05";
       });
     }
-    else  if(regionValue=="REGION VI"){
+    else  if(UregionValue=="REGION VI"){
       setState(() {
         UsRegion="06";
       });
     }
-    else  if(regionValue=="REGION VII"){
+    else  if(UregionValue=="REGION VII"){
       setState(() {
         UsRegion="07";
       });
@@ -146,42 +172,42 @@ class _MyHomePageState extends State<MyHomePage> {
         UsRegion="08";
       });
     }
-    else  if(regionValue=="REGION IX"){
+    else  if(UregionValue=="REGION IX"){
       setState(() {
         UsRegion="09";
       });
     }
-    else  if(regionValue=="REGION X"){
+    else  if(UregionValue=="REGION X"){
       setState(() {
         UsRegion="10";
       });
     }
-    else  if(regionValue=="REGION XI"){
+    else  if(UregionValue=="REGION XI"){
       setState(() {
         UsRegion="11";
       });
     }
-    else  if(regionValue=="REGION XII"){
+    else  if(UregionValue=="REGION XII"){
       setState(() {
         UsRegion="12";
       });
     }
-    else  if(regionValue=="REGION XIII"){
+    else  if(UregionValue=="REGION XIII"){
       setState(() {
         UsRegion="13";
       });
     }
-    else  if(regionValue=="BARMM"){
+    else  if(UregionValue=="BARMM"){
       setState(() {
         UsRegion="BARMM";
       });
     }
-    else  if(regionValue=="CAR"){
+    else  if(UregionValue=="CAR"){
       setState(() {
         UsRegion="CAR";
       });
     }
-    else  if(regionValue=="NCR"){
+    else  if(UregionValue=="NCR"){
       setState(() {
         UsRegion="NCR";
       });
@@ -273,170 +299,73 @@ class _MyHomePageState extends State<MyHomePage> {
       });
     }
   }
-  void UgetRegion() async {
-    var response = await http.get(Uri.parse(APIlocation), headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-      'Authorization': 'Bearer $pointToken',
-    });
-    var pointer = response.body;
-    if(response.statusCode==200){
-      setState(() {
-        Uregion.add(jsonDecode(pointer)['01']['region_name']);
-        Uregion.add(jsonDecode(pointer)['02']['region_name']);
-        Uregion.add(jsonDecode(pointer)['03']['region_name']);
-        Uregion.add(jsonDecode(pointer)['4A']['region_name']);
-        Uregion.add(jsonDecode(pointer)['4B']['region_name']);
-        Uregion.add(jsonDecode(pointer)['05']['region_name']);
-        Uregion.add(jsonDecode(pointer)['06']['region_name']);
-        Uregion.add(jsonDecode(pointer)['07']['region_name']);
-        Uregion.add(jsonDecode(pointer)['08']['region_name']);
-        Uregion.add(jsonDecode(pointer)['09']['region_name']);
-        Uregion.add(jsonDecode(pointer)['10']['region_name']);
-        Uregion.add(jsonDecode(pointer)['11']['region_name']);
-        Uregion.add(jsonDecode(pointer)['12']['region_name']);
-        Uregion.add(jsonDecode(pointer)['13']['region_name']);
-        Uregion.add(jsonDecode(pointer)['BARMM']['region_name']);
-        Uregion.add(jsonDecode(pointer)['CAR']['region_name']);
-        Uregion.add(jsonDecode(pointer)['NCR']['region_name']);
-        UselectRegion();
-      });
 
-    }
-
-  }
   void UgetProvince() async {
-    var response = await http.get(Uri.parse(APIlocation), headers: {
-      'Content-Ty'
-          'pe': 'application/json',
-      'Accept': 'application/json',
-      'Authorization': 'Bearer $pointToken',
-    });
-    var pointer = response.body;
-
-    if(response.statusCode==200){
-      Map<String, dynamic> res = jsonDecode(pointer)[UsRegion]['province_list'];
-      res.forEach((key, value) {
-        setState(() {
-          Uprovince.add(key);
-        });
+    Map<String, dynamic> res = jsonDecode(pointerAll)[UsRegion]['province_list'];
+    res.forEach((key, value) {
+      setState(() {
+        Uprovince.add(key);
       });
-    }
+    });
+
   }
   void UgetMunicipality() async {
-    var response = await http.get(Uri.parse(APIlocation), headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-      'Authorization': 'Bearer $pointToken',
-    });
-    var pointer = response.body;
-    if(response.statusCode==200){
-      Map<String, dynamic> res = jsonDecode(pointer)[UsRegion]['province_list'][UprovinceValue]['municipality_list'];
-      res.forEach((key, value) {
-        setState(() {
-          Ucitymunicipality.add(key);
-        });
+    Map<String, dynamic> res = jsonDecode(pointerAll)[UsRegion]['province_list'][UprovinceValue]['municipality_list'];
+    res.forEach((key, value) {
+      setState(() {
+        Ucitymunicipality.add(key);
       });
-    }
+    });
   }
   void UgetBarangay() async {
-    var response = await http.get(Uri.parse(APIlocation), headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-      'Authorization': 'Bearer $pointToken',
-    });
-    var pointer = response.body;
     var postLength;
-    if(response.statusCode==200){//store response as string
-      setState(() {
-        postLength = jsonDecode(pointer)[UsRegion]['province_list'][UprovinceValue]['municipality_list'][UcitymunicipalityValue]['barangay_list'];//get all the data from json string superheros
-      });
-      for (var i = 0; i <= postLength.length-1; i++) {
-        Ubarangay.add(jsonDecode(pointer)[UsRegion]['province_list'][UprovinceValue]['municipality_list'][UcitymunicipalityValue]['barangay_list'][i]);
-      }
+
+    setState(() {
+      postLength = jsonDecode(pointerAll)[UsRegion]['province_list'][UprovinceValue]['municipality_list'][UcitymunicipalityValue]['barangay_list'];//get all the data from json string superheros
+    });
+    for (var i = 0; i <= postLength.length-1; i++) {
+      Ubarangay.add(jsonDecode(pointerAll)[UsRegion]['province_list'][UprovinceValue]['municipality_list'][UcitymunicipalityValue]['barangay_list'][i]);
     }
   }
+  var pointerAll;
   void getRegion() async {
     var response = await http.get(Uri.parse(APIlocation), headers: {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
       'Authorization': 'Bearer $pointToken',
     });
-    var pointer = response.body;
-    if(response.statusCode==200){
-      setState(() {
-        region.add(jsonDecode(pointer)['01']['region_name']);
-        region.add(jsonDecode(pointer)['02']['region_name']);
-        region.add(jsonDecode(pointer)['03']['region_name']);
-        region.add(jsonDecode(pointer)['4A']['region_name']);
-        region.add(jsonDecode(pointer)['4B']['region_name']);
-        region.add(jsonDecode(pointer)['05']['region_name']);
-        region.add(jsonDecode(pointer)['06']['region_name']);
-        region.add(jsonDecode(pointer)['07']['region_name']);
-        region.add(jsonDecode(pointer)['08']['region_name']);
-        region.add(jsonDecode(pointer)['09']['region_name']);
-        region.add(jsonDecode(pointer)['10']['region_name']);
-        region.add(jsonDecode(pointer)['11']['region_name']);
-        region.add(jsonDecode(pointer)['12']['region_name']);
-        region.add(jsonDecode(pointer)['13']['region_name']);
-        region.add(jsonDecode(pointer)['BARMM']['region_name']);
-        region.add(jsonDecode(pointer)['CAR']['region_name']);
-        region.add(jsonDecode(pointer)['NCR']['region_name']);
-        selectRegion();
-      });
-
-    }
-
+    pointerAll = response.body;
+    setState(() {
+      selectRegion();
+      UselectRegion();
+    });
   }
   void getProvince() async {
-    var response = await http.get(Uri.parse(APIlocation), headers: {
-      'Content-Ty'
-          'pe': 'application/json',
-      'Accept': 'application/json',
-      'Authorization': 'Bearer $pointToken',
-    });
-    var pointer = response.body;
-
-    if(response.statusCode==200){
-      Map<String, dynamic> res = jsonDecode(pointer)[sRegion]['province_list'];
-      res.forEach((key, value) {
-        setState(() {
-          province.add(key);
-        });
+    Map<String, dynamic> res = jsonDecode(pointerAll)[sRegion]['province_list'];
+    res.forEach((key, value) {
+      setState(() {
+        province.add(key);
       });
-    }
+    });
+
   }
   void getMunicipality() async {
-    var response = await http.get(Uri.parse(APIlocation), headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-      'Authorization': 'Bearer $pointToken',
-    });
-    var pointer = response.body;
-    if(response.statusCode==200){
-      Map<String, dynamic> res = jsonDecode(pointer)[sRegion]['province_list'][provinceValue]['municipality_list'];
-      res.forEach((key, value) {
-        setState(() {
-          citymunicipality.add(key);
-        });
+    Map<String, dynamic> res = jsonDecode(pointerAll)[sRegion]['province_list'][provinceValue]['municipality_list'];
+    res.forEach((key, value) {
+      setState(() {
+        citymunicipality.add(key);
       });
-    }
+    });
   }
   void getBarangay() async {
-    var response = await http.get(Uri.parse(APIlocation), headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-      'Authorization': 'Bearer $pointToken',
-    });
-    var pointer = response.body;
+
     var postLength;
-    if(response.statusCode==200){//store response as string
-      setState(() {
-        postLength = jsonDecode(pointer)[sRegion]['province_list'][provinceValue]['municipality_list'][citymunicipalityValue]['barangay_list'];//get all the data from json string superheros
-      });
-      for (var i = 0; i <= postLength.length-1; i++) {
-        barangay.add(jsonDecode(pointer)[sRegion]['province_list'][provinceValue]['municipality_list'][citymunicipalityValue]['barangay_list'][i]);
-      }
+
+    setState(() {
+      postLength = jsonDecode(pointerAll)[sRegion]['province_list'][provinceValue]['municipality_list'][citymunicipalityValue]['barangay_list'];//get all the data from json string superheros
+    });
+    for (var i = 0; i <= postLength.length-1; i++) {
+      barangay.add(jsonDecode(pointerAll)[sRegion]['province_list'][provinceValue]['municipality_list'][citymunicipalityValue]['barangay_list'][i]);
     }
   }
 
@@ -451,7 +380,7 @@ class _MyHomePageState extends State<MyHomePage> {
     request.fields['last_name'] = '${lastnameRegisterController.text}';
     request.fields['suffix'] = '${suffixRegisterController.text}';
     request.fields['gender'] = '${genderRegisterController.text}';
-    request.fields['birthday'] = monthValue.toString()+"/"+dayValue.toString()+"/"+yearValue.toString();
+    request.fields['birthday'] = monthValue.toString()+" "+dayValue.toString()+","+yearValue.toString();
     request.fields['region'] = '${regionValue.toString()}';
     request.fields['province'] = '${provinceValue.toString()}';
     request.fields['citymunicipality'] = '${citymunicipalityValue.toString()}';
@@ -531,14 +460,24 @@ class _MyHomePageState extends State<MyHomePage> {
           textColor: Colors.black,
           fontSize: 15.0
       );
+      _Credentials(emailLogin.text,passwordLogin.text);
+      lobby="lobby";
+      lobbySize = 0;
       setState(() {
         lobby="lobby";
         lobbySize = 0;
         fetchData1();
         getprofile();
+        forgot="false";
+        lobbyselect="lobbygetpost";
+        iconSetting2 = dark;
+        iconAdd=dark;
       });
     } else if(response.statusCode==400){
       pointer = response.body;
+      setState(() {
+        forgot="true";
+      });
       var pointToken = jsonDecode(pointer)['email'][0];
       Timer(Duration(seconds: 1), () {
         Fluttertoast.showToast(
@@ -553,6 +492,9 @@ class _MyHomePageState extends State<MyHomePage> {
       });
     } else if(response.statusCode==401){
       pointer = response.body;
+      setState(() {
+        forgot="true";
+      });
       var pointToken = jsonDecode(pointer)['detail'];
       Timer(Duration(seconds: 1), () {
         Fluttertoast.showToast(
@@ -567,19 +509,245 @@ class _MyHomePageState extends State<MyHomePage> {
       });
     }
   }
-  void profile() async{
+   void resetVicinity() async{
+var birthday;
+var region=ORegion;
+var province=OProvince;
+var citymunicipality=OCityMunicipality;
+var barangay=Obarangay;
+    if(UmonthValue==null||UdayValue==null||UyearValue==null){
+      birthday= UbirthdayRegisterController.text;
+    }else{
+birthday= UmonthValue.toString()+" "+UdayValue.toString()+", "+UyearValue.toString();
+    }
+
+  
+ 
     final response = await http.put(
-      Uri.parse("https://klackr.teravibe.com:5000/homepage/profile/$profileID/"),
+      Uri.parse("https://data.klackr.world/homepage/profile/$profileID/"),
       headers: {
         "Accept": "application/json",
         "Content-Type": "application/x-www-form-urlencoded",
         'Authorization': 'Bearer $token'
       },
       encoding: Encoding.getByName('utf-8'),
-      body: {"username": UusernameRegisterController.text,
-        "contactnumber": UcellphoneRegisterController.text},
+      body: {
+        "username": UusernameRegisterController.text,
+        "contactnumber": UcellphoneRegisterController.text,
+        "first_name": UfirstnameRegisterController.text,
+        "last_name": UlastnameRegisterController.text,
+        "suffix": UsuffixRegisterController.text,
+        "genderr": UgenderRegisterController.text,
+        "birthday":birthday,
+        "region": region,
+        "province": province,
+        "citymunicipality": citymunicipality,
+        "barangay": barangay,
+
+      }
     );
     if (response.statusCode == 200) {
+      fetchData1();
+      getprofile();
+    
+      if(allow=="on"){
+        allow="off";
+        Fluttertoast.showToast(
+            msg: "successfuly save",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 2,
+            backgroundColor: Colors.red,
+            textColor: Colors.black,
+            fontSize: 15.0
+        );
+        Timer(Duration(seconds: 2), () {
+          allow="on";
+        });
+      }
+    }else if(response.statusCode == 400){
+      if(allow=="on"){
+        allow="off";
+        Fluttertoast.showToast(
+            msg: "This field may not be blank.",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 2,
+            backgroundColor: Colors.red,
+            textColor: Colors.black,
+            fontSize: 15.0
+        );
+        Timer(Duration(seconds: 2), () {
+          allow="on";
+        });
+      }
+    }
+  }
+   void changeVicinity() async{
+var birthday;
+var region;
+var province;
+var citymunicipality;
+var barangay;
+    if(UmonthValue==null||UdayValue==null||UyearValue==null){
+      birthday= UbirthdayRegisterController.text;
+    }else{
+birthday= UmonthValue.toString()+" "+UdayValue.toString()+", "+UyearValue.toString();
+    }
+
+    if(UregionValue==null){
+ 
+
+        region=VRegion;
+
+           
+              
+    }else{
+    region=UregionValue;
+    }
+    if(UprovinceValue==null){
+  province=VProvince;
+    }else{
+    province=UprovinceValue;
+    }
+    if(UcitymunicipalityValue==null){
+  citymunicipality=VCityMunicipality;
+    }else{
+    citymunicipality=UcitymunicipalityValue;
+    }
+    if(UbarangayValue==null){
+  barangay=Vbarangay;
+    }else{
+    barangay=UbarangayValue;
+    }
+   
+    final response = await http.put(
+      Uri.parse("https://data.klackr.world/homepage/profile/$profileID/"),
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/x-www-form-urlencoded",
+        'Authorization': 'Bearer $token'
+      },
+      encoding: Encoding.getByName('utf-8'),
+      body: {
+        "username": UusernameRegisterController.text,
+        "contactnumber": UcellphoneRegisterController.text,
+        "first_name": UfirstnameRegisterController.text,
+        "last_name": UlastnameRegisterController.text,
+        "suffix": UsuffixRegisterController.text,
+        "genderr": UgenderRegisterController.text,
+        "birthday":birthday,
+        "region": region,
+        "province": province,
+        "citymunicipality": citymunicipality,
+        "barangay": barangay,
+
+      }
+    );
+    if (response.statusCode == 200) {
+      fetchData1();
+      getprofile();
+    
+      if(allow=="on"){
+        allow="off";
+        Fluttertoast.showToast(
+            msg: "successfuly save",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 2,
+            backgroundColor: Colors.red,
+            textColor: Colors.black,
+            fontSize: 15.0
+        );
+        Timer(Duration(seconds: 2), () {
+          allow="on";
+        });
+      }
+    }else if(response.statusCode == 400){
+      if(allow=="on"){
+        allow="off";
+        Fluttertoast.showToast(
+            msg: "This field may not be blank.",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 2,
+            backgroundColor: Colors.red,
+            textColor: Colors.black,
+            fontSize: 15.0
+        );
+        Timer(Duration(seconds: 2), () {
+          allow="on";
+        });
+      }
+    }
+  }
+  void profile() async{
+var birthday;
+var region;
+var province;
+var citymunicipality;
+var barangay;
+    if(UmonthValue==null||UdayValue==null||UyearValue==null){
+      birthday= UbirthdayRegisterController.text;
+    }else{
+birthday= UmonthValue.toString()+" "+UdayValue.toString()+", "+UyearValue.toString();
+    }
+
+    if(UregionValue==null){
+ 
+
+        region=VRegion;
+
+           
+              
+    }else{
+    region=UregionValue;
+    }
+    if(UprovinceValue==null){
+  province=VProvince;
+    }else{
+    province=UprovinceValue;
+    }
+    if(UcitymunicipalityValue==null){
+  citymunicipality=VCityMunicipality;
+    }else{
+    citymunicipality=UcitymunicipalityValue;
+    }
+    if(UbarangayValue==null){
+  barangay=Vbarangay;
+    }else{
+    barangay=UbarangayValue;
+    }
+    print(region);
+    final response = await http.put(
+      Uri.parse("https://data.klackr.world/homepage/profile/$profileID/"),
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/x-www-form-urlencoded",
+        'Authorization': 'Bearer $token'
+      },
+      encoding: Encoding.getByName('utf-8'),
+      body: {
+        "username": UusernameRegisterController.text,
+        "contactnumber": UcellphoneRegisterController.text,
+        "first_name": UfirstnameRegisterController.text,
+        "last_name": UlastnameRegisterController.text,
+        "suffix": UsuffixRegisterController.text,
+        "genderr": UgenderRegisterController.text,
+        "birthday":birthday,
+        "region": region,
+        "province": province,
+        "citymunicipality": citymunicipality,
+        "barangay": barangay,
+
+      }
+    );
+    if (response.statusCode == 200) {
+       _Places(region,province,citymunicipality,barangay);
+          ORegion=region;
+      OProvince=province;
+      OCityMunicipality=citymunicipality;
+      Obarangay=barangay;
       fetchData1();
       getprofile();
       if(allow=="on"){
@@ -615,23 +783,125 @@ class _MyHomePageState extends State<MyHomePage> {
       }
     }
   }
+
   void posting() async{
-    final response = await http.post(
-      Uri.parse(APIposting),
-      headers: {
-        "Accept": "application/json",
-        "Content-Type": "application/x-www-form-urlencoded",
-        'Authorization': 'Bearer $token'
-      },
-      encoding: Encoding.getByName('utf-8'),
-      body: {"caption": postingRegisterController.text},
-    );
-    if (response.statusCode == 201) {
-      fetchData1();
-      postingRegisterController.text="";
-      setState(() {
-        lobbyselect="lobbygetpost";
-      });
+    if(_imageFileList!=null){
+      try {
+        var _request = http.MultipartRequest('POST', Uri.parse(APIposting));
+        _request.headers.addAll({'authorization':'Bearer $token' ,'Content-Type': 'application/formd-ata'});
+        _request.files.add(
+            http.MultipartFile.fromBytes(
+                'image',
+                await _imageFileList![0].readAsBytes().then((value) {
+                  return value.cast();
+                }),
+                filename:_imageFileList![0].name
+            )
+        );
+        _request.fields['caption']= postingRegisterController.text;
+        return await _request.send().then((value) {
+          if(value.statusCode == 201) {
+            lobbyselect="";
+
+              setState(() {
+                lobbyselect="lobbygetpost";
+                iconVicinity=red;
+                iconSetting2 = dark;
+                iconAdd=dark;
+
+                    fetchData1();
+
+
+              });
+
+            setState(() {
+              fetchData1();
+              postingRegisterController.text="";
+              _imageFileList=null;
+              loading="false";
+            });
+            return true;
+          } else {
+
+          }
+        });
+      } catch(e) {
+
+      }
+    }else if(file!=null){
+      try {
+        var _request = http.MultipartRequest('POST', Uri.parse(APIposting));
+        _request.headers.addAll({'authorization':'Bearer $token' ,'Content-Type': 'application/formd-ata'});
+        _request.files.add(
+            http.MultipartFile.fromBytes(
+                'video',
+                await file!.readAsBytes().then((value) {
+                  return value.cast();
+                }),
+                filename:file!.name
+            )
+        );
+        _request.fields['caption']= postingRegisterController.text;
+        return await _request.send().then((value) {
+          if(value.statusCode == 201) {
+            lobbyselect="";
+
+              setState(() {
+                lobbyselect="lobbygetpost";
+                iconVicinity=red;
+                iconSetting2 = dark;
+                iconAdd=dark;
+
+                    fetchData1();
+
+              });
+
+            setState(() {
+              fetchData1();
+              postingRegisterController.text="";
+              file=null;
+              loading="false";
+
+            });
+            return true;
+          } else {
+
+          }
+        });
+      } catch(e) {
+
+      }
+    }else{
+      try {
+        var _request = http.MultipartRequest('POST', Uri.parse(APIposting));
+        _request.headers.addAll({'authorization':'Bearer $token' ,'Content-Type': 'application/formd-ata'});
+        _request.fields['caption']= postingRegisterController.text;
+        return await _request.send().then((value) {
+          if(value.statusCode == 201) {
+            lobbyselect="";
+
+              setState(() {
+                lobbyselect="lobbygetpost";
+                iconSetting2 = dark;
+                iconAdd=dark;
+                iconVicinity=red;
+
+                    fetchData1();
+
+              });
+
+            setState(() {
+              postingRegisterController.text="";
+              loading="false";
+            });
+            return true;
+          } else {
+
+          }
+        });
+      } catch(e) {
+
+      }
     }
   }
   final List<Map<String, dynamic>> _allUsers1 = [];
@@ -654,6 +924,8 @@ class _MyHomePageState extends State<MyHomePage> {
       });
       for (var i = 0; i <= postLength1.length-1; i++) {
         _allUsers1.add(jsonDecode(data1)['results'][i]);
+       // _Video.add(VideoPlayerController.network("https://flutter.github.io/assets-for-api-docs/assets/videos/butterfly.mp4"));
+        //_Video[_Video.length-1].initialize();
       }
       _foundUsers1 = _allUsers1;
       refreshing="false";
@@ -662,7 +934,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
   void updateposting() async{
     final response = await http.put(
-      Uri.parse("https://klackr.teravibe.com:5000/homepage/posts/$IDpost/"),
+      Uri.parse("https://data.klackr.world/homepage/posts/$IDpost/"),
       headers: {
         "Accept": "application/json",
         "Content-Type": "application/x-www-form-urlencoded",
@@ -674,6 +946,7 @@ class _MyHomePageState extends State<MyHomePage> {
     if (response.statusCode == 200) {
       edit="false";
       lobbyselect="lobbygetpost";
+      iconVicinity=red;
       fetchData1();
       UpostController.text="";
       if(allow=="on"){
@@ -695,7 +968,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
   void deletedposting() async{
     final response = await http.delete(
-      Uri.parse("https://klackr.teravibe.com:5000/homepage/posts/$IDpost/"),
+      Uri.parse("https://data.klackr.world/homepage/posts/$IDpost/"),
       headers: {
         "Accept": "application/json",
         "Content-Type": "application/x-www-form-urlencoded",
@@ -767,13 +1040,46 @@ class _MyHomePageState extends State<MyHomePage> {
     if (response.statusCode == 200) {
       data2 = response.body; //store response as string
       var getID = jsonDecode(data2)['results'][0]['id'];
+      var getFirstname = jsonDecode(data2)['results'][0]['first_name'];
+      var getLastname = jsonDecode(data2)['results'][0]['last_name'];
+      var getSuffix = jsonDecode(data2)['results'][0]['suffix'];
+      var getGender = jsonDecode(data2)['results'][0]['gender'];
       var getUsername = jsonDecode(data2)['results'][0]['username'];
-      var getPhone = jsonDecode(data2)['results'][0]['contactnumber'];
-      UusernameRegisterController.text=getUsername;
-      username=getUsername ;
-      UcellphoneRegisterController.text=getPhone;
+      var getBirthday = jsonDecode(data2)['results'][0]['birthday'];
+      var getRegion = jsonDecode(data2)['results'][0]['region'];
+      var getProvince = jsonDecode(data2)['results'][0]['province'];
+      var getCityMunicipality = jsonDecode(data2)['results'][0]['citymunicipality'];
+      var getBarangay = jsonDecode(data2)['results'][0]['barangay'];
+      var getCellphone = jsonDecode(data2)['results'][0]['contactnumber'];
+      var getProfilepic = jsonDecode(data2)['results'][0]['profile_pic'];
+
       setState(() {
         profileID=getID.toString();
+        UfirstnameRegisterController.text=getFirstname;
+        UlastnameRegisterController.text=getLastname;
+        UsuffixRegisterController.text=getSuffix;
+        UgenderRegisterController.text=getGender;
+        if(UgenderRegisterController.text=="Male"){
+          Umale=true;
+          UsuffixRegisterController.text="Male";
+        }else if(UgenderRegisterController.text=="Female"){
+          Ufemale=true;
+          UsuffixRegisterController.text="Female";
+        }else{
+          Urather=true;
+          UsuffixRegisterController.text="Rather not say";
+        }
+        UbirthdayRegisterController.text=getBirthday;
+        UusernameRegisterController.text=getUsername;
+        username=getUsername;
+
+        VRegion = getRegion;
+        VProvince=getProvince;
+        VCityMunicipality=getCityMunicipality;
+        Vbarangay=getBarangay;
+        UcellphoneRegisterController.text=getCellphone;
+        profilePic  = getProfilepic ;
+
       });
     }
   }
@@ -785,6 +1091,8 @@ class _MyHomePageState extends State<MyHomePage> {
     themeInput=whiteinput;
     themeInputText=black;
     themeAppbard=grey;
+    themeNewCard=white;
+    themeContent=contentWhite;
   }
   Future<void> darkTheme() async {
     themeBase=DarkbaseColor;
@@ -793,7 +1101,8 @@ class _MyHomePageState extends State<MyHomePage> {
     themeInput=darkinput;
     themeInputText=white;
     themeAppbard=white;
-
+    themeNewCard=DarkcardColor;
+    themeContent=contentDark;
   }
 
 
@@ -876,6 +1185,362 @@ class _MyHomePageState extends State<MyHomePage> {
 
   }
 
+
+
+  List<XFile>? _imageFileList;
+
+  set _imageFile(XFile? value) {
+    _imageFileList = value == null ? null : <XFile>[value];
+  }
+
+  dynamic _pickImageError;
+  bool isVideo = false;
+
+  VideoPlayerController? _controller;
+  VideoPlayerController? _toBeDisposed;
+  String? _retrieveDataError;
+
+  final ImagePicker _picker = ImagePicker();
+  final TextEditingController maxWidthController = TextEditingController();
+  final TextEditingController maxHeightController = TextEditingController();
+  final TextEditingController qualityController = TextEditingController();
+
+  Future<void> _playVideo(XFile? file) async {
+    if (file != null && mounted) {
+      await _disposeVideoController();
+      late VideoPlayerController controller;
+      if (kIsWeb) {
+        controller = VideoPlayerController.network(file.path);
+      } else {
+        controller = VideoPlayerController.file(File(file.path));
+      }
+      _controller = controller;
+      // In web, most browsers won't honor a programmatic call to .play
+      // if the video has a sound track (and is not muted).
+      // Mute the video so it auto-plays in web!
+      // This is not needed if the call to .play is the result of user
+      // interaction (clicking on a "play" button, for example).
+      const double volume = kIsWeb ? 0.0 : 1.0;
+      await controller.setVolume(volume);
+      await controller.initialize();
+      await controller.setLooping(true);
+      await controller.play();
+      setState(() {});
+    }
+  }
+  XFile? file = null;
+  Future<void> _onImageButtonPressed(ImageSource source,
+      {BuildContext? context, bool isMultiImage = false}) async {
+    if (_controller != null) {
+      await _controller!.setVolume(0.0);
+    }
+    if (isVideo) {
+      file = await _picker.pickVideo(
+          source: source, maxDuration: const Duration(seconds: 10));
+      await _playVideo(file);
+    } else if (isMultiImage) {
+     double? maxWidth;
+      double? maxHeight;
+      int? quality;
+            try {
+              final List<XFile>? pickedFileList = await _picker.pickMultiImage(
+                maxWidth: maxWidth,
+                maxHeight: maxHeight,
+                imageQuality: quality,
+              );
+              setState(() {
+                _imageFileList = pickedFileList;
+              });
+            } catch (e) {
+              setState(() {
+                _pickImageError = e;
+              });
+            }
+        
+    } else {
+      double? maxWidth;
+      double? maxHeight;
+      int? quality;
+            try {
+              final XFile? pickedFile = await _picker.pickImage(
+                source: source,
+                maxWidth: maxWidth,
+                maxHeight: maxHeight,
+                imageQuality: quality,
+              );
+              setState(() {
+                _imageFile = pickedFile;
+              });
+            } catch (e) {
+              setState(() {
+                _pickImageError = e;
+              });
+            }
+          
+    }
+  }
+
+
+  Future<void> _disposeVideoController() async {
+    if (_toBeDisposed != null) {
+      await _toBeDisposed!.dispose();
+    }
+    _toBeDisposed = _controller;
+    _controller = null;
+  }
+
+  Widget _previewVideo() {
+    final Text? retrieveError = _getRetrieveErrorWidget();
+    if (retrieveError != null) {
+      return retrieveError;
+    }
+    if (_controller == null) {
+      return const Text(
+        'You have not yet picked a video',
+        textAlign: TextAlign.center,
+      );
+    }
+    return Padding(
+      padding: const EdgeInsets.all(10.0),
+      child: AspectRatioVideo(_controller),
+    );
+  }
+
+  Widget _previewImages() {
+    final Text? retrieveError = _getRetrieveErrorWidget();
+    if (retrieveError != null) {
+      return retrieveError;
+    }
+    if (_imageFileList != null) {
+      return Semantics(
+          child: ListView.builder(
+            key: UniqueKey(),
+            itemBuilder: (BuildContext context, int index) {
+              // Why network for web?
+              // See https://pub.dev/packages/image_picker#getting-ready-for-the-web-platform
+              filename=_imageFileList![index].name;
+              imageSelect=_imageFileList![index].path;
+              return Container(
+                child: Column(
+                  children: [    
+                    Semantics(
+                      label: 'image_picker_example_picked_image',
+                      child: kIsWeb
+                          ? Image.network(_imageFileList![index].path)
+                          : Image.file(File(_imageFileList![index].path)),
+                    ),
+                  ],
+                ),
+              );
+            },
+            itemCount: _imageFileList!.length,
+          ),
+          label: 'image_picker_example_picked_images');
+    } else if (_pickImageError != null) {
+      return Text(
+        'Pick image error: $_pickImageError',
+        textAlign: TextAlign.center,
+      );
+    } else {
+      return const Text(
+        'You have not yet picked an image.',
+        textAlign: TextAlign.center,
+      );
+    }
+  }
+
+  Widget _handlePreview() {
+    if (isVideo) {
+      _imageFileList=null;
+      return _previewVideo();
+    } else {
+      file=null;
+      return _previewImages();
+    }
+  }
+
+  Future<void> retrieveLostData() async {
+    final LostDataResponse response = await _picker.retrieveLostData();
+    if (response.isEmpty) {
+      return;
+    }
+    if (response.file != null) {
+      if (response.type == RetrieveType.video) {
+        isVideo = true;
+        await _playVideo(response.file);
+      } else {
+        isVideo = false;
+        setState(() {
+          _imageFile = response.file;
+          _imageFileList = response.files;
+        });
+      }
+    } else {
+      _retrieveDataError = response.exception!.code;
+    }
+  }
+
+
+  Future<void> _displayPickImageDialog(
+      BuildContext context, OnPickImageCallback onPick) async {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Add optional parameters'),
+            content: Column(
+              children: <Widget>[
+                TextField(
+                  controller: maxWidthController,
+                  keyboardType:
+                  const TextInputType.numberWithOptions(decimal: true),
+                  decoration: const InputDecoration(
+                      hintText: 'Enter maxWidth if desired'),
+                ),
+                TextField(
+                  controller: maxHeightController,
+                  keyboardType:
+                  const TextInputType.numberWithOptions(decimal: true),
+                  decoration: const InputDecoration(
+                      hintText: 'Enter maxHeight if desired'),
+                ),
+                TextField(
+                  controller: qualityController,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                      hintText: 'Enter quality if desired'),
+                ),
+              ],
+            ),
+            actions: <Widget>[
+              TextButton(
+                child: const Text('CANCEL'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              TextButton(
+                  child: const Text('PICK'),
+                  onPressed: () {
+                    final double? width = maxWidthController.text.isNotEmpty
+                        ? double.parse(maxWidthController.text)
+                        : null;
+                    final double? height = maxHeightController.text.isNotEmpty
+                        ? double.parse(maxHeightController.text)
+                        : null;
+                    final int? quality = qualityController.text.isNotEmpty
+                        ? int.parse(qualityController.text)
+                        : null;
+                    onPick(width, height, quality);
+                    Navigator.of(context).pop();
+                  }),
+            ],
+          );
+        });
+  }
+  Text? _getRetrieveErrorWidget() {
+    if (_retrieveDataError != null) {
+      final Text result = Text(_retrieveDataError!);
+      _retrieveDataError = null;
+      return result;
+    }
+    return null;
+  }
+
+  @override
+  void deactivate() {
+    if (_controller != null) {
+      _controller!.setVolume(0.0);
+      _controller!.pause();
+    }
+    super.deactivate();
+  }
+
+
+  @override
+  void dispose() {
+    _disposeVideoController();
+    maxWidthController.dispose();
+    maxHeightController.dispose();
+    qualityController.dispose();
+    super.dispose();
+  }
+
+
+
+
+
+
+  String? emailH = "";
+  String? passwordH = "";
+  _getCredentials() async {
+    SharedPreferences emailP = await SharedPreferences.getInstance();
+    SharedPreferences passwordP = await SharedPreferences.getInstance();
+    if(emailP.getString("email") == null||emailP.getString("password")==null){
+      emailLogin.text="";
+      passwordLogin.text="";
+    }else if (emailP.getString("email") != ""||emailP.getString("password") != "") {
+      emailH = emailP.getString("email");
+      passwordH = passwordP.getString("password");
+
+      setState(() {
+        emailLogin.text=emailH.toString();
+        passwordLogin.text=passwordH.toString();
+
+        login();
+      });
+
+    }
+  }
+  _Credentials(emailS,passwordS) async {
+    SharedPreferences emailP = await SharedPreferences.getInstance();
+    SharedPreferences passwordP = await SharedPreferences.getInstance();
+    emailP.setString("email", emailS);
+    passwordP.setString("password", passwordS);
+    return true;
+  }
+  String? regionH = "";
+   String? provinceH = "";
+    String? municipalityH = "";
+     String? barangayH = "";
+  _getPlaces() async {
+   SharedPreferences CPregion = await SharedPreferences.getInstance();
+    SharedPreferences CPprovince = await SharedPreferences.getInstance();
+     SharedPreferences CPmunicipality = await SharedPreferences.getInstance();
+    SharedPreferences CPbarangay = await SharedPreferences.getInstance();
+    if(CPregion.getString("region") == null||CPprovince.getString("province")==null
+    ||CPmunicipality.getString("municipality")==null||CPbarangay.getString("barangay")==null){
+      ORegion="";
+      OProvince="";
+      OCityMunicipality="";
+      Obarangay="";
+    }else if (CPregion.getString("region") != null||CPprovince.getString("province")!=null
+    ||CPmunicipality.getString("municipality")!=null||CPbarangay.getString("barangay")!=null) {
+      regionH=CPregion.getString("region");
+      provinceH=CPprovince.getString("province");
+      municipalityH=CPmunicipality.getString("municipality");
+      barangayH=CPbarangay.getString("barangay");
+      setState(() {
+      ORegion=regionH.toString();
+      OProvince=provinceH.toString();
+      OCityMunicipality=municipalityH.toString();
+      Obarangay=barangayH.toString();
+      print("23423423423423");
+      });
+
+    }
+  }
+   _Places(Cregion,Cprovince,Cmunicipality,Cbarangay) async {
+    SharedPreferences CPregion = await SharedPreferences.getInstance();
+    SharedPreferences CPprovince = await SharedPreferences.getInstance();
+     SharedPreferences CPmunicipality = await SharedPreferences.getInstance();
+    SharedPreferences CPbarangay = await SharedPreferences.getInstance();
+    CPregion.setString("region", Cregion);
+    CPprovince.setString("province", Cprovince);
+    CPmunicipality.setString("municipality", Cmunicipality);
+    CPbarangay.setString("barangay", Cbarangay);
+    return true;
+  }
   void OSindentifyer(){
     final userAgent = html.window.navigator.userAgent.toString().toLowerCase();
     // smartphone
@@ -884,8 +1549,10 @@ class _MyHomePageState extends State<MyHomePage> {
         plattform="androidiphone";
         allToken();
         selectRegion();
+        UselectRegion();
         getUser();
-
+        _getCredentials();
+        _getPlaces();
       });
     }else{
       Navigator.pushAndRemoveUntil<dynamic>(
@@ -903,7 +1570,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override void initState() {
     super.initState();
     Timer(Duration(seconds: 0), () {
-      OSindentifyer();
+      OSindentifyer(); 
     });
 
   }
@@ -938,9 +1605,13 @@ class _MyHomePageState extends State<MyHomePage> {
                                 onPressed: () {
                                   setState(() {
                                     clickContinue="login";
+                                    iconLogin=red;
+                                    iconSignup=dark;
+                                    iconSetting=dark;
+
                                   });
                                 },
-                                icon: Icon(Icons.login,color:_colorFromHex("#6688A0"),size:35),
+                                icon: Icon(Icons.login,color:_colorFromHex(iconLogin),size:35),
                               ),
                               Text("login",style:TextStyle(color:_colorFromHex(themeInputText))),
                             ],
@@ -956,9 +1627,12 @@ class _MyHomePageState extends State<MyHomePage> {
                                 onPressed: () {
                                   setState(() {
                                     clickContinue="false";
+                                    iconSignup=red;
+                                    iconLogin=dark;
+                                    iconSetting=dark;
                                   });
                                 },
-                                icon: Icon(Icons.assignment,color:_colorFromHex("#6688A0"),size:35),
+                                icon: Icon(Icons.assignment,color:_colorFromHex(iconSignup),size:35),
                               ),
                               Text("sign up",style:TextStyle(color:_colorFromHex(themeInputText))),
                             ],
@@ -974,9 +1648,12 @@ class _MyHomePageState extends State<MyHomePage> {
                                 onPressed: () {
                                   setState(() {
                                     clickContinue="setting";
+                                    iconSetting=red;
+                                    iconLogin=dark;
+                                    iconSignup=dark;
                                   });
                                 },
-                                icon: Icon(Icons.settings,color:_colorFromHex("#6688A0"),size:35),
+                                icon: Icon(Icons.settings,color:_colorFromHex(iconSetting),size:35),
                               ),
                               Text("setting",style:TextStyle(color:_colorFromHex(themeInputText))),
                             ],
@@ -1033,7 +1710,7 @@ if(plattform=="androidiphone")
                                           Expanded(
                                             flex:0,
                                             child:Container(
-                                              width:50,
+                                              width:10,
                                             ),
                                           ),
                                           Flexible(
@@ -1043,142 +1720,21 @@ if(plattform=="androidiphone")
                                                 child:Image.asset('assets/logo/klackr_logo.png')
                                             ),
                                           ),
+                                          
+                                          Container(width:7),
                                           Flexible(
                                             flex:5,
                                             child: Column(
                                                 crossAxisAlignment: CrossAxisAlignment.start,
                                                 children: [
                                                   Text("Klackr",style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold,color:_colorFromHex(themeInputText))),
-                                                  Text("Follow friends and discover great",style: TextStyle(color:_colorFromHex("#6688A0"),fontSize: 10,fontWeight: FontWeight.bold)),
-                                                  Text("things in your vicinity and beyond",style: TextStyle(color:_colorFromHex("#6688A0"),fontSize: 10,fontWeight: FontWeight.bold)),
+                                                  Text("Follow friends and discover great",style: TextStyle(color:_colorFromHex(themeContent),fontSize: 10,fontWeight: FontWeight.bold)),
+                                                  Text("things in your vicinity and beyond",style: TextStyle(color:_colorFromHex(themeContent),fontSize: 10,fontWeight: FontWeight.bold)),
                                                 ]),
                                           ),
                                         ]
                                         ),
-                                        Container(
-                                          height: 20,
-                                        ),
-                                        TextButton(
-                                          style: TextButton.styleFrom(
-                                            textStyle: TextStyle(),
-                                          ),
-                                          onPressed: (){
-                                            setState(() {
-                                              lobby="lobby";
-                                            });
-                                          },
-                                          child:Text('< Back to Klacker.world',style:TextStyle(color:_colorFromHex("#6688A0"))),
-                                        ),
-                                        Row(
-                                          children: [
-                                            Container(
-                                              width: 60,
-                                            ),
-                                            Flexible(
-                                              child:Theme(
-                                                data: ThemeData(
-                                                  primarySwatch: Colors.blue,
-                                                  unselectedWidgetColor: _colorFromHex("#6688A0"), // Your color
-                                                ),
-                                                child: Checkbox(
-                                                  value: showBarangay,
-                                                  checkColor: Colors.black,
-                                                  activeColor: _colorFromHex("#6688A0"),
-                                                  onChanged: (value) {
-                                                    setState(() {
-                                                      if(showBarangay==false){
-                                                        showBarangay=true;
-                                                      }else{
-                                                        showBarangay=false;
-                                                      }
-                                                    });
-                                                  },),
-                                              ),
-                                            ),
 
-                                            Flexible(
-                                              flex:9,
-                                              child:      Text("  barangay",style: TextStyle(color:_colorFromHex("#6688A0"))),
-                                            ),
-                                            Container(
-                                              width: 10,
-                                            ),
-                                          ],
-                                        ),
-                                        Row(
-                                          children: [
-                                            Container(
-                                              width: 60,
-                                            ),
-                                            Flexible(
-                                              child:Theme(
-                                                data: ThemeData(
-                                                  primarySwatch: Colors.blue,
-                                                  unselectedWidgetColor: _colorFromHex("#6688A0"), // Your color
-                                                ),
-                                                child: Checkbox(
-                                                  value: showMunicipality,
-                                                  checkColor: Colors.black,
-                                                  activeColor: _colorFromHex("#6688A0"),
-                                                  onChanged: (value) {
-                                                    setState(() {
-                                                      if(showMunicipality==false){
-                                                        showMunicipality=true;
-                                                      }else{
-                                                        showMunicipality=false;
-                                                      }
-                                                    });
-                                                  },),
-                                              ),
-                                            ),
-
-                                            Flexible(
-                                              flex:9,
-                                              child:      Text("  municipality",style: TextStyle(color:_colorFromHex("#6688A0"))),
-                                            ),
-                                            Container(
-                                              width: 10,
-                                            ),
-                                          ],
-                                        ),
-                                        Row(
-                                          children: [
-                                            Container(
-                                              width: 60,
-                                            ),
-                                            Flexible(
-                                              child:  Theme(
-                                                data: ThemeData(
-                                                  primarySwatch: Colors.blue,
-                                                  unselectedWidgetColor: _colorFromHex("#6688A0"), // Your color
-                                                ),
-                                                child: Checkbox(
-                                                  value: themeColor,
-                                                  checkColor: Colors.black,
-                                                  activeColor:_colorFromHex("#6688A0"),
-                                                  onChanged: (value) {
-                                                    setState(() {
-                                                      if(themeColor==false){
-                                                        themeColor=true;
-                                                        darkTheme();
-                                                      }else{
-                                                        themeColor=false;
-                                                        whiteTheme();
-                                                      }
-                                                    });
-                                                  },),
-                                              ),
-                                            ),
-
-                                            Flexible(
-                                              flex:9,
-                                              child:      Text("  Dark Theme",style: TextStyle(color:_colorFromHex("#6688A0"))),
-                                            ),
-                                            Container(
-                                              width: 10,
-                                            ),
-                                          ],
-                                        ),
 
                                       ]
                                   ),
@@ -1203,14 +1759,14 @@ if(plattform=="androidiphone")
                                           child: IntrinsicHeight(
                                             child: Row( children: [
                                               Container(
-                                                width: 5,
+                                                width: 10,
                                               ),
                                               Expanded(
                                                 flex: 10,
                                                 child: Column(
                                                     crossAxisAlignment: CrossAxisAlignment.start,
                                                     children: [
-                                                      Text("Edit Profile",style: TextStyle(fontSize: 25,color:_colorFromHex("#6688A0"))),
+                                                      Text("Edit Profile",style: TextStyle(fontSize: 25,color:_colorFromHex(themeContent))),
                                                       Text("Follow friends and discover great",style: TextStyle(color:Colors.transparent,fontSize: 10,fontWeight: FontWeight.bold)),
                                                       Text("things in your vicinity and beyond",style: TextStyle(color:Colors.transparent,fontSize: 10,fontWeight: FontWeight.bold)),
                                                     ]),
@@ -1237,8 +1793,7 @@ if(plattform=="androidiphone")
                                                           ),
                                                         ),
                                                       ),
-                                                      Text("Inventor & Administrator            ",style: TextStyle(color:Colors.transparent,fontSize: 10,fontWeight: FontWeight.bold)),
-                                                      Text("Leandro Kuya Jun Verceles Jr.  ",style: TextStyle(color:Colors.transparent,fontSize: 10,fontWeight: FontWeight.bold)),
+
                                                     ]),
                                               ),
                                             ]),
@@ -1246,23 +1801,234 @@ if(plattform=="androidiphone")
                                         ),
                                         Container(
                                           height: 0.2,
-                                          color:_colorFromHex("#6688A0"),
+                                          color:_colorFromHex(themeContent),
                                         ),
                                         Container(
                                           height: 10,
                                         ),
                                         Container(
-                                          alignment: Alignment.topLeft,
+                                          alignment: Alignment.topRight,
                                           child:   Padding(
                                             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                            child:  Text("Klackr account no. "+profileID.toString(),style: TextStyle(color: _colorFromHex(themeInputText))),
+                                            child:  Text("Klackr account no. "+profileID.toString(),style: TextStyle(color: _colorFromHex(themeContent))),
                                           ),
                                         ),
                                         Container(
                                           height: 15,
                                         ),
+                                 Row(children:[
+                                   Padding(
+                                     padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                     child:Container(
+                                       height:100,
+                                       width:100,
+                                       child:Image.network(profilePic),
+                                     ),
+                                   ),
+                                 ]),
+                                  Padding(
+                                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                        child:Text("Profile",style:TextStyle(fontSize: 17,fontWeight: FontWeight.bold)),
+                                  ),
 
+                                        
+                                        Container(
+                                          height: 5,
+                                        ),
+                                        Container(
+                                          height: 45,
+                                          child:   Padding(
+                                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                            child: TextField(
+                                              controller: UfirstnameRegisterController,
+                                              decoration: InputDecoration(
+                                                filled: true,
+                                                fillColor: _colorFromHex(themeInput),
+                                                border: OutlineInputBorder(
 
+                                                ),
+                                                hintText: 'First name',
+                                                hintStyle: TextStyle(color:_colorFromHex(themeContent)),
+                                              ),
+                                              style: TextStyle(color: _colorFromHex(themeInputText)),
+                                            ),
+                                          ),
+                                        ),
+                                        Container(
+                                          height: 5,
+                                        ),
+                                        Container(
+                                          height: 45,
+                                          child:   Padding(
+                                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                            child: TextField(
+                                              controller: UlastnameRegisterController,
+                                              decoration: InputDecoration(
+                                                filled: true,
+                                                fillColor: _colorFromHex(themeInput),
+                                                border: OutlineInputBorder(
+
+                                                ),
+                                                hintText: 'Last name',
+                                                hintStyle: TextStyle(color:_colorFromHex(themeContent)),
+                                              ),
+                                              style: TextStyle(color: _colorFromHex(themeInputText)),
+                                            ),
+                                          ),
+                                        ),
+                                        Container(
+                                          height: 5,
+                                        ),
+                                        Container(
+                                          height: 45,
+                                          child:   Padding(
+                                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                            child: TextField(
+                                              controller: UsuffixRegisterController,
+                                              decoration: InputDecoration(
+                                                filled: true,
+                                                fillColor: _colorFromHex(themeInput),
+                                                border: OutlineInputBorder(
+
+                                                ),
+                                                hintText: 'Suffix',
+                                                hintStyle: TextStyle(color:_colorFromHex(themeContent)),
+                                              ),
+                                              style: TextStyle(color:  _colorFromHex(themeInputText)),
+                                            ),
+                                          ),
+                                        ),
+                                        Container(
+                                          height: 15,
+                                        ),
+                                        Row(children: [
+                                          Container(
+                                            width: 10,
+                                          ),
+                                          Text("Gender",textAlign: TextAlign.start,style: TextStyle(color:_colorFromHex(themeContent))),
+                                        ]
+                                        ),
+
+                                        Row(children: [
+                                          Container(
+                                            width: 15,
+                                          ),
+
+                                          Flexible(
+                                            child:Theme(
+                                              data: ThemeData(
+                                                primarySwatch: Colors.blue,
+                                                unselectedWidgetColor: _colorFromHex(themeContent), // Your color
+                                              ),
+                                              child: Checkbox(
+                                                value: Umale,
+                                                checkColor: Colors.white,
+                                                activeColor: _colorFromHex(themeContent),
+                                                onChanged: (value) {
+                                                  setState(() {
+                                                    if(Umale==false){
+                                                      Umale=true;
+                                                      Ufemale=false;
+                                                      Urather=false;
+                                                      setState(() {
+                                                        UgenderRegisterController.text="Male";
+                                                      });
+                                                    }else{
+                                                      Umale=false;
+                                                    }
+                                                  });
+                                                },),
+                                            ),
+                                          ),
+                                          Container(
+                                            width:10,
+                                          ),
+                                          Flexible(
+                                            flex:9,
+                                            child:      Text("Male",style: TextStyle(color:_colorFromHex(themeContent))),
+                                          ),
+                                          Container(
+                                            width:10,
+                                          ),
+                                          Flexible(
+                                            child: Theme(
+                                              data: ThemeData(
+                                                primarySwatch: Colors.blue,
+                                                unselectedWidgetColor: _colorFromHex(themeContent), // Your color
+                                              ),
+                                              child: Checkbox(
+                                                value: Ufemale,
+                                                checkColor: Colors.white,
+                                                activeColor:_colorFromHex(themeContent),
+                                                onChanged: (value) {
+                                                  setState(() {
+                                                    if(Ufemale==false){
+                                                      Ufemale=true;
+                                                      Umale=false;
+                                                      Urather=false;
+                                                      setState(() {
+                                                        UgenderRegisterController.text="Female";
+                                                      });
+                                                    }else{
+                                                      Ufemale=false;
+                                                    }
+                                                  });
+                                                },),
+                                            ),
+                                          ),
+
+                                          Container(
+                                            width:10,
+                                          ),
+                                          Flexible(
+                                            flex:9,
+                                            child:      Text("Female",style: TextStyle(color:_colorFromHex(themeContent))),
+                                          ),
+                                          Container(
+                                            width:10,
+                                          ),
+                                          Flexible(
+
+                                            child: Theme(
+                                              data: ThemeData(
+                                                primarySwatch: Colors.blue,
+                                                unselectedWidgetColor: _colorFromHex(themeContent), // Your color
+                                              ),
+                                              child: Checkbox(
+                                                value: Urather,
+                                                checkColor: Colors.white,
+                                                activeColor:_colorFromHex(themeContent),
+                                                onChanged: (value) {
+                                                  setState(() {
+                                                    if(Urather==false){
+                                                      Urather=true;
+                                                      Ufemale=false;
+                                                      Umale=false;
+                                                      setState(() {
+                                                        UgenderRegisterController.text="Rather not say";
+                                                      });
+                                                    }else{
+                                                      Urather=false;
+                                                    }
+                                                  });
+                                                },),
+                                            ),
+                                          ),
+                                          Container(
+                                            width:10,
+                                          ),
+                                          Flexible(
+                                            flex:0  ,
+                                            child:Text("Rather not say",style: TextStyle(color:_colorFromHex(themeContent))),
+                                          ),
+
+                                        ]
+                                        ),
+
+                                      
+                                        Container(
+                                          height: 5,
+                                        ),
                                         Container(
                                           height: 45,
                                           child:  Stack(
@@ -1278,17 +2044,668 @@ if(plattform=="androidiphone")
 
                                                     ),
                                                     hintText: 'Username',
-                                                    hintStyle: TextStyle(color:_colorFromHex("#6688A0")),
+                                                    hintStyle: TextStyle(color:_colorFromHex(themeContent)),
                                                   ),
-                                                  style: TextStyle(color:  _colorFromHex(themeInputText)),
+                                                  style: TextStyle(color: _colorFromHex(themeInputText)),
                                                 ),
                                               ),
                                             ],
                                           ),
                                         ),
+
+                                        Container(height: 10),
                                         Container(
-                                          height: 5,
+                                          height: 45,
+                                          child:  Stack(
+                                            children: <Widget>[
+                                              Padding(
+                                                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                child: TextField(
+                                                  enabled: false,
+                                                  controller: UbirthdayRegisterController,
+                                                  decoration: InputDecoration(
+                                                    filled: true,
+                                                    fillColor: _colorFromHex(themeInput),
+                                                    border: OutlineInputBorder(
+
+                                                    ),
+                                                    hintText: 'Birthday',
+                                                    hintStyle: TextStyle(color:_colorFromHex(themeContent)),
+                                                  ),
+                                                  style: TextStyle(color: _colorFromHex(themeInputText)),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
                                         ),
+                                        Container(height: 20),
+                                        Container(
+                                          height:100,
+                                          child:Column(crossAxisAlignment: CrossAxisAlignment.stretch,children: [
+                                            Container(
+                                              alignment: Alignment.center,
+                                              child:   Padding(
+                                                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                child: Row(children:[
+                                                  Text("Date of birth",style: TextStyle(color:_colorFromHex(themeContent))),
+                                                ]),
+                                              ),
+                                            ),
+                                            Container(
+                                              height:10,
+                                            ),
+
+                                            Row(children: [
+                                              Container(
+                                                width:20,
+                                              ),
+                                              Flexible(
+                                                flex:2,
+                                                child: DropdownButtonHideUnderline(
+                                                  child: DropdownButton2(
+                                                    isExpanded: true,
+                                                    items: Umonth
+                                                        .map((item) =>
+                                                        DropdownMenuItem<String>(
+                                                          value: item.toString(),
+                                                          child:  Container(
+                                                            alignment:Alignment.center,
+                                                            child:Text(
+                                                              item.toString(),
+                                                              style:  TextStyle(
+                                                                fontSize: 14,
+                                                                fontWeight: FontWeight.bold,
+                                                                color:  _colorFromHex(themeInputText),
+                                                              ),
+                                                              overflow: TextOverflow.ellipsis,
+                                                            ),
+                                                          ),
+                                                        ))
+                                                        .toList(),
+                                                    value: UmonthValue,
+                                                    onChanged: (value) {
+                                                      setState(() {
+                                                        UmonthValue = value as String;
+                                                      });
+                                                    },
+                                                    iconSize: 14,
+                                                    iconEnabledColor:_colorFromHex(themeContent),
+                                                    iconDisabledColor: Colors.grey,
+                                                    buttonHeight: 30,
+                                                    buttonWidth: 100,
+                                                    buttonDecoration: BoxDecoration(
+                                                      borderRadius: BorderRadius.circular(0),
+                                                      border: Border.all(
+                                                        color: Colors.black26,
+                                                      ),
+                                                      color: _colorFromHex(themeInput),
+                                                    ),
+                                                    buttonElevation: 2,
+                                                    itemHeight: 40,
+                                                    itemPadding: const EdgeInsets.only(left: 14, right: 14),
+                                                    dropdownMaxHeight: 200,
+                                                    dropdownWidth: 200,
+                                                    dropdownPadding: null,
+                                                    dropdownDecoration: BoxDecoration(
+                                                      borderRadius: BorderRadius.circular(0),
+                                                      color: _colorFromHex(themeNewCard),
+                                                    ),
+                                                    dropdownElevation: 8,
+                                                    scrollbarRadius: const Radius.circular(40),
+                                                    scrollbarThickness: 6,
+                                                    scrollbarAlwaysShow: true,
+                                                    offset: const Offset(-20, 0),
+                                                  ),
+                                                ),
+                                              ),
+                                              Container(
+                                                width:5,
+                                              ),
+                                              Flexible(
+                                                flex:2  ,
+                                                child: Text("Month",style: TextStyle(color:_colorFromHex(themeContent))),
+                                              ),
+                                              Container(
+                                                width:15,
+                                              ),
+                                              Flexible(
+                                                flex:2,
+                                                child: DropdownButtonHideUnderline(
+                                                  child: DropdownButton2(
+                                                    isExpanded: true,
+                                                    items: day
+                                                        .map((item) =>
+                                                        DropdownMenuItem<String>(
+                                                          value: item.toString(),
+                                                          child:  Container(
+                                                            alignment:Alignment.center,
+                                                            child:Text(
+                                                              item.toString(),
+                                                              style:  TextStyle(
+                                                                fontSize: 14,
+                                                                fontWeight: FontWeight.bold,
+                                                                color:  _colorFromHex(themeInputText),
+                                                              ),
+                                                              overflow: TextOverflow.ellipsis,
+                                                            ),
+                                                          ),
+                                                        ))
+                                                        .toList(),
+                                                    value: UdayValue,
+                                                    onChanged: (value) {
+                                                      setState(() {
+                                                        UdayValue = value as String;
+                                                      });
+                                                    },
+
+                                                    iconSize: 14,
+                                                    iconEnabledColor:_colorFromHex(themeContent),
+                                                    iconDisabledColor: Colors.grey,
+                                                    buttonHeight: 30,
+                                                    buttonWidth: 100,
+
+                                                    buttonDecoration: BoxDecoration(
+                                                      borderRadius: BorderRadius.circular(0),
+                                                      border: Border.all(
+                                                        color: Colors.black26,
+                                                      ),
+                                                      color: _colorFromHex(themeInput),
+                                                    ),
+                                                    buttonElevation: 2,
+                                                    itemHeight: 40,
+                                                    itemPadding: const EdgeInsets.only(left: 14, right: 14),
+                                                    dropdownMaxHeight: 200,
+                                                    dropdownWidth: 200,
+                                                    dropdownPadding: null,
+                                                    dropdownDecoration: BoxDecoration(
+                                                      borderRadius: BorderRadius.circular(0),
+                                                      color: _colorFromHex(themeNewCard),
+                                                    ),
+                                                    dropdownElevation: 8,
+                                                    scrollbarRadius: const Radius.circular(40),
+                                                    scrollbarThickness: 6,
+                                                    scrollbarAlwaysShow: true,
+                                                    offset: const Offset(-20, 0),
+                                                  ),
+                                                ),
+                                              ),
+                                              Container(
+                                                width:5,
+                                              ),
+                                              Flexible(
+                                                flex:2,
+                                                child: Text("Day",style: TextStyle(color:_colorFromHex(themeContent))),
+                                              ),
+                                              Container(width: 15),
+                                              Flexible(
+                                                flex:3,
+                                                child: DropdownButtonHideUnderline(
+                                                  child: DropdownButton2(
+                                                    isExpanded: true,
+                                                    items: year
+                                                        .map((item) =>
+                                                        DropdownMenuItem<String>(
+                                                          value: item.toString(),
+                                                          child:  Container(
+                                                            alignment:Alignment.center,
+                                                            child:Text(
+                                                              item.toString(),
+                                                              style:  TextStyle(
+                                                                fontSize: 14,
+                                                                fontWeight: FontWeight.bold,
+                                                                color:  _colorFromHex(themeInputText),
+                                                              ),
+                                                              overflow: TextOverflow.ellipsis,
+                                                            ),
+                                                          ),
+                                                        ))
+                                                        .toList(),
+                                                    value: UyearValue,
+                                                    onChanged: (value) {
+                                                      setState(() {
+                                                        UyearValue = value as String;
+                                                      });
+                                                    },
+
+                                                    iconSize: 14,
+                                                    iconEnabledColor:_colorFromHex(themeContent),
+                                                    iconDisabledColor: Colors.grey,
+                                                    buttonHeight: 30,
+                                                    buttonWidth: 100,
+
+                                                    buttonDecoration: BoxDecoration(
+                                                      borderRadius: BorderRadius.circular(0),
+                                                      border: Border.all(
+                                                        color: Colors.black26,
+                                                      ),
+                                                      color: _colorFromHex(themeInput),
+                                                    ),
+                                                    buttonElevation: 2,
+                                                    itemHeight: 40,
+                                                    itemPadding: const EdgeInsets.only(left: 14, right: 14),
+                                                    dropdownMaxHeight: 200,
+                                                    dropdownWidth: 200,
+                                                    dropdownPadding: null,
+                                                    dropdownDecoration: BoxDecoration(
+                                                      borderRadius: BorderRadius.circular(0),
+                                                      color: _colorFromHex(themeNewCard),
+                                                    ),
+                                                    dropdownElevation: 8,
+                                                    scrollbarRadius: const Radius.circular(40),
+                                                    scrollbarThickness: 6,
+                                                    scrollbarAlwaysShow: true,
+                                                    offset: const Offset(-20, 0),
+                                                  ),
+                                                ),
+                                              ),
+                                              Container(width: 5),
+                                              Flexible(
+                                                flex:0,
+                                                child: Text("Year",style: TextStyle(color:_colorFromHex(themeContent))),
+                                              ),
+                                            ]
+                                            ),
+
+                                          ]
+                                          ),
+                                        ),
+
+                                        Expanded(
+                                          child: Container(
+                                            height: 45,
+                                            child:   Padding(
+                                              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                              child: DropdownButtonHideUnderline(
+                                                child: DropdownButton2(
+                                                  isExpanded: true,
+                                                  hint: Row(
+                                                    children:  [
+                                                      SizedBox(
+                                                        width: 4,
+                                                      ),
+                                                      Expanded(
+                                                        child: Text(
+                                                          VRegion,
+                                                          style: TextStyle(
+                                                              color: _colorFromHex( placeColor ),fontSize: 9
+                                                          ),
+                                                          overflow: TextOverflow.ellipsis,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  items: Uregion
+                                                      .map((item) =>
+                                                      DropdownMenuItem<String>(
+                                                        value: item,
+                                                        child: Text(
+                                                          item,
+                                                          style:  TextStyle(
+                                                              color:  _colorFromHex( themeInputText ),fontSize: 9
+                                                          ),
+                                                          overflow: TextOverflow.ellipsis,
+                                                        ),
+                                                      ))
+                                                      .toList(),
+                                                  value: UregionValue,
+                                                  onChanged: (value) {
+                                                    setState(() {
+                                                      Timer(Duration(seconds: 0), () {
+                                                        UselectRegion();
+                                                        Uprovince.clear();
+                                                        Ucitymunicipality.clear();
+                                                        UcitymunicipalityValue=null;
+                                                        Ubarangay.clear();
+                                                        UbarangayValue=null;
+                                                        UprovinceValue=null;
+                                                        UgetProvince();
+
+                                                         VProvince="Province";
+                                                        VCityMunicipality="City/Municipality";
+                                                         Vbarangay="Barangay (or nearest barangay)";
+                                                        UbarangayTypeRegisterController.text="";
+                                                      });
+                                                      UregionValue = value as String;
+                                                    });
+                                                  },
+                                                  iconSize: 14,
+                                                  iconEnabledColor: _colorFromHex(themeContent),
+                                                  iconDisabledColor: Colors.grey,
+                                                  buttonHeight: 40,
+                                                  buttonPadding: const EdgeInsets.only(left: 14, right: 14),
+                                                  buttonDecoration: BoxDecoration(
+                                                    borderRadius: BorderRadius.circular(0),
+                                                    border: Border.all(
+                                                      color: Colors.black26,
+                                                    ),
+                                                    color:_colorFromHex(themeInput),
+                                                  ),
+                                                  buttonElevation: 2,
+                                                  itemHeight: 40,
+                                                  itemPadding: const EdgeInsets.only(left: 14, right: 14),
+                                                  dropdownMaxHeight: 200,
+                                                  style: TextStyle(fontSize: 12),
+                                                  dropdownPadding: null,
+                                                  dropdownDecoration: BoxDecoration(
+                                                    borderRadius: BorderRadius.circular(0),
+                                                    color: _colorFromHex(themeNewCard),
+                                                  ),
+                                                  dropdownElevation: 8,
+                                                  scrollbarRadius: const Radius.circular(40),
+                                                  scrollbarThickness: 6,
+                                                  scrollbarAlwaysShow: true,
+                                                  offset: const Offset(-20, 0),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+
+
+                                        ),
+                                        Container(height: 5),
+
+                                        Expanded(
+                                          child: Stack(
+                                            children:[
+                                              Container(
+                                                height: 45,
+                                                child:   Padding(
+                                                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                  child: DropdownButtonHideUnderline(
+                                                    child: DropdownButton2(
+                                                      isExpanded: true,
+                                                      hint: Row(
+                                                        children:  [
+                                                          SizedBox(
+                                                            width: 4,
+                                                          ),
+                                                          Expanded(
+                                                            child: Text(
+                                                              VProvince,
+                                                              style: TextStyle(
+                                                                  color: _colorFromHex( placeColor ),fontSize: 9
+                                                              ),
+                                                              overflow: TextOverflow.ellipsis,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      items: Uprovince.map((item) =>
+                                                          DropdownMenuItem<String>(
+                                                            value: item,
+                                                            child: Text(
+                                                              item,
+                                                              style:  TextStyle(
+                                                                  color: _colorFromHex(themeInputText),fontSize: 9
+                                                              ),
+                                                              overflow: TextOverflow.ellipsis,
+                                                            ),
+                                                          ))
+                                                          .toList(),
+                                                      value: UprovinceValue,
+                                                      onChanged: (value) {
+                                                        setState(() {
+                                                          Ucitymunicipality.clear();
+                                                          UcitymunicipalityValue=null;
+                                                          Ubarangay.clear();
+                                                          UbarangayValue=null;
+                                                          VCityMunicipality="City/Municipality";
+                                                          Vbarangay="Barangay (or nearest barangay)";
+                                                          Timer(Duration(seconds: 0), () {
+                                                            UgetMunicipality();
+                                                            UbarangayTypeRegisterController.text="";
+                                                          });
+                                                          UprovinceValue = value as String;
+                                                        });
+                                                      },
+                                                      iconSize: 14,
+                                                      iconEnabledColor: _colorFromHex(themeContent),
+                                                      iconDisabledColor: Colors.grey,
+                                                      buttonHeight: 40,
+                                                      buttonPadding: const EdgeInsets.only(left: 14, right: 14),
+                                                      buttonDecoration: BoxDecoration(
+                                                        borderRadius: BorderRadius.circular(0),
+                                                        border: Border.all(
+                                                          color: Colors.black26,
+                                                        ),
+                                                        color:_colorFromHex(themeInput),
+                                                      ),
+                                                      buttonElevation: 2,
+                                                      itemHeight: 40,
+                                                      itemPadding: const EdgeInsets.only(left: 14, right: 14),
+                                                      dropdownMaxHeight: 200,
+                                                      dropdownPadding: null,
+                                                      style: TextStyle(fontSize: 12),
+                                                      dropdownDecoration: BoxDecoration(
+                                                        borderRadius: BorderRadius.circular(0),
+                                                        color: _colorFromHex(themeNewCard),
+                                                      ),
+                                                      dropdownElevation: 8,
+                                                      scrollbarRadius: const Radius.circular(40),
+                                                      scrollbarThickness: 6,
+                                                      scrollbarAlwaysShow: true,
+                                                      offset: const Offset(-20, 0),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                              if(UprovinceValue=="NATIONAL CAPITAL REGION - FOURTH DISTRICT"||UprovinceValue=="NATIONAL CAPITAL REGION - MANILA"
+                                                  ||UprovinceValue=="NATIONAL CAPITAL REGION - SECOND DISTRICT"||UprovinceValue=="NATIONAL CAPITAL REGION - THIRD DISTRICT"
+                                                  ||UprovinceValue=="TAGUIG - PATEROS")
+                                                Padding(
+                                                  padding: EdgeInsets.only(left: 20, right: 0,top:30),
+                                                  child:Text(Ucitymunicipality.join(","),style:TextStyle(fontSize:6,color:_colorFromHex(themeInputText))),
+                                                ),
+                                            ],
+                                          ),
+
+
+                                        ),
+                                        Container(height: 5),
+
+                                        Expanded(
+                                          child:
+                                          Container(
+                                            height: 45,
+                                            child:   Padding(
+                                              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                              child: DropdownButtonHideUnderline(
+                                                child: DropdownButton2(
+                                                  isExpanded: true,
+                                                  hint: Row(
+                                                    children:  [
+                                                      SizedBox(
+                                                        width: 4,
+                                                      ),
+                                                      Expanded(
+                                                        child: Text(
+                                                          VCityMunicipality,
+                                                          style: TextStyle(
+
+                                                              color: _colorFromHex( placeColor ),fontSize: 9
+                                                          ),
+                                                          overflow: TextOverflow.ellipsis,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  items: Ucitymunicipality
+                                                      .map((item) =>
+                                                      DropdownMenuItem<String>(
+                                                        value: item,
+                                                        child: Text(
+                                                          item,
+                                                          style: TextStyle(
+
+                                                              color: _colorFromHex(themeInputText),fontSize: 9
+                                                          ),
+                                                          overflow: TextOverflow.ellipsis,
+                                                        ),
+                                                      ))
+                                                      .toList(),
+                                                  value:UcitymunicipalityValue,
+                                                  onChanged: (value) {
+                                                    setState(() {
+                                                      Ubarangay.clear();
+                                                      UbarangayValue=null;
+                                                
+                                                      Vbarangay="Barangay (or nearest barangay)";
+                                                      Timer(Duration(seconds: 0), () {
+                                                        UgetBarangay();
+                                                        UbarangayTypeRegisterController.text="";
+                                                      });
+                                                      UcitymunicipalityValue = value as String;
+                                                    });
+                                                  },
+                                                  iconSize: 14,
+                                                  iconEnabledColor: _colorFromHex(themeContent),
+                                                  iconDisabledColor: Colors.grey,
+                                                  buttonHeight: 40,
+                                                  buttonPadding: const EdgeInsets.only(left: 14, right: 14),
+                                                  buttonDecoration: BoxDecoration(
+                                                    borderRadius: BorderRadius.circular(0),
+                                                    border: Border.all(
+                                                      color: Colors.black26,
+                                                    ),
+                                                    color:_colorFromHex(themeInput),
+                                                  ),
+                                                  buttonElevation: 2,
+                                                  itemHeight: 40,
+                                                  itemPadding: const EdgeInsets.only(left: 14, right: 14),
+                                                  dropdownMaxHeight: 200,
+                                                  style: TextStyle(fontSize: 12),
+                                                  dropdownPadding: null,
+                                                  dropdownDecoration: BoxDecoration(
+                                                    borderRadius: BorderRadius.circular(0),
+                                                    color: _colorFromHex(themeNewCard),
+                                                  ),
+                                                  dropdownElevation: 8,
+                                                  scrollbarRadius: const Radius.circular(40),
+                                                  scrollbarThickness: 6,
+                                                  scrollbarAlwaysShow: true,
+                                                  offset: const Offset(-20, 0),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+
+
+
+
+                                        ),
+
+                                        Container(height: 5),
+
+                                        Expanded(
+                                          child: Container(
+                                            height: 45,
+                                            child:   Padding(
+                                              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                              child: DropdownButtonHideUnderline(
+                                                child: DropdownButton2(
+                                                  isExpanded: true,
+                                                  hint: Row(
+                                                    children:  [
+                                                      SizedBox(
+                                                        width: 4,
+                                                      ),
+                                                      Expanded(
+                                                        child: Text(
+                                                          Vbarangay,
+                                                          style: TextStyle(
+                                                              color: _colorFromHex(placeColor),fontSize: 9
+                                                          ),
+                                                          overflow: TextOverflow.ellipsis,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  items: Ubarangay
+                                                      .map((item) =>
+                                                      DropdownMenuItem<String>(
+                                                        value: item,
+                                                        child: Text(
+                                                          item,
+                                                          style: TextStyle(
+
+                                                              color:  _colorFromHex(themeInputText),fontSize: 9
+                                                          ),
+                                                          overflow: TextOverflow.ellipsis,
+                                                        ),
+                                                      ))
+                                                      .toList(),
+                                                  value:UbarangayValue,
+                                                  onChanged: (value) {
+                                                    setState(() {
+                                                      UbarangayValue = value as String;
+                                                    });
+                                                  },
+                                                  iconSize: 14,
+                                                  iconEnabledColor: _colorFromHex(themeContent),
+                                                  iconDisabledColor: Colors.grey,
+                                                  buttonHeight: 40,
+                                                  buttonPadding: const EdgeInsets.only(left: 14, right: 14),
+                                                  buttonDecoration: BoxDecoration(
+                                                    borderRadius: BorderRadius.circular(0),
+                                                    border: Border.all(
+                                                      color: Colors.black26,
+                                                    ),
+                                                    color:_colorFromHex(themeInput),
+                                                  ),
+                                                  buttonElevation: 2,
+                                                  itemHeight: 40,
+                                                  itemPadding: const EdgeInsets.only(left: 14, right: 14),
+                                                  dropdownMaxHeight: 200,
+                                                  style: TextStyle(fontSize: 12),
+                                                  dropdownPadding: null,
+                                                  dropdownDecoration: BoxDecoration(
+                                                    borderRadius: BorderRadius.circular(0),
+                                                    color: _colorFromHex(themeNewCard),
+                                                  ),
+                                                  dropdownElevation: 8,
+                                                  scrollbarRadius: const Radius.circular(40),
+                                                  scrollbarThickness: 6,
+                                                  scrollbarAlwaysShow: true,
+                                                  offset: const Offset(-20, 0),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+
+
+                                        ),
+                                        Container(height: 5,),
+                                        /* Container(
+                                          height: 45,
+                                          child:   Padding(
+                                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                            child: TextField(
+                                              decoration: InputDecoration(
+                                                filled: true,
+                                                fillColor: _colorFromHex(themeInput),
+                                                border: OutlineInputBorder(
+
+                                                ),
+                                                hintText: '  Type here your barangay if not seen when scrolling in the box above',
+                                                hintStyle: TextStyle(color:_colorFromHex(themeContent),fontSize: 9),
+                                              ),
+                                              style: TextStyle(color:  _colorFromHex(themeInputText)),
+                                              onChanged: (value){
+                                                setState(() {
+                                                  barangayValue=null;
+                                                  barangay.clear();
+                                                  if(barangayTypeRegisterController.text.toString()==""){
+                                                    if(provinceValue!=null){
+                                                      getBarangay();
+                                                    }
+                                                  }
+                                                });
+                                              },
+                                              controller: barangayTypeRegisterController,
+                                            ),
+                                          ),
+                                        ),*/
+                                        Container(height: 5,),
                                         Container(
                                           height: 45,
                                           child:   Padding(
@@ -1301,15 +2718,38 @@ if(plattform=="androidiphone")
                                                 border: OutlineInputBorder(
 
                                                 ),
-                                                hintText: 'Cellphone No.',
-                                                hintStyle: TextStyle(color:_colorFromHex("#6688A0")),
+                                                hintText: '  Cellphone No.(optional)',
+                                                hintStyle: TextStyle(color:_colorFromHex(themeContent),fontSize: 9),
                                               ),
-                                              style: TextStyle(color:  _colorFromHex(themeInputText)),
+                                              style: TextStyle(color:  _colorFromHex(themeInputText),fontSize: 9),
+                                            ),
+                                          ),
+                                        ),
+                                       Container(
+                                         height:20,
+                                       ),
+                                         Container(
+                                          height: 45,
+                                          alignment: Alignment.center,
+                                          child:   Padding(
+                                            padding: EdgeInsets.symmetric(horizontal: 15, vertical: 0),
+                                            child:ElevatedButton(
+                                              child: Text('BACK',style:TextStyle(color: Colors.white)),
+                                              onPressed: () {
+                                                setState(() {
+                                                  lobby="lobby";
+                                                });
+                                              },
+                                              style: ElevatedButton.styleFrom(
+                                                  primary: _colorFromHex("#2786C9"),
+                                                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                                                  textStyle: TextStyle(
+                                                      fontWeight: FontWeight.bold)),
                                             ),
                                           ),
                                         ),
                                         Container(
-                                          height: 15,
+                                          height:30,
                                         ),
                                       ]
                                   ),
@@ -1321,10 +2761,9 @@ if(plattform=="androidiphone")
                       ),
 
                     if(lobby=="lobby")//LOBBY
-
                       Center(
                         child: Container(
-                          height: MediaQuery.of(context).size.height,
+                          height: MediaQuery.of(context).size.height-40,
                           child: Column(
                             children: <Widget>[
                               Column(
@@ -1341,11 +2780,15 @@ if(plattform=="androidiphone")
                                                     onPressed: () {
                                                       setState(() {
                                                         lobbyselect="lobbyposting";
+                                                        iconSetting2 = dark;
+                                                        iconAdd=red;
+                                                        iconVicinity=dark;
+                                                        iconVicinity="00FFFFFF";
                                                       });
                                                     },
-                                                    icon: Icon(Icons.add,color:_colorFromHex("#6688A0"),size:35),
+                                                    icon: Icon(Icons.add,color:_colorFromHex(iconAdd),size:35),
                                                   ),
-                                                  Text("ADD POST",style:TextStyle(color:_colorFromHex(themeInputText))),
+                                                  Text("add post",style:TextStyle(color:_colorFromHex(themeInputText))),
                                                 ],
                                               ),
                                             ),
@@ -1355,15 +2798,45 @@ if(plattform=="androidiphone")
                                             child:Container(
                                               child:Column(
                                                 children:[
-                                                  IconButton(
-                                                    onPressed: () {
-                                                      setState(() {
-                                                        lobbyselect="lobbygetpost";
-                                                      });
-                                                    },
-                                                    icon: Icon(Icons.public,color:_colorFromHex("#6688A0"),size:35),
-                                                  ),
-                                                  Text("STREET",style:TextStyle(color:_colorFromHex(themeInputText))),
+                                                  Material(
+  type: MaterialType.transparency, //Makes it usable on any background color, thanks @IanSmith
+  child: Ink(
+    decoration: BoxDecoration(
+   
+      color: _colorFromHex(iconVicinity),
+      shape: BoxShape.circle,
+    ),
+    child: InkWell(
+      //This keeps the splash effect within the circle
+      borderRadius: BorderRadius.circular(1000.0), //Something large to ensure a circle
+      onTap: (){     setState(() {
+                                                              lobbyselect="";
+
+                                                                setState(() {
+                                                                  lobbyselect="lobbygetpost";
+                                                                  iconSetting2 = dark;
+                                                                  iconAdd=dark;
+                                                                  iconVicinity=red;
+                                                                });
+
+                                                            });},
+      child: Padding(
+        padding:EdgeInsets.all(4),
+        child: Container(
+          height:28,
+          child: Tab(icon: new Image.asset("assets/logo/klackr_logo.png")),
+        ),
+      ),
+    ),
+  )
+),
+                                              
+                                                
+                                                  
+                                                 
+Container(height:5),
+                                                  
+                                                  Text("vicinity",style:TextStyle(color:_colorFromHex(themeInputText))),
                                                 ],
                                               ),
                                             ),
@@ -1377,15 +2850,61 @@ if(plattform=="androidiphone")
                                                     onPressed: () {
                                                       setState(() {
                                                         lobbyselect="lobbyhome";
+                                                        iconSetting2 = red;
+                                                        iconAdd=dark;
+                                                        iconVicinity="00FFFFFF";
                                                       });
                                                     },
-                                                    icon: Icon(Icons.home,color:_colorFromHex("#6688A0"),size:35),
+                                                    icon: Icon(Icons.settings,color:_colorFromHex(iconSetting2),size:35),
                                                   ),
-                                                  Text("HOME",style:TextStyle(color:_colorFromHex(themeInputText))),
+                                                  Text("setting",style:TextStyle(color:_colorFromHex(themeInputText))),
                                                 ],
                                               ),
                                             ),
                                           ),
+                                          if(refreshing=="false")
+                                          Expanded(
+                                            flex:3,
+                                            child:Container(
+                                              child:Column(
+                                                children:[
+                                                  IconButton(
+                                                    onPressed: () {
+                                                      setState(() {
+                                                       refreshing="true";
+                                                       Timer(Duration(seconds: 2), () {
+                                                         fetchData1();
+                                                       });
+                                                      });
+                                                    },
+                                                    icon: Icon(Icons.refresh,color:_colorFromHex(dark),size:35),
+                                                  ),
+                                                  Text("Refresh",style:TextStyle(color:_colorFromHex(themeInputText))),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                          if(refreshing=="true")
+                                            Expanded(
+                                              flex:3,
+                                              child:Container(
+                                                child:Column(
+                                                  children:[
+                                                    Container(
+                                                    
+                                                      child: SizedBox(
+                                                        height: 25,
+                                                        width:25,
+                                                        child: CircularProgressIndicator(
+                                                          color: Colors.red,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Text("Refresh",style:TextStyle(color:_colorFromHex(themeInputText))),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
                                         ]
                                     ),
                                   ),
@@ -1415,19 +2934,20 @@ if(plattform=="androidiphone")
                                                               Expanded(
                                                                 child: Column(
                                                                     children: [
-                                                                      
                                                                       IntrinsicHeight(
                                                                         child: Row( crossAxisAlignment: CrossAxisAlignment.start,children: [
-
                                                                           Expanded(
                                                                             flex:0,
-                                                                            child: Container(
-                                                                              height:45,
-                                                                              width:45,
-                                                                              alignment: Alignment.topLeft,
-                                                                              child: IconButton(onPressed: (){},icon: Icon(Icons.account_circle_rounded,size: 50,color:_colorFromHex("#6688A0"))),
+                                                                            child: Column(
+                                                                              children:[
+                                                                                Container(
+                                                                                  height:45,
+                                                                                  width:45,
+                                                                                  alignment: Alignment.topLeft,
+                                                                                  child: IconButton(onPressed: (){},icon: Icon(Icons.account_circle_rounded,size: 50,color:_colorFromHex(themeContent))),
+                                                                                ),
+                                                                              ],
                                                                             ),
-
                                                                           ),
                                                                           Expanded(
                                                                             flex:0,
@@ -1450,28 +2970,38 @@ if(plattform=="androidiphone")
                                                                                         alignment: Alignment.topLeft,
                                                                                         child:   Padding(
                                                                                           padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                                                          child:  Text(username,style: TextStyle(color:_colorFromHex("#6688A0"),fontWeight: FontWeight.bold,fontSize: 13)),
+                                                                                          child:  Text("Hello",style: TextStyle(color:Colors.transparent,fontWeight: FontWeight.bold,fontSize: 13)),
                                                                                         ),
                                                                                       ),
                                                                                     ),
-                                                                                    Flexible(
-                                                                                      flex:0,
-                                                                                      child: Container(
-                                                                                        height: 35,
+                                                                                   
+                                                                                   Row(
+                                                                                      children:[
+                                                                                        Container(width:5),
+Container(
                                                                                         alignment: Alignment.topLeft,
-                                                                                        child:TextButton(
-                                                                                          style: TextButton.styleFrom(
-                                                                                            textStyle: TextStyle(),
-                                                                                          ),
-                                                                                          onPressed: (){
-                                                                                            setState(() {
+                                                                                        child:   Padding(
+                                                                                          padding: EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+                                                                                          child:  Text(username,style: TextStyle(color:_colorFromHex(themeContent),fontWeight: FontWeight.bold,fontSize: 13)),
+                                                                                        ),
+                                                                                      ),
+                                                                                      ],
+                                                                                    ),
+                                                                                    Row(
+                                                                                      children:[
+                                                                                        Container(width:5),
+ Container(
+
+
+              child:InkWell( child:Text('Edit profile',style:TextStyle(color:_colorFromHex(themeContent))),onTap:(){
+                 setState(() {
                                                                                               lobby="editprofile";
                                                                                             });
-                                                                                          },
-                                                                                          child:Text('Edit profile',style:TextStyle(color:Colors.grey)),
-                                                                                        ),
-                                                                                      ),
+              } ),
+                                                                                     ),
+                                                                                      ],
                                                                                     ),
+                                                                                    
                                                                                   ]
                                                                                   ),
                                                                                 ),
@@ -1485,176 +3015,462 @@ if(plattform=="androidiphone")
                                                                       Container(
                                                                         height: 20,
                                                                       ),
-                                                                      if(edit=="true")
-                                                                        Container(
-                                                                          height: 225,
-                                                                          child:   Padding(
-                                                                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                                            child: TextField(
-                                                                              controller: UpostController,
-                                                                              keyboardType: TextInputType.multiline,
-                                                                              maxLines: 10,
-                                                                              decoration: InputDecoration(
-                                                                                suffixIcon:IntrinsicHeight(
-                                                                                  child: Column(children: [
-                                                                                    IconButton(
-                                                                                      onPressed: () {
-                                                                                        setState(() {
-                                                                                          UpostController.text="";
+                                                                     
+                                                                            if(edit=="true")
+                                                                          Padding(
+                                                                            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                                                                      child: Container(
+                                                                         child:Card(
+                                                                           child:Container(
+                                        
+                                        child:Column(
+                                          children:[
+       Container(
+                                              
+                                                                              child:   Padding(
+                                                                                padding: EdgeInsets.symmetric(horizontal: 15, vertical: 0),
+                                                                                child: TextField(
+                                                                                  onChanged:(value){
+                                                                                UpostController.text=value;
+                                                                                 },
+                                                                                  keyboardType: TextInputType.multiline,
+                                                                                  maxLines: null,
+                                                                                  decoration: InputDecoration(
+                                                                                    border: InputBorder.none,
+                                                                                   // filled: true,
+                                                                                   // fillColor:Colors.white,
+                      
+                                                                                    hintText: "Post in your vicinity [home barangay]",
+                                                                                    hintStyle: TextStyle(color:Colors.black),
+                                                                                  ),
+                                                                                  style: TextStyle(color: Colors.black),
+                                                                                ),
+                                                                              ),
+                                                                            ),
+                                                                                Padding(
+                                                                                padding: EdgeInsets.only(left: 6, top:0),
+                                                                            child:IntrinsicHeight(
+                                                                              child: Row(children: [
+                                                                                IconButton(
+                                                                                  onPressed: () {
+                                                                                    setState(() {
+                                                                                   deleteposting();
+                                                                                    });
+                                                                                  },
+                                                                                  icon:Icon(Icons.delete,color: Colors.red),
+                                                                                ),
+                                                                                IconButton(
+                                                                                  onPressed: () {
+                                                                                    setState(() {
+                                                                                        UpostController.text="";
                                                                                           IDpost="";
                                                                                           CPpost="";
                                                                                           edit="false";
                                                                                           lobbyselect="lobbygetpost";
-                                                                                        });
-                                                                                      },
-                                                                                      icon:Icon(Icons.cancel,color: Colors.black),
-                                                                                    ),
-                                                                                    IconButton(
-                                                                                      onPressed: () {
-                                                                                        setState(() {
-
-                                                                                        });
-                                                                                      },
-                                                                                      icon:Icon(Icons.cancel,color: Colors.transparent),
-                                                                                    ),
-                                                                                    IconButton(
-                                                                                      onPressed: () {
-                                                                                        setState(() {
-
-                                                                                        });
-                                                                                      },
-                                                                                      icon:Icon(Icons.cancel,color:Colors.transparent),
-                                                                                    ),
-
-                                                                                    IconButton(
-                                                                                      onPressed: () {
-                                                                                        setState(() {
-                                                                                          deleteposting();
-                                                                                        });
-                                                                                      },
-                                                                                      icon:Icon(Icons.delete,color: Colors.red),
-                                                                                    ),
-                                                                                  ]),
+                                                                                    });
+                                                                                  },
+                                                                                  icon:Icon(Icons.cancel,color: Colors.black),
                                                                                 ),
-                                                                                filled: true,
-                                                                                fillColor:Colors.white,
-                                                                                border: OutlineInputBorder(
-                                                                                ),
-                                                                                hintText: "",
-                                                                                hintStyle: TextStyle(color:Colors.grey),
+
+                                                                              ]
                                                                               ),
-                                                                              style: TextStyle(color: Colors.black),
                                                                             ),
+                                                                                   ),
+                                          ],
+                                        ),
+                                                                           ),
+                                                                         ),
+                                                                      ),
                                                                           ),
-                                                                        ),
-                                                                      if(edit=="false")
+                                                                         if(edit=="false")
+  Padding(
+                                                                            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                                                                      child: Container(
+                                                                         child:Card(
+                                                                           child:Container(
+                                        
+                                        child:Column(
+                                          children:[
+                                           
+                                                                       Container(
+                                              
+                                                                              child:   Padding(
+                                                                                padding: EdgeInsets.symmetric(horizontal: 15, vertical: 0),
+                                                                                child: TextField(
+                                                                                  controller: postingRegisterController,
+                                                                                  keyboardType: TextInputType.multiline,
+                                                                                  maxLines: null,
+                                                                                  decoration: InputDecoration(
+                                                                                    border: InputBorder.none,
+                                                                                   // filled: true,
+                                                                                   // fillColor:Colors.white,
+                      
+                                                                                    hintText: "Post in your vicinity [home barangay]",
+                                                                                    hintStyle: TextStyle(color:Colors.black),
+                                                                                  ),
+                                                                                  style: TextStyle(color: Colors.black),
+                                                                                ),
+                                                                              ),
+                                                                            ),
+
+                                                                   
+                                                                        Padding(
+                                                                                padding: EdgeInsets.only(left: 6, top:0),
+                                                                            child:IntrinsicHeight(
+                                                                              child: Row(children: [
+                                                                                IconButton(
+                                                                                  onPressed: () {
+                                                                                    setState(() {
+                                                                                      isVideo = true;
+                                                                                      _onImageButtonPressed(ImageSource.gallery);
+                                                                                    });
+                                                                                  },
+                                                                                  icon:Icon(Icons.video_collection,color: Colors.black),
+                                                                                ),
+                                                                                IconButton(
+                                                                                  onPressed: () {
+                                                                                    setState(() {
+                                                                                      isVideo = false;
+                                                                                      _onImageButtonPressed(ImageSource.gallery, context: context);
+                                                                                    });
+                                                                                  },
+                                                                                  icon:Icon(Icons.photo,color: Colors.black),
+                                                                                ),
+
+                                                                              ]
+                                                                              ),
+                                                                            ),
+                                                                                   ),
+                                                                      if(loading=="true")
                                                                         Container(
-                                                                          height: 225,
-                                                                          child:   Padding(
-                                                                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                                            child: TextField(
-                                                                              controller: postingRegisterController,
-                                                                              keyboardType: TextInputType.multiline,
-                                                                              maxLines: 10,
-                                                                              decoration: InputDecoration(
-                                                                                suffixIcon:IntrinsicHeight(
-                                                                                  child: Column(children: [
-                                                                                    IconButton(
-                                                                                      onPressed: () {
-                                                                                        setState(() {
+                                                                          child:Column(
+                                                                            children:[
+                                                                              CircularProgressIndicator(
 
-                                                                                        });
-                                                                                      },
-                                                                                      icon:Icon(Icons.emoji_emotions,color: Colors.black),
-                                                                                    ),
-                                                                                    IconButton(
-                                                                                      onPressed: () {
-                                                                                        setState(() {
-
-                                                                                        });
-                                                                                      },
-                                                                                      icon:Icon(Icons.attach_file,color: Colors.black),
-                                                                                    ),
-                                                                                    IconButton(
-                                                                                      onPressed: () {
-                                                                                        setState(() {
-
-                                                                                        });
-                                                                                      },
-                                                                                      icon:Icon(Icons.public,color: Colors.black),
-                                                                                    ),
-                                                                                  ]),
-                                                                                ),
-                                                                                filled: true,
-                                                                                fillColor:Colors.white,
-                                                                                border: OutlineInputBorder(
-                                                                                ),
-                                                                                hintText: "What's on your mind ?",
-                                                                                hintStyle: TextStyle(color:Colors.black),
                                                                               ),
-                                                                              style: TextStyle(color: Colors.black),
-                                                                            ),
+                                                                            ],
                                                                           ),
                                                                         ),
+                                                                      if(loading=="false")
+                                                                        Container(
+                                                                          child:Column(
+                                                                            children:[
+                                                                              if(_imageFileList!=null||file != null)
+                                                                                Container(
+                                                                                  alignment:Alignment.topRight,
+                                                                                  child:IconButton(
+                                                                                    onPressed: () {
+                                                                                      setState(() {
+                                                                                        _imageFileList=null;
+                                                                                        file=null;
+
+                                                                                      });
+                                                                                    },
+                                                                                    icon:Icon(Icons.cancel,color: Colors.black),
+                                                                                  ),
+                                                                                ),
+                                                                              if(_imageFileList!=null||file != null)
+                                                                               Padding(
+                                                                            padding: EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+                                                                               child: Container(
+                                                                                  height:MediaQuery.of(context).size.height-320,
+                                                                        
+                                                                                  child: Center(
+                                                                                    child: !kIsWeb && defaultTargetPlatform == TargetPlatform.android
+                                                                                        ? FutureBuilder<void>(
+                                                                                      future: retrieveLostData(),
+                                                                                      builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+                                                                                        switch (snapshot.connectionState) {
+                                                                                          case ConnectionState.none:
+                                                                                          case ConnectionState.waiting:
+                                                                                            return const Text(
+                                                                                              'You have not yet picked an image.',
+                                                                                              textAlign: TextAlign.center,
+                                                                                            );
+                                                                                          case ConnectionState.done:
+                                                                                            return _handlePreview();
+                                                                                          default:
+                                                                                            if (snapshot.hasError) {
+                                                                                              return Text(
+                                                                                                'Pick image/video error: ${snapshot.error}}',
+                                                                                                textAlign: TextAlign.center,
+                                                                                              );
+                                                                                            } else {
+                                                                                              return const Text(
+                                                                                                'You have not yet picked an image.',
+                                                                                                textAlign: TextAlign.center,
+                                                                                              );
+                                                                                            }
+                                                                                        }
+                                                                                      },
+                                                                                    )
+                                                                                        : _handlePreview(),
+                                                                                  ),
+                                                                                ),
+                                                                               ),
+                                                                            ],
+                                                                          ),
+                                                                        ),
+                                          ],
+                                        ),
+                                      ),
+
+                                                                         ),
+                                                                       ),
+  ),
+                                                                     
+                                                                    
                                                                       Container(
                                                                         height: 10,
                                                                       ),
-                                                                      Container(
-                                                                        alignment: Alignment.topLeft,
-                                                                        child:   Padding(
-                                                                          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                                          child:TextButton(
-                                                                            style: TextButton.styleFrom(
-                                                                              textStyle: TextStyle(),
-                                                                            ),
-                                                                            onPressed: (){
-                                                                              setState(() {
-                                                                                if(role=="influencer"){
-                                                                                  info="1";
-                                                                                }
-                                                                              });
-                                                                            },
-                                                                            child:Text('Klackr private posts',style:TextStyle(color:_colorFromHex(themeInputText),fontWeight: FontWeight.bold)),
-                                                                          ),
-                                                                        ),
-                                                                      ),
-                                                                      Container(
-                                                                        alignment: Alignment.topLeft,
-                                                                        child:   Padding(
-                                                                          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                                          child:TextButton(
-                                                                            style: TextButton.styleFrom(
-                                                                              textStyle: TextStyle(),
-                                                                            ),
-                                                                            onPressed: (){
-                                                                              setState(() {
-                                                                                if(role=="influencer"){
-                                                                                  info="2";
-                                                                                }
-                                                                              });
-                                                                            },
-                                                                            child:Text('Klackr ads & commercial posts',style:TextStyle(color:_colorFromHex(themeInputText),fontWeight: FontWeight.bold)),
-                                                                          ),
-                                                                        ),
-                                                                      ),
-                                                                      if(role=="influencer")
+                                                                      if(edit=="false")
                                                                         Container(
-                                                                          alignment: Alignment.topLeft,
+                                                                          height: 45,
+                                                                          alignment: Alignment.topRight,
                                                                           child:   Padding(
-                                                                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                                            child:TextButton(
-                                                                              style: TextButton.styleFrom(
-                                                                                textStyle: TextStyle(),
-                                                                              ),
-                                                                              onPressed: (){
+                                                                            padding: EdgeInsets.symmetric(horizontal: 15, vertical: 0),
+                                                                            child:ElevatedButton(
+                                                                              child: Text('KLACK!',style:TextStyle(color: _colorFromHex("#FFF200"))),
+                                                                              onPressed: () {
                                                                                 setState(() {
-                                                                                  info="3";
+                                                                                  if(postingRegisterController.text==""){
+                                                                                    if(allow=="on"){
+                                                                                      allow="off";
+                                                                                      Fluttertoast.showToast(
+                                                                                          msg: "Blank spaces not allowed",
+                                                                                          toastLength: Toast.LENGTH_SHORT,
+                                                                                          gravity: ToastGravity.BOTTOM,
+                                                                                          timeInSecForIosWeb: 3,
+                                                                                          backgroundColor: Colors.red,
+                                                                                          textColor: Colors.black,
+                                                                                          fontSize: 15.0
+                                                                                      );
+                                                                                      Timer(Duration(seconds: 3), () {
+                                                                                        allow="on";
+                                                                                      });
+                                                                                    }
+                                                                                  }else{
+                                                                                    setState(() {
+                                                                                      _Video.clear();
+                                                                                    });
+                                                                                    if(loading=="false"){
+                                                                                      loading="true";
+                                                                                      posting();
+                                                                                    }
+                                                                                  }
                                                                                 });
                                                                               },
-                                                                              child:Text('Klackr Influencer placements',style:TextStyle(color:_colorFromHex(themeInputText),fontWeight: FontWeight.bold)),
+                                                                              style: ElevatedButton.styleFrom(
+                                                                                  primary: _colorFromHex("#2786C9"),
+                                                                                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                                                                                  textStyle: TextStyle(
+                                                                                      fontWeight: FontWeight.bold)),
                                                                             ),
                                                                           ),
                                                                         ),
+                                                                     Column(
+                                                                       children:[
+                                                                         Row(children:[
+                                                                           Container(width:15),
+                                                                           Expanded(
+                                                                           flex:0,
+                                                                           child:Padding(
+                                                                             padding: EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+                                                                             child:Text('Private posts',style:TextStyle(color:_colorFromHex(themeInputText),fontWeight: FontWeight.bold)),
+                                                                           ),
+                                                                           ),
+                                                                      
+                                                                         ]),
+                                                                         Container(height:10),
+                                                                         Row(children:[
+                                                                           Container(width:16),
+                                                                           Expanded(
+                                                                             flex:0,
+                                                                             child:Container(
+                                                                               alignment: Alignment.topLeft,
+                                                                               child:   Padding(
+                                                                                   padding: EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+                                                                                   child:OutlineButton(
+                                                                                     shape: RoundedRectangleBorder(),
+                                                                                     textColor: Colors.grey,
+                                                                                     child:Text('Terms & Conditions',style:TextStyle(color:_colorFromHex(themeInputText),fontWeight: FontWeight.bold)),
+                                                                                     borderSide: BorderSide(
+                                                                                         color: Colors.black, style: BorderStyle.solid,
+                                                                                         width: 2),
+                                                                                     onPressed: () {
+                                                                                       if(role=="influencer"){
+                                                                                         setState(() {
+                                                                                           info="1";
+                                                                                         });
+                                                                                       }
+                                                                                     },
+                                                                                   )
+                                                                               ),
+                                                                             ),
+                                                                           ),
+                                                                           Container(width:5),
+                                                                           Expanded(
+                                                                             flex:0,
+                                                                             child:Container(
+                                                                               alignment: Alignment.topLeft,
+                                                                               child:   Padding(
+                                                                                   padding: EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+                                                                                   child:OutlineButton(
+                                                                                     shape: RoundedRectangleBorder(),
+                                                                                     textColor: Colors.grey,
+                                                                                     child:Text('STATS',style:TextStyle(color:_colorFromHex(themeInputText),fontWeight: FontWeight.bold)),
+                                                                                     borderSide: BorderSide(
+                                                                                         color: Colors.black, style: BorderStyle.solid,
+                                                                                         width: 2),
+                                                                                     onPressed: () {
+                                                                                       if(role=="influencer"){
+                                                                                         setState(() {
+                                                                                           info="4";
+                                                                                         });
+                                                                                       }
+                                                                                     },
+                                                                                   )
+                                                                               ),
+                                                                             ),
+                                                                           ),
+                                                                         ]),
+                                                                         Container(height:10),
+                                                                         Row(children:[
+                                                                           Container(width:15),
+                                                                           Expanded(
+                                                                             flex:0,
+                                                                             child:Padding(
+                                                                               padding: EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+                                                                               child:Text('Ads & commerical posts',style:TextStyle(color:_colorFromHex(themeInputText),fontWeight: FontWeight.bold)),
+                                                                             ),
+                                                                           ),
+                                                                           Container(width:20),
+
+                                                                         ]),
+
+
+                                                                         Container(height:10),
+                                                                         Row(children:[
+                                                                           Container(width:16),
+                                                                           Expanded(
+                                                                             flex:0,
+                                                                             child:Container(
+                                                                               alignment: Alignment.topLeft,
+                                                                               child:   Padding(
+                                                                                   padding: EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+                                                                                   child:OutlineButton(
+                                                                                     shape: RoundedRectangleBorder(),
+                                                                                     textColor: Colors.grey,
+                                                                                     child:Text('Terms & Conditions',style:TextStyle(color:_colorFromHex(themeInputText),fontWeight: FontWeight.bold)),
+                                                                                     borderSide: BorderSide(
+                                                                                         color: Colors.black, style: BorderStyle.solid,
+                                                                                         width: 2),
+                                                                                     onPressed: () {
+                                                                                       if(role=="influencer"){
+                                                                                         setState(() {
+                                                                                           info="2";
+                                                                                         });
+                                                                                       }
+                                                                                     },
+                                                                                   )
+                                                                               ),
+                                                                             ),
+                                                                           ),
+                                                                           Container(width:5),
+                                                                           Expanded(
+                                                                             flex:0,
+                                                                             child:Container(
+                                                                               alignment: Alignment.topLeft,
+                                                                               child:   Padding(
+                                                                                   padding: EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+                                                                                   child:OutlineButton(
+                                                                                     shape: RoundedRectangleBorder(),
+                                                                                     textColor: Colors.grey,
+                                                                                     child:Text('STATS',style:TextStyle(color:_colorFromHex(themeInputText),fontWeight: FontWeight.bold)),
+                                                                                     borderSide: BorderSide(
+                                                                                         color: Colors.black, style: BorderStyle.solid,
+                                                                                         width: 2),
+                                                                                     onPressed: () {
+                                                                                       if(role=="influencer"){
+                                                                                         setState(() {
+                                                                                           info="5";
+                                                                                         });
+                                                                                       }
+                                                                                     },
+                                                                                   )
+                                                                               ),
+                                                                             ),
+                                                                           ),
+                                                                         ]),
+                                                                         Container(height:10),
+                                                                         Row(children:[
+                                                                           Container(width:16),
+                                                                           Expanded(
+                                                                             flex:0,
+                                                                             child:Padding(
+                                                                               padding: EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+                                                                               child:Text('Influencer placements',style:TextStyle(color:_colorFromHex(themeInputText),fontWeight: FontWeight.bold)),
+                                                                             ),
+                                                                           ),
+                                                                           Container(width:33),
+                                                                         ]),
+                                                                         Container(height:10),
+                                                                         Row(children:[
+                                                                           Container(width:16),
+                                                                           Expanded(
+                                                                             flex:0,
+                                                                             child:Container(
+                                                                               alignment: Alignment.topLeft,
+                                                                               child:   Padding(
+                                                                                   padding: EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+                                                                                   child:OutlineButton(
+                                                                                     shape: RoundedRectangleBorder(),
+                                                                                     textColor: Colors.grey,
+                                                                                     child:Text('Terms & Conditions',style:TextStyle(color:_colorFromHex(themeInputText),fontWeight: FontWeight.bold)),
+                                                                                     borderSide: BorderSide(
+                                                                                         color: Colors.black, style: BorderStyle.solid,
+                                                                                         width: 2),
+                                                                                     onPressed: () {
+                                                                                       if(role=="influencer"){
+                                                                                         setState(() {
+                                                                                           info="3";
+                                                                                         });
+                                                                                       }
+                                                                                     },
+                                                                                   )
+                                                                               ),
+                                                                             ),
+                                                                           ),
+                                                                           Container(width:5),
+                                                                           Expanded(
+                                                                             flex:0,
+                                                                             child:Container(
+                                                                               alignment: Alignment.topLeft,
+                                                                               child:   Padding(
+                                                                                   padding: EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+                                                                                   child:OutlineButton(
+                                                                                     shape: RoundedRectangleBorder(),
+                                                                                     textColor: Colors.grey,
+                                                                                     child:Text('STATS',style:TextStyle(color:_colorFromHex(themeInputText),fontWeight: FontWeight.bold)),
+                                                                                     borderSide: BorderSide(
+                                                                                         color: Colors.black, style: BorderStyle.solid,
+                                                                                         width: 2),
+                                                                                     onPressed: () {
+                                                                                       if(role=="influencer"){
+                                                                                         setState(() {
+                                                                                           info="6";
+                                                                                         });
+                                                                                       }
+                                                                                     },
+                                                                                   )
+                                                                               ),
+                                                                             ),
+                                                                           ),
+                                                                         ]),
+                                                                       ]
+                                                                     ),
+
+
                                                                       Container(
                                                                         height: 20,
                                                                       ),
@@ -1700,100 +3516,6 @@ if(plattform=="androidiphone")
                                                                       Container(
                                                                         height:5,
                                                                       ),
-
-                                                                      if(edit=="false")
-                                                                        Container(
-                                                                          height: 45,
-                                                                          alignment: Alignment.center,
-                                                                          child:   Padding(
-                                                                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                                            child:ElevatedButton(
-                                                                              child: Text('KLACK!',style:TextStyle(color: _colorFromHex("#FFF200"))),
-                                                                              onPressed: () {
-                                                                                setState(() {
-                                                                                  if(postingRegisterController.text==""){
-                                                                                    if(allow=="on"){
-                                                                                      allow="off";
-                                                                                      Fluttertoast.showToast(
-                                                                                          msg: "Blank spaces not allowed",
-                                                                                          toastLength: Toast.LENGTH_SHORT,
-                                                                                          gravity: ToastGravity.BOTTOM,
-                                                                                          timeInSecForIosWeb: 3,
-                                                                                          backgroundColor: Colors.red,
-                                                                                          textColor: Colors.black,
-                                                                                          fontSize: 15.0
-                                                                                      );
-                                                                                      Timer(Duration(seconds: 3), () {
-                                                                                        allow="on";
-                                                                                      });
-                                                                                    }
-                                                                                  }else{
-                                                                                    posting();
-                                                                                  }
-                                                                                });
-                                                                              },
-                                                                              style: ElevatedButton.styleFrom(
-                                                                                  primary: _colorFromHex("#2786C9"),
-                                                                                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                                                                                  textStyle: TextStyle(
-                                                                                      fontWeight: FontWeight.bold)),
-                                                                            ),
-                                                                          ),
-                                                                        ),
-                                                                      Container(
-                                                                        height: 40,
-                                                                      ),
-                                                                      Container(
-                                                                        alignment: Alignment.topLeft,
-                                                                        child:   Padding(
-                                                                          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                                          child:TextButton(
-                                                                            style: TextButton.styleFrom(
-                                                                              textStyle: TextStyle(),
-                                                                            ),
-                                                                            onPressed: (){
-                                                                              setState(() {
-                                                                                info="4";
-                                                                              });
-                                                                            },
-                                                                            child:Text('STATS Klackr private posts',style:TextStyle(color:_colorFromHex(themeInputText),fontWeight: FontWeight.bold)),
-                                                                          ),
-                                                                        ),
-                                                                      ),
-                                                                      Container(
-                                                                        alignment: Alignment.topLeft,
-                                                                        child:   Padding(
-                                                                          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                                          child:TextButton(
-                                                                            style: TextButton.styleFrom(
-                                                                              textStyle: TextStyle(),
-                                                                            ),
-                                                                            onPressed: (){
-                                                                              setState(() {
-                                                                                info="5";
-                                                                              });
-                                                                            },
-                                                                            child:Text('STATS Klackr ads & commercial posts',style:TextStyle(color:_colorFromHex(themeInputText),fontWeight: FontWeight.bold)),
-                                                                          ),
-                                                                        ),
-                                                                      ),
-                                                                      Container(
-                                                                        alignment: Alignment.topLeft,
-                                                                        child:   Padding(
-                                                                          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                                          child:TextButton(
-                                                                            style: TextButton.styleFrom(
-                                                                              textStyle: TextStyle(),
-                                                                            ),
-                                                                            onPressed: (){
-                                                                              setState(() {
-                                                                                info="6";
-                                                                              });
-                                                                            },
-                                                                            child:Text('STATS Klackr Influencer placements',style:TextStyle(color:_colorFromHex(themeInputText),fontWeight: FontWeight.bold)),
-                                                                          ),
-                                                                        ),
-                                                                      ),
                                                                       Container(
                                                                           height:30
                                                                       ),
@@ -1835,24 +3557,26 @@ if(plattform=="androidiphone")
                                                                                                     width: 50,
                                                                                                     child:Image.asset('assets/logo/klackr_logo.png')),
                                                                                               ),
+                                                                                             
                                                                                               Expanded(
                                                                                                 flex: 10,
                                                                                                 child: Column(
                                                                                                     crossAxisAlignment: CrossAxisAlignment.start,
                                                                                                     children: [
                                                                                                       Text("Klackr",style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold,color:_colorFromHex(themeInputText))),
-                                                                                                      Text("Follow friends and discover great",style: TextStyle(color:_colorFromHex("#6688A0"),fontSize: 10,fontWeight: FontWeight.bold)),
-                                                                                                      Text("things in your vicinity and beyond",style: TextStyle(color:_colorFromHex("#6688A0"),fontSize: 10,fontWeight: FontWeight.bold)),
+                                                                                                      Text("Follow friends and discover great",style: TextStyle(color:_colorFromHex(themeContent),fontSize: 10,fontWeight: FontWeight.bold)),
+                                                                                                      Text("things in your vicinity and beyond",style: TextStyle(color:_colorFromHex(themeContent),fontSize: 10,fontWeight: FontWeight.bold)),
                                                                                                     ]),
                                                                                               ),
+
                                                                                               Expanded(
                                                                                                 flex: 10,
                                                                                                 child: Column(
                                                                                                     crossAxisAlignment: CrossAxisAlignment.end,
                                                                                                     children: [
                                                                                                       Text("Klackr",style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold,color:Colors.transparent)),
-                                                                                                      Text("Inventor & Administrator            ",style: TextStyle(color:_colorFromHex("#6688A0"),fontSize: 10,fontWeight: FontWeight.bold)),
-                                                                                                      Text("Leandro Kuya Jun Verceles Jr.  ",style: TextStyle(color:_colorFromHex("#6688A0"),fontSize: 10,fontWeight: FontWeight.bold)),
+                                                                                                      Text("Inventor & Administrator            ",style: TextStyle(color:Colors.transparent,fontSize: 10,fontWeight: FontWeight.bold)),
+                                                                                                      Text("Leandro Kuya Jun Verceles Jr.  ",style: TextStyle(color:Colors.transparent,fontSize: 10,fontWeight: FontWeight.bold)),
                                                                                                     ]),
                                                                                               ),
                                                                                             ]),
@@ -1865,9 +3589,13 @@ if(plattform=="androidiphone")
                                                                                           alignment: Alignment.topLeft,
                                                                                           child:   Padding(
                                                                                             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                                                            child:   Text("Klackr private posts ",style: TextStyle(color:_colorFromHex("#6688A0"),fontWeight: FontWeight.bold)),
+                                                                                            child:   Text("Klackr private posts ",style: TextStyle(color:_colorFromHex(themeContent),fontWeight: FontWeight.bold)),
                                                                                           ),
                                                                                         ),
+                                                                                        Container(
+                                                                                          height: 10,
+                                                                                        ),
+
                                                                                         Container(
                                                                                           height: 10,
                                                                                         ),
@@ -1875,17 +3603,7 @@ if(plattform=="androidiphone")
                                                                                           alignment: Alignment.topLeft,
                                                                                           child:   Padding(
                                                                                             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                                                            child:   Text("[TO HOME BARANGAY & FOLLOWERS]",style: TextStyle(color:_colorFromHex("#6688A0"),fontWeight: FontWeight.bold)),
-                                                                                          ),
-                                                                                        ),
-                                                                                        Container(
-                                                                                          height: 10,
-                                                                                        ),
-                                                                                        Container(
-                                                                                          alignment: Alignment.topLeft,
-                                                                                          child:   Padding(
-                                                                                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                                                            child:   Text("Private posts are FREE for subscribers-users and have no limit of frequency of publication (subject to reasonable use). Private posts exclude Klackr ads & commercial posts. ",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                                                                            child:   Text("Private posts are FREE for subscribers-users and have no limit of frequency of publication (subject to reasonable use). Private posts exclude Klackr ads & commercial posts. ",style: TextStyle(color:_colorFromHex(themeContent))),
                                                                                           ),
                                                                                         ),
                                                                                         Container(
@@ -1895,7 +3613,7 @@ if(plattform=="androidiphone")
                                                                                           alignment: Alignment.topLeft,
                                                                                           child:   Padding(
                                                                                             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                                                            child:   Text("Private posts should not aim to advertise or promote businesses, products, services in the commercial sense; otherwise, they should be treated in the other category: Klackr ads & commercial posts. ",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                                                                            child:   Text("Private posts should not aim to advertise or promote businesses, products, services in the commercial sense; otherwise, they should be treated in the other category: Klackr ads & commercial posts. ",style: TextStyle(color:_colorFromHex(themeContent))),
                                                                                           ),
                                                                                         ),
                                                                                         Container(
@@ -1905,7 +3623,7 @@ if(plattform=="androidiphone")
                                                                                           alignment: Alignment.topLeft,
                                                                                           child:   Padding(
                                                                                             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                                                            child:   Text("Ads & commercial posts in the guise of private posts but actually election campaign or partisan political activity to support or defeat a candidate at any time is strictly prohibited. ",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                                                                            child:   Text("Ads & commercial posts in the guise of private posts but actually election campaign or partisan political activity to support or defeat a candidate at any time is strictly prohibited. ",style: TextStyle(color:_colorFromHex(themeContent))),
                                                                                           ),
                                                                                         ),
                                                                                         Container(
@@ -1915,7 +3633,7 @@ if(plattform=="androidiphone")
                                                                                           alignment: Alignment.topLeft,
                                                                                           child:   Padding(
                                                                                             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                                                            child:   Text("Private posts should not aim to advertise or promote businesses, products, services in the commercial sense; otherwise, they should be treated in the other category: Klackr ads & commercial posts. ",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                                                                            child:   Text("Private posts should not aim to advertise or promote businesses, products, services in the commercial sense; otherwise, they should be treated in the other category: Klackr ads & commercial posts. ",style: TextStyle(color:_colorFromHex(themeContent))),
                                                                                           ),
                                                                                         ),
                                                                                         Container(
@@ -1925,7 +3643,7 @@ if(plattform=="androidiphone")
                                                                                           alignment: Alignment.topLeft,
                                                                                           child:   Padding(
                                                                                             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                                                            child:   Text("Also strictly prohibited are fake news and language that are abusive, cursing, cussing, profaning, blaspheming, racist, anti-minority, white supremancy, and intending to destroy the reputation of any person or group whether the latter is a public or government personality, celebrity, private individual, company, business, public or private institution. The defamatory, cyber libel, and other libel rules of the particular jurisdiction shall supplement the liability for fake news and prohibited language indicated herein.  ",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                                                                            child:   Text("Also strictly prohibited are fake news and language that are abusive, cursing, cussing, profaning, blaspheming, racist, anti-minority, white supremancy, and intending to destroy the reputation of any person or group whether the latter is a public or government personality, celebrity, private individual, company, business, public or private institution. The defamatory, cyber libel, and other libel rules of the particular jurisdiction shall supplement the liability for fake news and prohibited language indicated herein.  ",style: TextStyle(color:_colorFromHex(themeContent))),
                                                                                           ),
                                                                                         ),
                                                                                         Container(
@@ -1935,7 +3653,7 @@ if(plattform=="androidiphone")
                                                                                           alignment: Alignment.topLeft,
                                                                                           child:   Padding(
                                                                                             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                                                            child:   Text("The klackr company policies and rules against fake news and prohibited language, or any violation of this rulle may lead to a suspension or total ban on the use of the Klackr platform. ",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                                                                            child:   Text("The klackr company policies and rules against fake news and prohibited language, or any violation of this rulle may lead to a suspension or total ban on the use of the Klackr platform. ",style: TextStyle(color:_colorFromHex(themeContent))),
                                                                                           ),
                                                                                         ),
 
@@ -1946,7 +3664,7 @@ if(plattform=="androidiphone")
                                                                                           alignment: Alignment.topLeft,
                                                                                           child:   Padding(
                                                                                             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                                                            child:   Text("Private posts do not require pre-approval by the Klackr administrator and do not incur any waiting period to get published unlike ads & commercial posts. ",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                                                                            child:   Text("Private posts do not require pre-approval by the Klackr administrator and do not incur any waiting period to get published unlike ads & commercial posts. ",style: TextStyle(color:_colorFromHex(themeContent))),
                                                                                           ),
                                                                                         ),
                                                                                         Container(
@@ -1956,7 +3674,7 @@ if(plattform=="androidiphone")
                                                                                           alignment: Alignment.topLeft,
                                                                                           child:   Padding(
                                                                                             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                                                            child:   Text("The Klackr platform is merely the vessel of your private posts. Hence, the the Klackr company bears no responsibility to the contents of said private posts and the publisher saves harmless from all liabilities and damages the Klackr company, its equity holders, officers, directors, managers, employees, and assigns.  ",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                                                                            child:   Text("The Klackr platform is merely the vessel of your private posts. Hence, the the Klackr company bears no responsibility to the contents of said private posts and the publisher saves harmless from all liabilities and damages the Klackr company, its equity holders, officers, directors, managers, employees, and assigns.  ",style: TextStyle(color:_colorFromHex(themeContent))),
                                                                                           ),
                                                                                         ),
                                                                                         Container(
@@ -1966,7 +3684,7 @@ if(plattform=="androidiphone")
                                                                                           alignment: Alignment.topLeft,
                                                                                           child:   Padding(
                                                                                             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                                                            child:   Text("There are no algorithms on the platfrom so private posts reach 100% the subscribers-users upon their opening of the app. The ads & commercial posts are viewable for 72 hours from the time the material is downloaded. Sharing to followers or to any body else after the subscriber-user receives the original private post is not automatic. If manually shared, it is viewable for another 72 hours from the time of sharing.",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                                                                            child:   Text("There are no algorithms on the platfrom so private posts reach 100% the subscribers-users upon their opening of the app. The ads & commercial posts are viewable for 72 hours from the time the material is downloaded. Sharing to followers or to any body else after the subscriber-user receives the original private post is not automatic. If manually shared, it is viewable for another 72 hours from the time of sharing.",style: TextStyle(color:_colorFromHex(themeContent))),
                                                                                           ),
                                                                                         ),
                                                                                         Container(
@@ -1976,19 +3694,19 @@ if(plattform=="androidiphone")
                                                                                           alignment: Alignment.topLeft,
                                                                                           child:   Padding(
                                                                                             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                                                            child:   Text("Trolling is strictly prohibited on the platform. An immediate permanent ban awaits the trollers once discovered.",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                                                                            child:   Text("Trolling is strictly prohibited on the platform. An immediate permanent ban awaits the trollers once discovered.",style: TextStyle(color:_colorFromHex(themeContent))),
                                                                                           ),
                                                                                         ),
                                                                                         Container(
                                                                                           height: 35,
                                                                                         ),
                                                                                         Container(
-                                                                                          height: 25,
-                                                                                          child:    Padding(
-                                                                                            padding: const EdgeInsets.only(
-                                                                                                left: 120, right:120, bottom: 0,top:0),
+                                                                                          height: 45,
+                                                                                          alignment: Alignment.center,
+                                                                                          child:   Padding(
+                                                                                            padding: EdgeInsets.symmetric(horizontal: 15, vertical: 0),
                                                                                             child:ElevatedButton(
-                                                                                              child: Text('Back'),
+                                                                                              child: Text('BACK',style:TextStyle(color: Colors.white)),
                                                                                               onPressed: () {
                                                                                                 setState(() {
                                                                                                   info="false";
@@ -1996,7 +3714,7 @@ if(plattform=="androidiphone")
                                                                                               },
                                                                                               style: ElevatedButton.styleFrom(
                                                                                                   primary: _colorFromHex("#2786C9"),
-                                                                                                  padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                                                                                                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                                                                                                   textStyle: TextStyle(
                                                                                                       fontWeight: FontWeight.bold)),
                                                                                             ),
@@ -2061,8 +3779,8 @@ if(plattform=="androidiphone")
                                                                                                     crossAxisAlignment: CrossAxisAlignment.start,
                                                                                                     children: [
                                                                                                       Text("Klackr",style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold,color:_colorFromHex(themeInputText))),
-                                                                                                      Text("Follow friends and discover great",style: TextStyle(color:_colorFromHex("#6688A0"),fontSize: 10,fontWeight: FontWeight.bold)),
-                                                                                                      Text("things in your vicinity and beyond",style: TextStyle(color:_colorFromHex("#6688A0"),fontSize: 10,fontWeight: FontWeight.bold)),
+                                                                                                      Text("Follow friends and discover great",style: TextStyle(color:_colorFromHex(themeContent),fontSize: 10,fontWeight: FontWeight.bold)),
+                                                                                                      Text("things in your vicinity and beyond",style: TextStyle(color:_colorFromHex(themeContent),fontSize: 10,fontWeight: FontWeight.bold)),
                                                                                                     ]),
                                                                                               ),
                                                                                               Expanded(
@@ -2071,8 +3789,8 @@ if(plattform=="androidiphone")
                                                                                                     crossAxisAlignment: CrossAxisAlignment.end,
                                                                                                     children: [
                                                                                                       Text("Klackr",style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold,color:Colors.transparent)),
-                                                                                                      Text("Inventor & Administrator            ",style: TextStyle(color:_colorFromHex("#6688A0"),fontSize: 10,fontWeight: FontWeight.bold)),
-                                                                                                      Text("Leandro Kuya Jun Verceles Jr.  ",style: TextStyle(color:_colorFromHex("#6688A0"),fontSize: 10,fontWeight: FontWeight.bold)),
+                                                                                                      Text("Inventor & Administrator            ",style: TextStyle(color:Colors.transparent,fontSize: 10,fontWeight: FontWeight.bold)),
+                                                                                                      Text("Leandro Kuya Jun Verceles Jr.  ",style: TextStyle(color:Colors.transparent,fontSize: 10,fontWeight: FontWeight.bold)),
                                                                                                     ]),
                                                                                               ),
                                                                                             ]),
@@ -2085,9 +3803,13 @@ if(plattform=="androidiphone")
                                                                                           alignment: Alignment.topLeft,
                                                                                           child:   Padding(
                                                                                             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                                                            child:   Text("Klackr ads & commercial posts ",style: TextStyle(color:_colorFromHex("#6688A0"),fontWeight: FontWeight.bold)),
+                                                                                            child:   Text("Klackr ads & commercial posts ",style: TextStyle(color:_colorFromHex(themeContent),fontWeight: FontWeight.bold)),
                                                                                           ),
                                                                                         ),
+                                                                                        Container(
+                                                                                          height: 10,
+                                                                                        ),
+
                                                                                         Container(
                                                                                           height: 10,
                                                                                         ),
@@ -2095,17 +3817,7 @@ if(plattform=="androidiphone")
                                                                                           alignment: Alignment.topLeft,
                                                                                           child:   Padding(
                                                                                             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                                                            child:   Text("[TO HOME BARANGAY & FOLLOWERS]",style: TextStyle(color:_colorFromHex("#6688A0"),fontWeight: FontWeight.bold)),
-                                                                                          ),
-                                                                                        ),
-                                                                                        Container(
-                                                                                          height: 10,
-                                                                                        ),
-                                                                                        Container(
-                                                                                          alignment: Alignment.topLeft,
-                                                                                          child:   Padding(
-                                                                                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                                                            child:   Text("Your advertisments and commercial posts are FREE for this beta test. ",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                                                                            child:   Text("Your advertisments and commercial posts are FREE for this beta test. ",style: TextStyle(color:_colorFromHex(themeContent))),
                                                                                           ),
                                                                                         ),
                                                                                         Container(
@@ -2115,7 +3827,7 @@ if(plattform=="androidiphone")
                                                                                           alignment: Alignment.topLeft,
                                                                                           child:   Padding(
                                                                                             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                                                            child:   Text("An ad or commercial post is evaluated by the Klackr.world administrator and if within 48 hours there is no reply, it is deemed as approved and will automatically be posted unless there is a violation of company rules then which it may be taken down at anytime. ",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                                                                            child:   Text("An ad or commercial post is evaluated by the Klackr.world administrator and if within 48 hours there is no reply, it is deemed as approved and will automatically be posted unless there is a violation of company rules then which it may be taken down at anytime. ",style: TextStyle(color:_colorFromHex(themeContent))),
                                                                                           ),
                                                                                         ),
                                                                                         Container(
@@ -2125,7 +3837,7 @@ if(plattform=="androidiphone")
                                                                                           alignment: Alignment.topLeft,
                                                                                           child:   Padding(
                                                                                             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                                                            child:   Text("Ads & commercial posts in the guise of private posts but actually election campaign or partisan political activity to support or defeat a candidate at any time is strictly prohibited. ",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                                                                            child:   Text("Ads & commercial posts in the guise of private posts but actually election campaign or partisan political activity to support or defeat a candidate at any time is strictly prohibited. ",style: TextStyle(color:_colorFromHex(themeContent))),
                                                                                           ),
                                                                                         ),
                                                                                         Container(
@@ -2135,7 +3847,7 @@ if(plattform=="androidiphone")
                                                                                           alignment: Alignment.topLeft,
                                                                                           child:   Padding(
                                                                                             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                                                            child:   Text("Ads & commercial posts in the context of an election campaign or partisan political activity to support or defeat a candidate or partylist party at any time are strictly prohibited  without the approval of the Klackr administrator.",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                                                                            child:   Text("Ads & commercial posts in the context of an election campaign or partisan political activity to support or defeat a candidate or partylist party at any time are strictly prohibited  without the approval of the Klackr administrator.",style: TextStyle(color:_colorFromHex(themeContent))),
                                                                                           ),
                                                                                         ),
                                                                                         Container(
@@ -2145,7 +3857,7 @@ if(plattform=="androidiphone")
                                                                                           alignment: Alignment.topLeft,
                                                                                           child:   Padding(
                                                                                             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                                                            child:   Text("The post may be in the nature of a discount.  ",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                                                                            child:   Text("The post may be in the nature of a discount.  ",style: TextStyle(color:_colorFromHex(themeContent))),
                                                                                           ),
                                                                                         ),
                                                                                         Container(
@@ -2155,7 +3867,7 @@ if(plattform=="androidiphone")
                                                                                           alignment: Alignment.topLeft,
                                                                                           child:   Padding(
                                                                                             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                                                            child:   Text("Publication by the same person, store, outlet, company, or business outfit shall be limited to two posts per week. The ad or commercial post expires in 72 hours from the time of publication. ",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                                                                            child:   Text("Publication by the same person, store, outlet, company, or business outfit shall be limited to two posts per week. The ad or commercial post expires in 72 hours from the time of publication. ",style: TextStyle(color:_colorFromHex(themeContent))),
                                                                                           ),
                                                                                         ),
 
@@ -2166,7 +3878,7 @@ if(plattform=="androidiphone")
                                                                                           alignment: Alignment.topLeft,
                                                                                           child:   Padding(
                                                                                             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                                                            child:   Text("Any strategy to duplicate persons or entities acting as separate publishers but discovered to be actually the same person or entity just to avoid the two posts per week limitation shall be dealt with severely and may lead to an immediate permanent ban from further publishing and/or use of the platform.  ",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                                                                            child:   Text("Any strategy to duplicate persons or entities acting as separate publishers but discovered to be actually the same person or entity just to avoid the two posts per week limitation shall be dealt with severely and may lead to an immediate permanent ban from further publishing and/or use of the platform.  ",style: TextStyle(color:_colorFromHex(themeContent))),
                                                                                           ),
                                                                                         ),
                                                                                         Container(
@@ -2176,7 +3888,7 @@ if(plattform=="androidiphone")
                                                                                           alignment: Alignment.topLeft,
                                                                                           child:   Padding(
                                                                                             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                                                            child:   Text("The publisher of the ad or  commercial post shall have the total responsibility of securing the necessary clearance or permit from the regulating agencies for the posting, if required. The publisher shall save free from any liability the Klackr company or any of its equity holders, officers, directors, administrator, managers, employees, and assigns because of the post.  ",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                                                                            child:   Text("The publisher of the ad or  commercial post shall have the total responsibility of securing the necessary clearance or permit from the regulating agencies for the posting, if required. The publisher shall save free from any liability the Klackr company or any of its equity holders, officers, directors, administrator, managers, employees, and assigns because of the post.  ",style: TextStyle(color:_colorFromHex(themeContent))),
                                                                                           ),
                                                                                         ),
                                                                                         Container(
@@ -2186,7 +3898,7 @@ if(plattform=="androidiphone")
                                                                                           alignment: Alignment.topLeft,
                                                                                           child:   Padding(
                                                                                             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                                                            child:   Text("Strictly prohibited are fake news and language that are abusive, cursing, cussing, profaning, blaspheming, racist, anti-minority, white supremancy, and intending to destroy the reputation of any person or group whether the latter is a public or government personality, celebrity, private individual, company, business, public or private institution. The defamatory, cyber libel, and other libel rules of the particular jurisdiction shall supplement the liability for fake news and prohibited language indicated herein.  ",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                                                                            child:   Text("Strictly prohibited are fake news and language that are abusive, cursing, cussing, profaning, blaspheming, racist, anti-minority, white supremancy, and intending to destroy the reputation of any person or group whether the latter is a public or government personality, celebrity, private individual, company, business, public or private institution. The defamatory, cyber libel, and other libel rules of the particular jurisdiction shall supplement the liability for fake news and prohibited language indicated herein.  ",style: TextStyle(color:_colorFromHex(themeContent))),
                                                                                           ),
                                                                                         ),
                                                                                         Container(
@@ -2196,7 +3908,7 @@ if(plattform=="androidiphone")
                                                                                           alignment: Alignment.topLeft,
                                                                                           child:   Padding(
                                                                                             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                                                            child:   Text("The klackr company policies and rules against fake news and prohibited language may lead to a suspension or total ban on the use of the Klackr platform.",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                                                                            child:   Text("The klackr company policies and rules against fake news and prohibited language may lead to a suspension or total ban on the use of the Klackr platform.",style: TextStyle(color:_colorFromHex(themeContent))),
                                                                                           ),
                                                                                         ),
                                                                                         Container(
@@ -2206,7 +3918,7 @@ if(plattform=="androidiphone")
                                                                                           alignment: Alignment.topLeft,
                                                                                           child:   Padding(
                                                                                             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                                                            child:   Text("The Klackr platform is merely the vessel of your ads & commercial posts. Hence, the the Klackr company bears no responsibility to the contents of said ads & commercial posts and the publisher saves harmless from all liabilities and damages the Klackr company, its equity holders, officers, directors, managers, employees, and assigns.     ",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                                                                            child:   Text("The Klackr platform is merely the vessel of your ads & commercial posts. Hence, the the Klackr company bears no responsibility to the contents of said ads & commercial posts and the publisher saves harmless from all liabilities and damages the Klackr company, its equity holders, officers, directors, managers, employees, and assigns.     ",style: TextStyle(color:_colorFromHex(themeContent))),
                                                                                           ),
                                                                                         ),
                                                                                         Container(
@@ -2216,7 +3928,7 @@ if(plattform=="androidiphone")
                                                                                           alignment: Alignment.topLeft,
                                                                                           child:   Padding(
                                                                                             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                                                            child:   Text("There are no algorithms on the platfrom so ads & commerical posts reach 100% the subscribers-users upon their opening of the app. The ads & commercial posts are viewable for 72 hours from the time the material is downloaded. Sharing to followers or to any body else after the subscriber-user receives the original ad or commericial post is not automatic. If manually shared, it is viewable for another 72 hours from the time of sharing.",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                                                                            child:   Text("There are no algorithms on the platfrom so ads & commerical posts reach 100% the subscribers-users upon their opening of the app. The ads & commercial posts are viewable for 72 hours from the time the material is downloaded. Sharing to followers or to any body else after the subscriber-user receives the original ad or commericial post is not automatic. If manually shared, it is viewable for another 72 hours from the time of sharing.",style: TextStyle(color:_colorFromHex(themeContent))),
                                                                                           ),
                                                                                         ),
                                                                                         Container(
@@ -2226,7 +3938,7 @@ if(plattform=="androidiphone")
                                                                                           alignment: Alignment.topLeft,
                                                                                           child:   Padding(
                                                                                             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                                                            child:   Text("Trolling is strictly prohibited on the platform. An immediate permanent ban awaits the trollers once discovered.",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                                                                            child:   Text("Trolling is strictly prohibited on the platform. An immediate permanent ban awaits the trollers once discovered.",style: TextStyle(color:_colorFromHex(themeContent))),
                                                                                           ),
                                                                                         ),
                                                                                         Container(
@@ -2236,19 +3948,19 @@ if(plattform=="androidiphone")
                                                                                           alignment: Alignment.topLeft,
                                                                                           child:   Padding(
                                                                                             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                                                            child:   Text("Once the ad or commercial post is approved or denied with 48 hours, the administrator shall send a direct message (no reply) to the email address of the personal publisher. If there is no message within the 48 hours, the ad or commerical post is deemed approved of publication. This is automatic, no intervention from the publisher necessary. ",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                                                                            child:   Text("Once the ad or commercial post is approved or denied with 48 hours, the administrator shall send a direct message (no reply) to the email address of the personal publisher. If there is no message within the 48 hours, the ad or commerical post is deemed approved of publication. This is automatic, no intervention from the publisher necessary. ",style: TextStyle(color:_colorFromHex(themeContent))),
                                                                                           ),
                                                                                         ),
                                                                                         Container(
                                                                                           height: 35,
                                                                                         ),
                                                                                         Container(
-                                                                                          height: 25,
-                                                                                          child:    Padding(
-                                                                                            padding: const EdgeInsets.only(
-                                                                                                left: 120, right:120, bottom: 0,top:0),
+                                                                                          height: 45,
+                                                                                          alignment: Alignment.center,
+                                                                                          child:   Padding(
+                                                                                            padding: EdgeInsets.symmetric(horizontal: 15, vertical: 0),
                                                                                             child:ElevatedButton(
-                                                                                              child: Text('Back'),
+                                                                                              child: Text('BACK',style:TextStyle(color: Colors.white)),
                                                                                               onPressed: () {
                                                                                                 setState(() {
                                                                                                   info="false";
@@ -2256,7 +3968,7 @@ if(plattform=="androidiphone")
                                                                                               },
                                                                                               style: ElevatedButton.styleFrom(
                                                                                                   primary: _colorFromHex("#2786C9"),
-                                                                                                  padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                                                                                                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                                                                                                   textStyle: TextStyle(
                                                                                                       fontWeight: FontWeight.bold)),
                                                                                             ),
@@ -2321,8 +4033,8 @@ if(plattform=="androidiphone")
                                                                                                     crossAxisAlignment: CrossAxisAlignment.start,
                                                                                                     children: [
                                                                                                       Text("Klackr",style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold,color:_colorFromHex(themeInputText))),
-                                                                                                      Text("Follow friends and discover great",style: TextStyle(color:_colorFromHex("#6688A0"),fontSize: 10,fontWeight: FontWeight.bold)),
-                                                                                                      Text("things in your vicinity and beyond",style: TextStyle(color:_colorFromHex("#6688A0"),fontSize: 10,fontWeight: FontWeight.bold)),
+                                                                                                      Text("Follow friends and discover great",style: TextStyle(color:_colorFromHex(themeContent),fontSize: 10,fontWeight: FontWeight.bold)),
+                                                                                                      Text("things in your vicinity and beyond",style: TextStyle(color:_colorFromHex(themeContent),fontSize: 10,fontWeight: FontWeight.bold)),
                                                                                                     ]),
                                                                                               ),
                                                                                               Expanded(
@@ -2331,8 +4043,8 @@ if(plattform=="androidiphone")
                                                                                                     crossAxisAlignment: CrossAxisAlignment.end,
                                                                                                     children: [
                                                                                                       Text("Klackr",style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold,color:Colors.transparent)),
-                                                                                                      Text("Inventor & Administrator            ",style: TextStyle(color:_colorFromHex("#6688A0"),fontSize: 10,fontWeight: FontWeight.bold)),
-                                                                                                      Text("Leandro Kuya Jun Verceles Jr.  ",style: TextStyle(color:_colorFromHex("#6688A0"),fontSize: 10,fontWeight: FontWeight.bold)),
+                                                                                                      Text("Inventor & Administrator            ",style: TextStyle(color:Colors.transparent,fontSize: 10,fontWeight: FontWeight.bold)),
+                                                                                                      Text("Leandro Kuya Jun Verceles Jr.  ",style: TextStyle(color:Colors.transparent,fontSize: 10,fontWeight: FontWeight.bold)),
                                                                                                     ]),
                                                                                               ),
                                                                                             ]),
@@ -2345,19 +4057,13 @@ if(plattform=="androidiphone")
                                                                                           alignment: Alignment.topLeft,
                                                                                           child:   Padding(
                                                                                             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                                                            child:   Text("Klackr Influencer placements",style: TextStyle(color:_colorFromHex("#6688A0"),fontWeight: FontWeight.bold)),
+                                                                                            child:   Text("Klackr Influencer placements",style: TextStyle(color:_colorFromHex(themeContent),fontWeight: FontWeight.bold)),
                                                                                           ),
                                                                                         ),
                                                                                         Container(
                                                                                           height: 10,
                                                                                         ),
-                                                                                        Container(
-                                                                                          alignment: Alignment.topLeft,
-                                                                                          child:   Padding(
-                                                                                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                                                            child:   Text("[TO MAXIMUM AREA PER CONTRACT OR SMALLER IPAs INSIDE THEREOF & FOLLOWERS]",style: TextStyle(color:_colorFromHex("#6688A0"),fontWeight: FontWeight.bold)),
-                                                                                          ),
-                                                                                        ),
+
 
                                                                                         Container(
                                                                                           height: 10,
@@ -2369,29 +4075,11 @@ if(plattform=="androidiphone")
                                                                                               alignment: Alignment.topLeft,
                                                                                               child:   Padding(
                                                                                                 padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                                                                child:    Text("Construct your INFLUENCIAL PLACEMENT AREA/S (IPAs)",style: TextStyle(color:_colorFromHex("#6688A0"),fontWeight: FontWeight.w500)
+                                                                                                child:    Text("Construct your INFLUENCIAL PLACEMENT AREA/S (IPAs)",style: TextStyle(color:_colorFromHex(themeContent),fontWeight: FontWeight.w500)
                                                                                                 ),
                                                                                               ),),
                                                                                           ),
-                                                                                          Flexible(
-                                                                                            flex:2,
-                                                                                            child: Container(
-                                                                                              alignment: Alignment.topLeft,
-                                                                                              child:   Padding(
-                                                                                                padding: EdgeInsets.symmetric(horizontal: 0, vertical: 0),
-                                                                                                child:TextButton(
-                                                                                                    style: TextButton.styleFrom(
-                                                                                                      textStyle: TextStyle(),
-                                                                                                    ),
-                                                                                                    onPressed: (){
-                                                                                                      setState(() {
 
-                                                                                                      });
-                                                                                                    },
-                                                                                                    child:Text('click to go',style:TextStyle(color:Colors.red))),
-                                                                                              ),
-                                                                                            ),
-                                                                                          ),
                                                                                         ]
                                                                                         ),
                                                                                         Row(children: [
@@ -2401,20 +4089,11 @@ if(plattform=="androidiphone")
                                                                                               alignment: Alignment.topLeft,
                                                                                               child:   Padding(
                                                                                                 padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                                                                child:    Text("IPA in play 3",style: TextStyle(color:_colorFromHex("#6688A0"),fontWeight: FontWeight.w500)
+                                                                                                child:    Text("IPA in play 3",style: TextStyle(color:_colorFromHex(themeContent),fontWeight: FontWeight.w500)
                                                                                                 ),
                                                                                               ),),
                                                                                           ),
-                                                                                          Flexible(
 
-                                                                                            child:    Container(
-                                                                                              alignment: Alignment.topLeft,
-                                                                                              child:   Padding(
-                                                                                                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                                                                child:    Text("scroll 1-10 etc.",style: TextStyle(color:Colors.red)
-                                                                                                ),
-                                                                                              ),),
-                                                                                          ),
                                                                                         ]
                                                                                         ),
                                                                                         Container(
@@ -2424,7 +4103,7 @@ if(plattform=="androidiphone")
                                                                                           alignment: Alignment.topLeft,
                                                                                           child:   Padding(
                                                                                             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                                                            child:   Text("Influencers (i.e., candidates and/or partlylist parties for the May 2022 elections) may publish their propaganda in their conracted area or any part inside thereof as Influencer placements.  ",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                                                                            child:   Text("Influencers (i.e., candidates and/or partlylist parties for the May 2022 elections) may publish their propaganda in their conracted area or any part inside thereof as Influencer placements.  ",style: TextStyle(color:_colorFromHex(themeContent))),
                                                                                           ),
                                                                                         ),
                                                                                         Container(
@@ -2434,7 +4113,7 @@ if(plattform=="androidiphone")
                                                                                           alignment: Alignment.topLeft,
                                                                                           child:   Padding(
                                                                                             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                                                            child:   Text("The Klackr platform is merely the vessel of your Influencer placements. Hence, the the Klackr company bears no responsibility to the contents of said Influencer placements and the Influencer publisher saves harmless from all liabilities and damages the Klackr company, its equity holders, officers, directors,  employees, managers, and asssigns.",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                                                                            child:   Text("The Klackr platform is merely the vessel of your Influencer placements. Hence, the the Klackr company bears no responsibility to the contents of said Influencer placements and the Influencer publisher saves harmless from all liabilities and damages the Klackr company, its equity holders, officers, directors,  employees, managers, and asssigns.",style: TextStyle(color:_colorFromHex(themeContent))),
                                                                                           ),
                                                                                         ),
                                                                                         Container(
@@ -2444,7 +4123,7 @@ if(plattform=="androidiphone")
                                                                                           alignment: Alignment.topLeft,
                                                                                           child:   Padding(
                                                                                             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                                                            child:   Text("Until May 7, 2022 or two days before election day,  the Influencer considered as a single candidate group will be entitled to four propaganda placements published per week. An Influencer group with a maximum of 10 Influencers in the group, however, will be entitled to 12 propaganda placements published per week. The propaganda placements are cumulative and unused placements may be carried over to the next week, and so forth. ",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                                                                            child:   Text("Until May 7, 2022 or two days before election day,  the Influencer considered as a single candidate group will be entitled to four propaganda placements published per week. An Influencer group with a maximum of 10 Influencers in the group, however, will be entitled to 12 propaganda placements published per week. The propaganda placements are cumulative and unused placements may be carried over to the next week, and so forth. ",style: TextStyle(color:_colorFromHex(themeContent))),
                                                                                           ),
                                                                                         ),
                                                                                         Container(
@@ -2454,7 +4133,7 @@ if(plattform=="androidiphone")
                                                                                           alignment: Alignment.topLeft,
                                                                                           child:   Padding(
                                                                                             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                                                            child:   Text("Strictly prohibited are fake news and language that are abusive, cursing, cussing, profaning, blaspheming, racist, anti-minority, white supremancy, and intending to destroy the reputation of any person or group whether the latter is a public or government personality, celebrity, private individual, company, business, public or private institution. The defamatory, cyber libel, and other libel rules of the particular jurisdiction shall supplement the liability for fake news and prohibited language indicated herein.  ",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                                                                            child:   Text("Strictly prohibited are fake news and language that are abusive, cursing, cussing, profaning, blaspheming, racist, anti-minority, white supremancy, and intending to destroy the reputation of any person or group whether the latter is a public or government personality, celebrity, private individual, company, business, public or private institution. The defamatory, cyber libel, and other libel rules of the particular jurisdiction shall supplement the liability for fake news and prohibited language indicated herein.  ",style: TextStyle(color:_colorFromHex(themeContent))),
                                                                                           ),
                                                                                         ),
                                                                                         Container(
@@ -2464,7 +4143,7 @@ if(plattform=="androidiphone")
                                                                                           alignment: Alignment.topLeft,
                                                                                           child:   Padding(
                                                                                             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                                                            child:   Text("The Influencer placements do not require pre-approval by the Klackr administrator or incur any waiting period before their publication unlike ads & commerical posts.",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                                                                            child:   Text("The Influencer placements do not require pre-approval by the Klackr administrator or incur any waiting period before their publication unlike ads & commerical posts.",style: TextStyle(color:_colorFromHex(themeContent))),
                                                                                           ),
                                                                                         ),
 
@@ -2475,7 +4154,7 @@ if(plattform=="androidiphone")
                                                                                           alignment: Alignment.topLeft,
                                                                                           child:   Padding(
                                                                                             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                                                            child:   Text("There are no algorithms on the platfrom so Influencer placements reach 100% the subscribers-users upon their opening of the app. The placements are viewable for 72 hours from the time the material is downloaded. Sharing to followers or to any body else after the subscriber-user receives the original placement is not automatic. If manually shared, it is viewable for another 72 hours from the time of sharing. ",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                                                                            child:   Text("There are no algorithms on the platfrom so Influencer placements reach 100% the subscribers-users upon their opening of the app. The placements are viewable for 72 hours from the time the material is downloaded. Sharing to followers or to any body else after the subscriber-user receives the original placement is not automatic. If manually shared, it is viewable for another 72 hours from the time of sharing. ",style: TextStyle(color:_colorFromHex(themeContent))),
                                                                                           ),
                                                                                         ),
                                                                                         Container(
@@ -2485,7 +4164,7 @@ if(plattform=="androidiphone")
                                                                                           alignment: Alignment.topLeft,
                                                                                           child:   Padding(
                                                                                             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                                                            child:   Text("Trolling is strictly prohibited on the platform. An immediate permanent ban awaits the trollers once discovered.  ",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                                                                            child:   Text("Trolling is strictly prohibited on the platform. An immediate permanent ban awaits the trollers once discovered.  ",style: TextStyle(color:_colorFromHex(themeContent))),
                                                                                           ),
                                                                                         ),
                                                                                         Container(
@@ -2495,7 +4174,7 @@ if(plattform=="androidiphone")
                                                                                           alignment: Alignment.topLeft,
                                                                                           child:   Padding(
                                                                                             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                                                            child:   Text("Strictly prohibited are fake news and language that are abusive, cursing, cussing, profaning, blaspheming, racist, anti-minority, white supremancy, and intending to destroy the reputation of any person or group whether the latter is a public or government personality, celebrity, private individual, company, business, public or private institution. The defamatory, cyber libel, and other libel rules of the particular jurisdiction shall supplement the liability for fake news and prohibited language indicated herein.  ",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                                                                            child:   Text("Strictly prohibited are fake news and language that are abusive, cursing, cussing, profaning, blaspheming, racist, anti-minority, white supremancy, and intending to destroy the reputation of any person or group whether the latter is a public or government personality, celebrity, private individual, company, business, public or private institution. The defamatory, cyber libel, and other libel rules of the particular jurisdiction shall supplement the liability for fake news and prohibited language indicated herein.  ",style: TextStyle(color:_colorFromHex(themeContent))),
                                                                                           ),
                                                                                         ),
                                                                                         Container(
@@ -2505,7 +4184,7 @@ if(plattform=="androidiphone")
                                                                                           alignment: Alignment.topLeft,
                                                                                           child:   Padding(
                                                                                             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                                                            child:   Text("The klackr company policies and rules against fake news and prohibited language may lead to a suspension or total ban on the use of the Klackr platform.",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                                                                            child:   Text("The klackr company policies and rules against fake news and prohibited language may lead to a suspension or total ban on the use of the Klackr platform.",style: TextStyle(color:_colorFromHex(themeContent))),
                                                                                           ),
                                                                                         ),
                                                                                         Container(
@@ -2515,7 +4194,7 @@ if(plattform=="androidiphone")
                                                                                           alignment: Alignment.topLeft,
                                                                                           child:   Padding(
                                                                                             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                                                            child:   Text("The Klackr platform is merely the vessel of your ads & commercial posts. Hence, the the Klackr company bears no responsibility to the contents of said ads & commercial posts and the publisher saves harmless from all liabilities and damages the Klackr company, its equity holders, officers, directors, managers, employees, and assigns.     ",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                                                                            child:   Text("The Klackr platform is merely the vessel of your ads & commercial posts. Hence, the the Klackr company bears no responsibility to the contents of said ads & commercial posts and the publisher saves harmless from all liabilities and damages the Klackr company, its equity holders, officers, directors, managers, employees, and assigns.     ",style: TextStyle(color:_colorFromHex(themeContent))),
                                                                                           ),
                                                                                         ),
                                                                                         Container(
@@ -2525,7 +4204,7 @@ if(plattform=="androidiphone")
                                                                                           alignment: Alignment.topLeft,
                                                                                           child:   Padding(
                                                                                             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                                                            child:   Text("There are no algorithms on the platfrom so ads & commerical posts reach 100% the subscribers-users upon their opening of the app. The ads & commercial posts are viewable for 72 hours from the time the material is downloaded. Sharing to followers or to any body else after the subscriber-user receives the original ad or commericial post is not automatic. If manually shared, it is viewable for another 72 hours from the time of sharing.",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                                                                            child:   Text("There are no algorithms on the platfrom so ads & commerical posts reach 100% the subscribers-users upon their opening of the app. The ads & commercial posts are viewable for 72 hours from the time the material is downloaded. Sharing to followers or to any body else after the subscriber-user receives the original ad or commericial post is not automatic. If manually shared, it is viewable for another 72 hours from the time of sharing.",style: TextStyle(color:_colorFromHex(themeContent))),
                                                                                           ),
                                                                                         ),
                                                                                         Container(
@@ -2535,7 +4214,7 @@ if(plattform=="androidiphone")
                                                                                           alignment: Alignment.topLeft,
                                                                                           child:   Padding(
                                                                                             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                                                            child:   Text("Trolling is strictly prohibited on the platform. An immediate permanent ban awaits the trollers once discovered.",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                                                                            child:   Text("Trolling is strictly prohibited on the platform. An immediate permanent ban awaits the trollers once discovered.",style: TextStyle(color:_colorFromHex(themeContent))),
                                                                                           ),
                                                                                         ),
                                                                                         Container(
@@ -2545,19 +4224,19 @@ if(plattform=="androidiphone")
                                                                                           alignment: Alignment.topLeft,
                                                                                           child:   Padding(
                                                                                             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                                                            child:   Text("Once the ad or commercial post is approved or denied with 48 hours, the administrator shall send a direct message (no reply) to the email address of the personal publisher. If there is no message within the 48 hours, the ad or commerical post is deemed approved of publication. This is automatic, no intervention from the publisher necessary. ",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                                                                            child:   Text("Once the ad or commercial post is approved or denied with 48 hours, the administrator shall send a direct message (no reply) to the email address of the personal publisher. If there is no message within the 48 hours, the ad or commerical post is deemed approved of publication. This is automatic, no intervention from the publisher necessary. ",style: TextStyle(color:_colorFromHex(themeContent))),
                                                                                           ),
                                                                                         ),
                                                                                         Container(
                                                                                           height: 35,
                                                                                         ),
                                                                                         Container(
-                                                                                          height: 25,
-                                                                                          child:    Padding(
-                                                                                            padding: const EdgeInsets.only(
-                                                                                                left: 120, right:120, bottom: 0,top:0),
+                                                                                          height: 45,
+                                                                                          alignment: Alignment.center,
+                                                                                          child:   Padding(
+                                                                                            padding: EdgeInsets.symmetric(horizontal: 15, vertical: 0),
                                                                                             child:ElevatedButton(
-                                                                                              child: Text('Back'),
+                                                                                              child: Text('BACK',style:TextStyle(color: Colors.white)),
                                                                                               onPressed: () {
                                                                                                 setState(() {
                                                                                                   info="false";
@@ -2565,7 +4244,7 @@ if(plattform=="androidiphone")
                                                                                               },
                                                                                               style: ElevatedButton.styleFrom(
                                                                                                   primary: _colorFromHex("#2786C9"),
-                                                                                                  padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                                                                                                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                                                                                                   textStyle: TextStyle(
                                                                                                       fontWeight: FontWeight.bold)),
                                                                                             ),
@@ -2731,11 +4410,12 @@ if(plattform=="androidiphone")
                                                                                           height: 20,
                                                                                         ),
                                                                                         Container(
-                                                                                          child:    Padding(
-                                                                                            padding: const EdgeInsets.only(
-                                                                                                left: 125, right:125, bottom: 0,top:0),
+                                                                                          height: 45,
+                                                                                          alignment: Alignment.center,
+                                                                                          child:   Padding(
+                                                                                            padding: EdgeInsets.symmetric(horizontal: 15, vertical: 0),
                                                                                             child:ElevatedButton(
-                                                                                              child: Text('Back'),
+                                                                                              child: Text('BACK',style:TextStyle(color: Colors.white)),
                                                                                               onPressed: () {
                                                                                                 setState(() {
                                                                                                   info="false";
@@ -2743,7 +4423,7 @@ if(plattform=="androidiphone")
                                                                                               },
                                                                                               style: ElevatedButton.styleFrom(
                                                                                                   primary: _colorFromHex("#2786C9"),
-                                                                                                  padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                                                                                                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                                                                                                   textStyle: TextStyle(
                                                                                                       fontWeight: FontWeight.bold)),
                                                                                             ),
@@ -2919,11 +4599,12 @@ if(plattform=="androidiphone")
                                                                                           height: 20,
                                                                                         ),
                                                                                         Container(
-                                                                                          child:    Padding(
-                                                                                            padding: const EdgeInsets.only(
-                                                                                                left: 125, right:125, bottom: 0,top:0),
+                                                                                          height: 45,
+                                                                                          alignment: Alignment.center,
+                                                                                          child:   Padding(
+                                                                                            padding: EdgeInsets.symmetric(horizontal: 15, vertical: 0),
                                                                                             child:ElevatedButton(
-                                                                                              child: Text('Back'),
+                                                                                              child: Text('BACK',style:TextStyle(color: Colors.white)),
                                                                                               onPressed: () {
                                                                                                 setState(() {
                                                                                                   info="false";
@@ -2931,7 +4612,7 @@ if(plattform=="androidiphone")
                                                                                               },
                                                                                               style: ElevatedButton.styleFrom(
                                                                                                   primary: _colorFromHex("#2786C9"),
-                                                                                                  padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                                                                                                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                                                                                                   textStyle: TextStyle(
                                                                                                       fontWeight: FontWeight.bold)),
                                                                                             ),
@@ -3100,11 +4781,12 @@ if(plattform=="androidiphone")
                                                                                           height: 20,
                                                                                         ),
                                                                                         Container(
-                                                                                          child:    Padding(
-                                                                                            padding: const EdgeInsets.only(
-                                                                                                left: 125, right:125, bottom: 0,top:0),
+                                                                                          height: 45,
+                                                                                          alignment: Alignment.center,
+                                                                                          child:   Padding(
+                                                                                            padding: EdgeInsets.symmetric(horizontal: 15, vertical: 0),
                                                                                             child:ElevatedButton(
-                                                                                              child: Text('Back'),
+                                                                                              child: Text('BACK',style:TextStyle(color: Colors.white)),
                                                                                               onPressed: () {
                                                                                                 setState(() {
                                                                                                   info="false";
@@ -3112,7 +4794,7 @@ if(plattform=="androidiphone")
                                                                                               },
                                                                                               style: ElevatedButton.styleFrom(
                                                                                                   primary: _colorFromHex("#2786C9"),
-                                                                                                  padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                                                                                                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                                                                                                   textStyle: TextStyle(
                                                                                                       fontWeight: FontWeight.bold)),
                                                                                             ),
@@ -3141,295 +4823,50 @@ if(plattform=="androidiphone")
                                                       ),
                                                     if(lobbyselect=="lobbygetpost")
                                                       Container(
-                                                        height: MediaQuery.of(context).size.height+10,
-                                                        child:
-                                                        SmartRefresher(
-                                                          enablePullDown: true,
-                                                          enablePullUp: true,
-                                                          header: WaterDropHeader(),
-                                                          controller: _refreshController,
-                                                          onRefresh: _onRefresh,
-                                                          onLoading: _onLoading,
-                                                          child: ListView.builder(
-                                                            itemBuilder: (c, i) => Center(
-                                                              child: Container(
-
-                                                                child: Column(
-                                                                  children: <Widget>[
-                                                                    Column(
-                                                                      children: <Widget>[
-                                                                        Container(
-                                                                          height: 45,
-                                                                          child:   Padding(
-                                                                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                                            child: TextField(
-                                                                              onChanged: (value){
-                                                                                searchRegisterController.text=value;
-                                                                                if(value==""){
-                                                                                  filterSearchResults( searchRegisterController.text);
-                                                                                }
-                                                                              },
-                                                                              decoration: InputDecoration(
-                                                                                suffixIcon: IconButton(
-                                                                                  onPressed: () {
-                                                                                    filterSearchResults( searchRegisterController.text);
-                                                                                  },
-                                                                                  icon: Icon(Icons.search_outlined,color:_colorFromHex("#6688A0")),
-                                                                                ),
-                                                                                filled: true,
-                                                                                fillColor: _colorFromHex(themeInput),
-                                                                                border: OutlineInputBorder(
-                                                                                ),
-                                                                                hintText: 'Search',
-                                                                                hintStyle: TextStyle(color:_colorFromHex("#6688A0")),
-                                                                              ),
-                                                                              style: TextStyle(color:  _colorFromHex(themeInputText)),
-                                                                            ),
-                                                                          ),
-                                                                        ),
-
-                                                                        Container(
-                                                                          height: 5,
-                                                                        ),
-                                                                        Container(
-                                                                          height: 30.0, color: _colorFromHex(themeAppbard),
-                                                                          child:IntrinsicHeight(
-                                                                            child: Row( children: [
-                                                                              Container(
-                                                                                width:10,
-                                                                              ),
-                                                                              Expanded(
-                                                                                flex:0,
-                                                                                child:Container(
-                                                                                    height: 20,
-                                                                                    alignment: Alignment.topLeft,
-                                                                                    child:Image.asset('assets/logo/klackr_logo.png')),
-                                                                              ),
-                                                                              Expanded(
-                                                                                flex:3,
-                                                                                child:  Container(
-                                                                                  alignment: Alignment.topLeft,
-                                                                                  child:   Padding(
-                                                                                    padding: EdgeInsets.symmetric(horizontal: 1, vertical: 3),
-                                                                                    child: Text("Street",style: TextStyle(fontSize: 20,color:Colors.blue)),
-                                                                                  ),
-                                                                                ),
-                                                                              ),
-                                                                              Expanded(
-                                                                                flex:8,
-                                                                                child:Container(
-                                                                                  alignment: Alignment.topRight,
-                                                                                  child:   Padding(
-                                                                                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-                                                                                    child: Text("Klackr account no. "+profileID.toString(),style: TextStyle(color: _colorFromHex(themeInputText),fontSize: 15)),
-                                                                                  ),
-                                                                                ),
-                                                                              ),
-                                                                            ]),
-                                                                          ),
-                                                                        ),
-                                                                      ],
-                                                                    ),
-                                                                    Expanded(
-                                                                      child: SizedBox(
-                                                                        child:ListView.builder(
-
-                                                                          itemCount: 1,
-                                                                          itemBuilder: (BuildContext context, int index) {
-                                                                            return Container(
-                                                                              child:  Container(
-                                                                                color:_colorFromHex(themeCard),
-                                                                                alignment: Alignment.topLeft,
-                                                                                child:IntrinsicHeight(
-                                                                                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-
-                                                                                    if(noPost=="true")
-                                                                                      Container(
-                                                                                        height: 30,
-                                                                                      ),
-                                                                                    if(noPost=="true")
-                                                                                      Expanded(
-                                                                                        child:  Padding(
-                                                                                          padding: const EdgeInsets.only(
-                                                                                              left: 0, right: 0, bottom: 0,top:40),
-                                                                                          child:Container(
-                                                                                            alignment: Alignment.center,
-                                                                                            child: Text("No Results Found",style:TextStyle(color: _colorFromHex(themeInputText),fontSize: 25)),
-                                                                                          ),
-                                                                                        ),
-                                                                                      ),
-                                                                                    if(noPost=="true")
-                                                                                      Container(
-                                                                                        height: 700,
-                                                                                      ),
-                                                                                    if(noPost=="false")
-                                                                                      Container(
-                                                                                        child:Column(children: [
-                                                                                          SizedBox(
-                                                                                            height: MediaQuery.of(context).size.height-220,
-                                                                                            child:ListView.builder(
-                                                                                              controller: ScrollController(),
-                                                                                              itemCount: _foundUsers1.length,
-                                                                                              itemBuilder: (BuildContext context, int index) {
-                                                                                                final DateTime time1 = DateTime.parse(_foundUsers1[_foundUsers1.length-1-index]["date_posted"].toString());
-                                                                                                String dt4 = timeago.format(time1);
-                                                                                                return Container(
-                                                                                                  child:   IntrinsicHeight(
-                                                                                                    child: Column( children: [
-                                                                                                      Expanded(
-                                                                                                        child: Column(
-                                                                                                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                                                                                                            children: [
-                                                                                                              IntrinsicHeight(
-                                                                                                                child: Row( children: [
-                                                                                                                  Expanded(
-                                                                                                                    flex: 0,
-                                                                                                                    child: Column(children: [
-                                                                                                                      Container(
-                                                                                                                        alignment: Alignment.topLeft,
-                                                                                                                        child: IconButton(onPressed: (){},icon: Icon(Icons.account_circle_rounded,size: 50,color:  _colorFromHex(themeInputText))),
-                                                                                                                      ),
-                                                                                                                    ]),
-                                                                                                                  ),
-                                                                                                                  Container(
-                                                                                                                    width: 20,
-                                                                                                                  ),
-                                                                                                                  Expanded(
-                                                                                                                    flex: 10,
-                                                                                                                    child: Padding(
-                                                                                                                      padding: const EdgeInsets.only(
-                                                                                                                          left: 0, right: 0, bottom: 0,top:15),
-                                                                                                                      child: Column(children: [
-                                                                                                                        Container(
-                                                                                                                          alignment: Alignment.topLeft,
-                                                                                                                          child: Text(_foundUsers1[_foundUsers1.length-1-index]["author"].toString(),style: TextStyle(fontWeight: FontWeight.bold,fontSize: 15,color:  _colorFromHex(themeInputText))),
-                                                                                                                        ),
-                                                                                                                        Container(
-                                                                                                                          alignment: Alignment.topLeft,
-                                                                                                                          child: Row( children: [
-                                                                                                                            Text(dt4,style: TextStyle(color: _colorFromHex(themeInputText))),
-                                                                                                                            Text(" · ",style: TextStyle(color:  _colorFromHex(themeInputText))),
-                                                                                                                            Icon(Icons.public,size: 15,color:  _colorFromHex(themeInputText)),
-                                                                                                                          ],
-                                                                                                                          ),
-                                                                                                                        ),
-                                                                                                                      ]
-                                                                                                                      ),
-                                                                                                                    ),
-                                                                                                                  ),
-                                                                                                                  if(username==_foundUsers1[_foundUsers1.length-1-index]["author"].toString())
-                                                                                                                    IconButton(
-                                                                                                                      icon: Icon(
-                                                                                                                          Icons.edit,color: _colorFromHex(themeInputText),size: 18
-                                                                                                                      ),
-                                                                                                                      onPressed: () {
-                                                                                                                        setState(() {
-                                                                                                                          edit="true";
-                                                                                                                          IDpost = _foundUsers1[_foundUsers1.length-1-index]["id"].toString();
-                                                                                                                          CPpost = _foundUsers1[_foundUsers1.length-1-index]["caption"].toString();
-                                                                                                                          UpostController.text=CPpost;
-                                                                                                                          lobbyselect="lobbyposting";
-                                                                                                                        });
-                                                                                                                      },
-                                                                                                                    ),
-                                                                                                                ]
-                                                                                                                ),
-
-                                                                                                              ),
-                                                                                                              Container(
-                                                                                                                height:20,
-                                                                                                              ),
-                                                                                                              Container(
-                                                                                                                alignment: Alignment.topLeft,
-                                                                                                                child:   Padding(
-                                                                                                                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                                                                                  child: Text(_foundUsers1[_foundUsers1.length-1-index]["caption"].toString(),style: TextStyle(color: _colorFromHex(themeInputText)),),
-                                                                                                                ),
-                                                                                                              ),
-                                                                                                              Container(
-                                                                                                                height:10,
-                                                                                                              ),
-                                                                                                              Row(children: [
-                                                                                                                IconButton(
-                                                                                                                  icon: Icon(
-                                                                                                                      Icons.thumb_up,color: _colorFromHex(themeInputText),size: 18
-                                                                                                                  ),
-                                                                                                                  onPressed: () {
-
-                                                                                                                  },
-                                                                                                                ),
-                                                                                                                IconButton(
-                                                                                                                  icon: Icon(
-                                                                                                                      Icons.comment,color: _colorFromHex(themeInputText),size: 18
-                                                                                                                  ),
-                                                                                                                  onPressed: () {
-
-                                                                                                                  },
-                                                                                                                ),
-                                                                                                                IconButton(
-                                                                                                                  icon: Icon(
-                                                                                                                    Icons.share,color: _colorFromHex(themeInputText),size: 18,
-                                                                                                                  ),
-                                                                                                                  onPressed: () {
-
-                                                                                                                  },
-                                                                                                                ),
-                                                                                                              ]
-                                                                                                              ),
-                                                                                                              Container(
-                                                                                                                  height:2
-                                                                                                              ),
-                                                                                                              Container(
-                                                                                                                height: 1,
-                                                                                                                color:_colorFromHex(themeBase),
-                                                                                                              ),
-
-                                                                                                            ]
-                                                                                                        ),
-                                                                                                      ),
-
-                                                                                                    ]),
-                                                                                                  ),
-                                                                                                );
-                                                                                              },
-                                                                                            ),
-                                                                                          ),
-
-                                                                                        ]
-                                                                                        ),
-                                                                                      ),
-                                                                                  ]),
-                                                                                ),
-
-                                                                              ),
-                                                                            );
-                                                                          },
-                                                                        ),
+                                                        height: MediaQuery.of(context).size.height-140,
+                                                        child:Container(
+                                                          child: Column(
+                                                            children: <Widget>[
+                                                              Container(
+                                                                height: 45,
+                                                                child:   Padding(
+                                                                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                                  child: TextField(
+                                                                    onChanged: (value){
+                                                                      searchRegisterController.text=value;
+                                                                      if(value==""){
+                                                                        filterSearchResults( searchRegisterController.text);
+                                                                      }
+                                                                    },
+                                                                    decoration: InputDecoration(
+                                                                      suffixIcon: IconButton(
+                                                                        onPressed: () {
+                                                                          filterSearchResults( searchRegisterController.text);
+                                                                        },
+                                                                        icon: Icon(Icons.search_outlined,color:_colorFromHex(themeContent)),
                                                                       ),
+                                                                      filled: true,
+                                                                      fillColor: _colorFromHex(themeInput),
+                                                                      border: OutlineInputBorder(
+                                                                      ),
+                                                                      hintText: 'Search',
+                                                                      hintStyle: TextStyle(color:_colorFromHex(themeContent)),
                                                                     ),
-                                                                  ],
+                                                                    style: TextStyle(color:  _colorFromHex(themeInputText)),
+                                                                  ),
                                                                 ),
                                                               ),
-                                                            ),
-                                                            itemExtent: MediaQuery.of(context).size.height,
-                                                            itemCount: 1,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      
 
-
-                                                    if(lobbyselect=="lobbyhome")
-                                                      Container(
-                                                        child:   IntrinsicHeight(
-                                                          child: Column( children: [
-                                                            Container(
-                                                              height: 30.0,
-                                                              child:   Padding(
-                                                                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                              Container(
+                                                                height: 5,
+                                                              ),
+                                                              Container(
+                                                                height: 30.0, color: _colorFromHex(themeAppbard),
                                                                 child:IntrinsicHeight(
                                                                   child: Row( children: [
-
+                                                                    Container(
+                                                                      width:10,
+                                                                    ),
                                                                     Expanded(
                                                                       flex:0,
                                                                       child:Container(
@@ -3437,192 +4874,891 @@ if(plattform=="androidiphone")
                                                                           alignment: Alignment.topLeft,
                                                                           child:Image.asset('assets/logo/klackr_logo.png')),
                                                                     ),
+                                                                    
                                                                     Expanded(
-                                                                      flex:10,
+                                                                      flex:3,
                                                                       child:  Container(
                                                                         alignment: Alignment.topLeft,
                                                                         child:   Padding(
                                                                           padding: EdgeInsets.symmetric(horizontal: 1, vertical: 3),
-                                                                          child: Text("Street",style: TextStyle(fontSize: 20,color:Colors.blue)),
+                                                                          child: Text("vicinity",style: TextStyle(fontSize: 20,color:Colors.blue)),
                                                                         ),
                                                                       ),
                                                                     ),
-
-
+                                                                    Expanded(
+                                                                      flex:8,
+                                                                      child:Container(
+                                                                        alignment: Alignment.topRight,
+                                                                        child:   Padding(
+                                                                          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+                                                                          child: Text("Klackr account no. "+profileID.toString(),style: TextStyle(color: _colorFromHex(themeContent),fontSize: 15)),
+                                                                        ),
+                                                                      ),
+                                                                    ),
                                                                   ]),
                                                                 ),
                                                               ),
-                                                            ),
-                                                            Row(children: [
-                                                              Container(
-                                                                width: 10,
-                                                              ),
-                                                              Flexible(
-                                                                child: Theme(
-                                                                  data: ThemeData(
-                                                                    primarySwatch: Colors.blue,
-                                                                    unselectedWidgetColor: _colorFromHex("#6688A0"), // Your color
+                                                              Expanded(
+                                                                child: SizedBox(
+                                                                  child:ListView.builder(
+
+                                                                    itemCount: 1,
+                                                                    itemBuilder: (BuildContext context, int index) {
+                                                                      return Container(
+                                                                        child:  Container(
+                                                                          color:_colorFromHex(themeNewCard),
+                                                                          alignment: Alignment.topLeft,
+                                                                          child:IntrinsicHeight(
+                                                                            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+
+                                                                              if(noPost=="true")
+                                                                                Container(
+                                                                                  height: 30,
+                                                                                ),
+                                                                              if(noPost=="true")
+                                                                                Expanded(
+                                                                                  child:  Padding(
+                                                                                    padding: const EdgeInsets.only(
+                                                                                        left: 0, right: 0, bottom: 0,top:40),
+                                                                                    child:Container(
+                                                                                      alignment: Alignment.center,
+                                                                                      child: Text("No Results Found",style:TextStyle(color: _colorFromHex(themeInputText),fontSize: 25)),
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                              if(noPost=="true")
+                                                                                Container(
+                                                                                  height: 700,
+                                                                                ),
+                                                                              if(noPost=="false")
+                                                                                Container(
+                                                                                  child:Column(children: [
+                                                                                    SizedBox(
+                                                                                      height: MediaQuery.of(context).size.height-215,
+                                                                                      child:ListView.builder(
+                                                                                        controller: ScrollController(),
+                                                                                        itemCount: _foundUsers1.length,
+                                                                                        itemBuilder: (BuildContext context, int index) {
+                                                                                          final DateTime time1 = DateTime.parse(_foundUsers1[_foundUsers1.length-1-index]["date_posted"].toString());
+                                                                                          String dt4 = timeago.format(time1);
+                                                                                          return Container(
+                                                                                            child:   IntrinsicHeight(
+                                                                                              child: Column( children: [
+                                                                                                Expanded(
+                                                                                                  child: Column(
+                                                                                                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                                                                                                      children: [
+                                                                                                        IntrinsicHeight(
+                                                                                                          child: Row( children: [
+                                                                                                            Expanded(
+                                                                                                              flex: 0,
+                                                                                                              child: Column(children: [
+                                                                                                                Container(
+                                                                                                                  alignment: Alignment.topLeft,
+                                                                                                                  child: IconButton(onPressed: (){},icon: Icon(Icons.account_circle_rounded,size: 50,color:  _colorFromHex(themeInputText))),
+                                                                                                                ),
+                                                                                                              ]),
+                                                                                                            ),
+                                                                                                            Container(
+                                                                                                              width: 20,
+                                                                                                            ),
+                                                                                                            Expanded(
+                                                                                                              flex: 10,
+                                                                                                              child: Padding(
+                                                                                                                padding: const EdgeInsets.only(
+                                                                                                                    left: 0, right: 0, bottom: 0,top:15),
+                                                                                                                child: Column(children: [
+                                                                                                                  Container(
+                                                                                                                    alignment: Alignment.topLeft,
+                                                                                                                    child: Text(_foundUsers1[_foundUsers1.length-1-index]["author"].toString(),style: TextStyle(fontWeight: FontWeight.bold,fontSize: 15,color:  _colorFromHex(themeInputText))),
+                                                                                                                  ),
+                                                                                                                  Container(
+                                                                                                                    alignment: Alignment.topLeft,
+                                                                                                                    child: Row( children: [
+                                                                                                                      Text(dt4,style: TextStyle(color: _colorFromHex(themeInputText))),
+                                                                                                                      Text(" · ",style: TextStyle(color:  _colorFromHex(themeInputText))),
+                                                                                                                      Icon(Icons.public,size: 15,color:  _colorFromHex(themeInputText)),
+                                                                                                                    ],
+                                                                                                                    ),
+                                                                                                                  ),
+                                                                                                                ]
+                                                                                                                ),
+                                                                                                              ),
+                                                                                                            ),
+                                                                                                            if(username==_foundUsers1[_foundUsers1.length-1-index]["author"].toString())
+                                                                                                              IconButton(
+                                                                                                                icon: Icon(
+                                                                                                                    Icons.edit,color: _colorFromHex(themeInputText),size: 18
+                                                                                                                ),
+                                                                                                                onPressed: () {
+                                                                                                                  setState(() {
+                                                                                                                    edit="true";
+                                                                                                                    IDpost = _foundUsers1[_foundUsers1.length-1-index]["id"].toString();
+                                                                                                                    CPpost = _foundUsers1[_foundUsers1.length-1-index]["caption"].toString();
+                                                                                                                    UpostController.text=CPpost;
+                                                                                                                    lobbyselect="lobbyposting";
+                                                                                                                  });
+                                                                                                                },
+                                                                                                              ),
+                                                                                                          ]
+                                                                                                          ),
+
+                                                                                                        ),
+                                                                                                        Container(
+                                                                                                          height:20,
+                                                                                                        ),
+                                                                                                        Container(
+                                                                                                          alignment: Alignment.topLeft,
+                                                                                                          child:   Padding(
+                                                                                                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                                                                            child: Text(_foundUsers1[_foundUsers1.length-1-index]["caption"].toString(),style: TextStyle(color: _colorFromHex(themeInputText)),),
+                                                                                                          ),
+                                                                                                        ),
+                                                                                                        Container(
+                                                                                                          height:10,
+                                                                                                        ),
+                                                                                                        /* if(_foundUsers1[_foundUsers1.length-1-index]["image"]!=null)
+                                                                                                                Container(
+                                                                                                                  height:300,
+                                                                                                                  width:250,
+                                                                                                                  child:Image.network(_foundUsers1[_foundUsers1.length-1-index]["image"]),
+                                                                                                                ),
+                                                                                                              if(_foundUsers1[_foundUsers1.length-1-index]["video"]!=null)
+                                                                                                                Stack(
+                                                                                                                  children: <Widget>[
+                                                                                                                    Center (
+                                                                                                                      child: Container(
+                                                                                                                        height: 300,
+                                                                                                                        width: 300,
+                                                                                                                        child:Padding(
+                                                                                                                          padding: const EdgeInsets.only(
+                                                                                                                              left: 0, right: 0, bottom: 10,top:0),
+                                                                                                                          child:VideoPlayer(_Video[_Video.length-1-index]),
+                                                                                                                        ),
+                                                                                                                      ),
+                                                                                                                    ),
+                                                                                                                    Center(
+                                                                                                                      child: InkWell(
+                                                                                                                        child:AnimatedOpacity(
+
+                                                                                                                          opacity:  _Video[_Video.length-1-index].value.isPlaying ? 0 : 1,
+                                                                                                                          duration: const Duration(milliseconds: 500),
+                                                                                                                          child:Container(
+                                                                                                                            height:300,
+                                                                                                                            width:300,
+                                                                                                                            child:  Icon(
+                                                                                                                              Icons.play_arrow,
+                                                                                                                              color: Colors.white,
+                                                                                                                              size: 50,
+                                                                                                                            ),
+                                                                                                                          ),
+                                                                                                                        ),
+                                                                                                                        onTap: ()  {
+                                                                                                                          setState(() {
+                                                                                                                            _Video[_Video.length-1-index].value.isPlaying ?
+                                                                                                                            _Video[_Video.length-1-index].pause() :
+                                                                                                                            _Video[_Video.length-1-index].play();
+                                                                                                                          });
+                                                                                                                          _Video[_Video.length-1-index].addListener(() {
+                                                                                                                            setState(() {
+
+                                                                                                                            });
+                                                                                                                          });
+                                                                                                                        },
+                                                                                                                      ),
+                                                                                                                    ),
+                                                                                                                  ],
+                                                                                                                ),*/
+                                                                                                        Container(
+                                                                                                          height:10,
+                                                                                                        ),
+                                                                                                        Row(children: [
+                                                                                                          IconButton(
+                                                                                                            icon: Icon(
+                                                                                                                Icons.thumb_up,color: _colorFromHex(themeInputText),size: 18
+                                                                                                            ),
+                                                                                                            onPressed: () {
+
+                                                                                                            },
+                                                                                                          ),
+                                                                                                          IconButton(
+                                                                                                            icon: Icon(
+                                                                                                                Icons.comment,color: _colorFromHex(themeInputText),size: 18
+                                                                                                            ),
+                                                                                                            onPressed: () {
+
+                                                                                                            },
+                                                                                                          ),
+                                                                                                          IconButton(
+                                                                                                            icon: Icon(
+                                                                                                              Icons.share,color: _colorFromHex(themeInputText),size: 18,
+                                                                                                            ),
+                                                                                                            onPressed: () {
+
+                                                                                                            },
+                                                                                                          ),
+                                                                                                        ]
+                                                                                                        ),
+                                                                                                        Container(
+                                                                                                            height:2
+                                                                                                        ),
+                                                                                                        Container(
+                                                                                                          height: 1,
+                                                                                                          color:_colorFromHex(themeBase),
+                                                                                                        ),
+
+                                                                                                      ]
+                                                                                                  ),
+                                                                                                ),
+
+                                                                                              ]),
+                                                                                            ),
+                                                                                          );
+                                                                                        },
+                                                                                      ),
+                                                                                    ),
+
+                                                                                  ]
+                                                                                  ),
+                                                                                ),
+                                                                            ]),
+                                                                          ),
+
+                                                                        ),
+                                                                      );
+                                                                    },
                                                                   ),
-                                                                  child: Checkbox(
-                                                                    value: vicinity,
-                                                                    checkColor: Colors.black,
-                                                                    activeColor:_colorFromHex("#6688A0"),
-                                                                    onChanged: (value) {
-                                                                      setState(() {
-                                                                        if(vicinity==false){
-                                                                          vicinity=true;
-                                                                        }else{
-                                                                          vicinity=false;
-                                                                        }
-                                                                      });
-                                                                    },),
                                                                 ),
                                                               ),
-                                                              Flexible(
-                                                                child: Text(" home barangay",style: TextStyle(color:_colorFromHex("#6688A0"))),
-                                                              ),
-
-                                                              //  Container(height: 100.0, color: Colors.cyan),
-                                                            ]
-                                                            ),
-                                                            Row(children: [
-                                                              Container(
-                                                                width: 10,
-                                                              ),
-                                                              Flexible(
-                                                                child: Theme(
-                                                                  data: ThemeData(
-                                                                    primarySwatch: Colors.blue,
-                                                                    unselectedWidgetColor: _colorFromHex("#6688A0"), // Your color
-                                                                  ),
-                                                                  child: Checkbox(
-                                                                    value: outvicinity,
-                                                                    checkColor: Colors.black,
-                                                                    activeColor:_colorFromHex("#6688A0"),
-                                                                    onChanged: (value) {
-                                                                      setState(() {
-                                                                        if(outvicinity==false){
-                                                                          outvicinity=true;
-                                                                        }else{
-                                                                          outvicinity=false;
-                                                                        }
-                                                                      });
-                                                                    },),
-                                                                ),
-                                                              ),
-                                                              Flexible(
-                                                                child: Text(" home municipality",style: TextStyle(color:_colorFromHex("#6688A0"))),
-                                                              ),
-
-                                                              //  Container(height: 100.0, color: Colors.cyan),
-                                                            ]
-                                                            ),
-                                                            Padding(
-                                                              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                              child:   Container(
-                                                                height:0.5,
-                                                                color:_colorFromHex("#6688A0"),
-                                                              ),
-                                                            ),
-                                                            Row(children: [
-                                                              Container(
-                                                                width: 10,
-                                                              ),
-
-                                                              Flexible(
-                                                                child: Theme(
-                                                                  data: ThemeData(
-                                                                    primarySwatch: Colors.blue,
-                                                                    unselectedWidgetColor: _colorFromHex("#6688A0"), // Your color
-                                                                  ),
-                                                                  child: Checkbox(
-                                                                    value: vicinity,
-                                                                    checkColor: Colors.black,
-                                                                    activeColor:_colorFromHex("#6688A0"),
-                                                                    onChanged: (value) {
-                                                                      setState(() {
-                                                                        if(vicinity==false){
-                                                                          vicinity=true;
-                                                                        }else{
-                                                                          vicinity=false;
-                                                                        }
-                                                                      });
-                                                                    },),
-                                                                ),
-                                                              ),
-                                                              Flexible(
-                                                                child: Text(" barangay",style: TextStyle(color:_colorFromHex("#6688A0"))),
-                                                              ),
-
-                                                              //  Container(height: 100.0, color: Colors.cyan),
-                                                            ]
-                                                            ),
-                                                            Row(children: [
-                                                              Container(
-                                                                width: 10,
-                                                              ),
-                                                              Flexible(
-                                                                child: Theme(
-                                                                  data: ThemeData(
-                                                                    primarySwatch: Colors.blue,
-                                                                    unselectedWidgetColor: _colorFromHex("#6688A0"), // Your color
-                                                                  ),
-                                                                  child: Checkbox(
-                                                                    value: outvicinity,
-                                                                    checkColor: Colors.black,
-                                                                    activeColor:_colorFromHex("#6688A0"),
-                                                                    onChanged: (value) {
-                                                                      setState(() {
-                                                                        if(outvicinity==false){
-                                                                          outvicinity=true;
-                                                                        }else{
-                                                                          outvicinity=false;
-                                                                        }
-                                                                      });
-                                                                    },),
-                                                                ),
-                                                              ),
-                                                              Flexible(
-                                                                child: Text(" municipality",style: TextStyle(color:_colorFromHex("#6688A0"))),
-                                                              ),
-
-                                                              //  Container(height: 100.0, color: Colors.cyan),
-                                                            ]
-                                                            ),
-
-                                                            Container(
-                                                              height: 20,
-                                                            ),
-                                                            Container(
-                                                              height: 40,
-                                                              alignment: Alignment.center,
-                                                              child:TextButton(
-                                                                style: TextButton.styleFrom(
-                                                                  textStyle: TextStyle(),
-                                                                ),
-                                                                onPressed: (){
-                                                                  setState(() {
-                                                                    lobby="main";
-                                                                    lobbySize = 75;
-                                                                  });
-                                                                },
-                                                                child:Text('logout',style:TextStyle(color:_colorFromHex("#6688A0"))),
-                                                              ),
-                                                            ),
-                                                            Container(
-                                                              height: 20,
-                                                            ),
-                                                            Container(
-                                                              alignment: Alignment.center,
-                                                              child:   Padding(
-                                                                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                                child:   Text("Compliance with the Philippine Data Privacy Act",style: TextStyle(color:_colorFromHex("#6688A0"))),
-                                                              ),
-                                                            ),
-                                                          ]),
+                                                            ],
+                                                          ),
                                                         ),
                                                       ),
-                                                    
+
+
+
+                                                    if(lobbyselect=="lobbyhome")
+                                                      Padding(
+                                                        padding: EdgeInsets.symmetric(horizontal: 8 , vertical: 0),
+                                                        child: Container(
+                                                          child:   IntrinsicHeight(
+                                                            child: Column( children: [
+                                                              Flexible(
+                                                                child:IntrinsicHeight(
+                                                                  child: Row( children: [
+                                                                    Container(
+                                                                      width:10,
+                                                                    ),
+
+                                                                    Theme(
+                                                                      data: ThemeData(
+                                                                        primarySwatch: Colors.blue,
+                                                                        unselectedWidgetColor: _colorFromHex(themeContent), // Your color
+                                                                      ),
+                                                                      child: Checkbox(
+                                                                        value: true,
+                                                                        checkColor: Colors.black,
+                                                                        activeColor: Colors.grey,
+                                                                        // activeColor:_colorFromHex("#6688A0"),
+                                                                        onChanged: (value) {
+                                                                          setState(() {
+                                                                            if(english==false){
+                                                                              english=true;
+                                                                              pilipino=false;
+                                                                            }
+                                                                          });
+                                                                        },),
+                                                                    ),
+                                                                    Text("English",style: TextStyle(color:_colorFromHex(themeInputText))),
+                                                                    Container(
+                                                                      width:20,
+                                                                    ),
+
+                                                                    Theme(
+                                                                      data: ThemeData(
+                                                                        primarySwatch: Colors.blue,
+                                                                        unselectedWidgetColor: _colorFromHex(themeContent), // Your color
+                                                                      ),
+                                                                      child: Checkbox(
+                                                                        value: themeColorWhite,
+                                                                        checkColor: Colors.black,
+                                                                        activeColor: Colors.grey,
+                                                                        onChanged: (value) {
+                                                                          setState(() {
+                                                                            if(themeColorDark==true){
+                                                                              themeColorDark=false;
+                                                                              themeColorWhite=true;
+                                                                              whiteTheme();
+                                                                            }
+                                                                          });
+                                                                        },),
+                                                                    ),
+                                                                    Text("light theme",style: TextStyle(color:_colorFromHex(themeContent))),
+                                                                  ]),
+                                                                ),
+                                                              ),
+                                                              Flexible(
+                                                                child:IntrinsicHeight(
+                                                                  child: Row( children: [
+                                                                    Container(
+                                                                      width:10,
+                                                                    ),
+
+                                                                    Theme(
+                                                                      data: ThemeData(
+                                                                        primarySwatch: Colors.blue,
+                                                                        unselectedWidgetColor: _colorFromHex(themeContent), // Your color
+                                                                      ),
+                                                                      child: Checkbox(
+                                                                        value: false,
+                                                                        checkColor: Colors.black,
+                                                                        activeColor: Colors.grey,
+                                                                        onChanged: (value) {
+                                                                          setState(() {
+                                                                            if(pilipino==false){
+                                                                              pilipino=true;
+                                                                              english=false;
+                                                                            }
+                                                                          });
+                                                                        },),
+                                                                    ),
+                                                                    Text("Tagalog",style: TextStyle(color:_colorFromHex(themeInputText))),
+                                                                    Container(
+                                                                      width:16,
+                                                                    ),
+                                                                    Theme(
+                                                                      data: ThemeData(
+                                                                        primarySwatch: Colors.blue,
+                                                                        unselectedWidgetColor: _colorFromHex(themeContent), // Your color
+                                                                      ),
+                                                                      child: Checkbox(
+                                                                        value: themeColorDark,
+                                                                        checkColor: Colors.black,
+                                                                        activeColor:_colorFromHex("#6688A0"),
+                                                                        onChanged: (value) {
+                                                                          setState(() {
+                                                                            if(themeColorWhite==true){
+                                                                              themeColorWhite=false;
+                                                                              themeColorDark=true;
+                                                                              darkTheme();
+                                                                            }
+                                                                          });
+                                                                        },),
+                                                                    ),
+                                                                    Text("dark theme",style: TextStyle(color:_colorFromHex(themeContent))),
+                                                                  ]),
+                                                                ),
+                                                              ),
+                                                              Container(height:30),
+                                                                Row(children:[
+                                     Container(
+                                                  alignment: Alignment.topLeft,
+                                                  child:   Padding(
+                                                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                                                    child:  Text("Vicinity (View)",style: TextStyle(color:_colorFromHex(themeContent),fontWeight: FontWeight.bold,fontSize: 15)),
+                                                  ),
+                                                ),
+                                               
+                                  ]),
+                                         Container(height:20),
+                                    Row(children:[
+                                     Container(
+                                                  alignment: Alignment.topRight,
+                                                  child:   Padding(
+                                                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                                                    child:  Text("home barangay",style: TextStyle(color:_colorFromHex(themeContent),fontWeight: FontWeight.bold,fontSize: 15)),
+                                                  ),
+                                                ),
+                                            
+                                               
+                                  ]),
+                                       Container(height:5),
+                                  Row(children:[
+                                     Container(
+                                                  alignment: Alignment.topLeft,
+                                                  child:   Padding(
+                                                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                                                    child:  Text(Obarangay,style: TextStyle(color:_colorFromHex(themeContent),fontWeight: FontWeight.bold,fontSize: 10)),
+                                                  ),
+                                                ),
+                                               
+                                  ]),
+                                  Row(children:[
+                                     Container(
+                                                  alignment: Alignment.topLeft,
+                                                  child:   Padding(
+                                                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                                                    child:  Text(OCityMunicipality+", "+ORegion,style: TextStyle(color:_colorFromHex(themeContent),fontWeight: FontWeight.bold,fontSize: 10)),
+                                                  ),
+                                                ),
+                                               
+                                  ]),
+                                   Column(children:[
+                             
+                                                 Container(
+                                                                height: 45,
+                                                                alignment: Alignment.topRight,
+                                                                child:   Padding(
+                                                                  padding: EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+                                                                  child:ElevatedButton(
+                                                                    child: Text('Reset',style:TextStyle(color: Colors.yellow)),
+                                                                    onPressed: () {
+                                                                      setState(() {
+                                                                       resetVicinity();
+                                                                     Timer(Duration(seconds: 0), () {
+                                                        UselectRegion();
+                                                        Uprovince.clear();
+                                                        Ucitymunicipality.clear();
+                                                        UcitymunicipalityValue=OCityMunicipality;
+                                                        Ubarangay.clear();
+                                                        UbarangayValue=Obarangay;
+                                                        UprovinceValue=OProvince;
+                                                UregionValue=ORegion;
+                                                         VProvince="Province";
+                                                        VCityMunicipality="City/Municipality";
+                                                         Vbarangay="Barangay (or nearest barangay)";
+                                                        UbarangayTypeRegisterController.text="";
+                                                      });
+                                                     // UregionValue = value as String;
+                                                                      });
+                                                                    },
+                                                                    style: ElevatedButton.styleFrom(
+                                                                        primary: _colorFromHex("#2786C9"),
+                                                                        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                                                                        textStyle: TextStyle(
+                                                                            fontWeight: FontWeight.bold)),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                               
+                                  ]),
+   Container(height:20),
+    Row(children:[
+                                     Container(
+                                                  alignment: Alignment.topLeft,
+                                                  child:   Padding(
+                                                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                                                    child:  Text("OutVicinity+ view",style: TextStyle(color:_colorFromHex(themeContent),fontWeight: FontWeight.bold,fontSize: 15)),
+                                                  ),
+                                                ),
+                                               
+                                  ]),
+                                     Container(height:5),
+                                        Expanded(
+                                          child: Container(
+                                            height: 45,
+                                            child:   Padding(
+                                              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                              child: DropdownButtonHideUnderline(
+                                                child: DropdownButton2(
+                                                  isExpanded: true,
+                                                  hint: Row(
+                                                    children:  [
+                                                      SizedBox(
+                                                        width: 4,
+                                                      ),
+                                                      Expanded(
+                                                        child: Text(
+                                                          VRegion,
+                                                          style: TextStyle(
+                                                              color: _colorFromHex( placeColor ),fontSize: 9
+                                                          ),
+                                                          overflow: TextOverflow.ellipsis,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  items: Uregion
+                                                      .map((item) =>
+                                                      DropdownMenuItem<String>(
+                                                        value: item,
+                                                        child: Text(
+                                                          item,
+                                                          style:  TextStyle(
+                                                              color:  _colorFromHex( themeInputText ),fontSize: 9
+                                                          ),
+                                                          overflow: TextOverflow.ellipsis,
+                                                        ),
+                                                      ))
+                                                      .toList(),
+                                                  value: UregionValue,
+                                                  onChanged: (value) {
+                                                    setState(() {
+                                                      Timer(Duration(seconds: 0), () {
+                                                        UselectRegion();
+                                                        Uprovince.clear();
+                                                        Ucitymunicipality.clear();
+                                                        UcitymunicipalityValue=null;
+                                                        Ubarangay.clear();
+                                                        UbarangayValue=null;
+                                                        UprovinceValue=null;
+                                                        UgetProvince();
+
+                                                         VProvince="Province";
+                                                        VCityMunicipality="City/Municipality";
+                                                         Vbarangay="Barangay (or nearest barangay)";
+                                                        UbarangayTypeRegisterController.text="";
+                                                      });
+                                                      UregionValue = value as String;
+                                                    });
+                                                  },
+                                                  iconSize: 14,
+                                                  iconEnabledColor: _colorFromHex(themeContent),
+                                                  iconDisabledColor: Colors.grey,
+                                                  buttonHeight: 40,
+                                                  buttonPadding: const EdgeInsets.only(left: 14, right: 14),
+                                                  buttonDecoration: BoxDecoration(
+                                                    borderRadius: BorderRadius.circular(0),
+                                                    border: Border.all(
+                                                      color: Colors.black26,
+                                                    ),
+                                                    color:_colorFromHex(themeInput),
+                                                  ),
+                                                  buttonElevation: 2,
+                                                  itemHeight: 40,
+                                                  itemPadding: const EdgeInsets.only(left: 14, right: 14),
+                                                  dropdownMaxHeight: 200,
+                                                  style: TextStyle(fontSize: 12),
+                                                  dropdownPadding: null,
+                                                  dropdownDecoration: BoxDecoration(
+                                                    borderRadius: BorderRadius.circular(0),
+                                                    color: _colorFromHex(themeNewCard),
+                                                  ),
+                                                  dropdownElevation: 8,
+                                                  scrollbarRadius: const Radius.circular(40),
+                                                  scrollbarThickness: 6,
+                                                  scrollbarAlwaysShow: true,
+                                                  offset: const Offset(-20, 0),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+
+
+                                        ),
+                                        Container(height: 5),
+
+                                        Expanded(
+                                          child: Stack(
+                                            children:[
+                                              Container(
+                                                height: 45,
+                                                child:   Padding(
+                                                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                  child: DropdownButtonHideUnderline(
+                                                    child: DropdownButton2(
+                                                      isExpanded: true,
+                                                      hint: Row(
+                                                        children:  [
+                                                          SizedBox(
+                                                            width: 4,
+                                                          ),
+                                                          Expanded(
+                                                            child: Text(
+                                                              VProvince,
+                                                              style: TextStyle(
+                                                                  color: _colorFromHex( placeColor ),fontSize: 9
+                                                              ),
+                                                              overflow: TextOverflow.ellipsis,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      items: Uprovince.map((item) =>
+                                                          DropdownMenuItem<String>(
+                                                            value: item,
+                                                            child: Text(
+                                                              item,
+                                                              style:  TextStyle(
+                                                                  color: _colorFromHex(themeInputText),fontSize: 9
+                                                              ),
+                                                              overflow: TextOverflow.ellipsis,
+                                                            ),
+                                                          ))
+                                                          .toList(),
+                                                      value: UprovinceValue,
+                                                      onChanged: (value) {
+                                                        setState(() {
+                                                          Ucitymunicipality.clear();
+                                                          UcitymunicipalityValue=null;
+                                                          Ubarangay.clear();
+                                                          UbarangayValue=null;
+                                                          VCityMunicipality="City/Municipality";
+                                                          Vbarangay="Barangay (or nearest barangay)";
+                                                          Timer(Duration(seconds: 0), () {
+                                                            UgetMunicipality();
+                                                            UbarangayTypeRegisterController.text="";
+                                                          });
+                                                          UprovinceValue = value as String;
+                                                          
+                                                        });
+                                                      },
+                                                      iconSize: 14,
+                                                      iconEnabledColor: _colorFromHex(themeContent),
+                                                      iconDisabledColor: Colors.grey,
+                                                      buttonHeight: 40,
+                                                      buttonPadding: const EdgeInsets.only(left: 14, right: 14),
+                                                      buttonDecoration: BoxDecoration(
+                                                        borderRadius: BorderRadius.circular(0),
+                                                        border: Border.all(
+                                                          color: Colors.black26,
+                                                        ),
+                                                        color:_colorFromHex(themeInput),
+                                                      ),
+                                                      buttonElevation: 2,
+                                                      itemHeight: 40,
+                                                      itemPadding: const EdgeInsets.only(left: 14, right: 14),
+                                                      dropdownMaxHeight: 200,
+                                                      dropdownPadding: null,
+                                                      style: TextStyle(fontSize: 12),
+                                                      dropdownDecoration: BoxDecoration(
+                                                        borderRadius: BorderRadius.circular(0),
+                                                        color: _colorFromHex(themeNewCard),
+                                                      ),
+                                                      dropdownElevation: 8,
+                                                      scrollbarRadius: const Radius.circular(40),
+                                                      scrollbarThickness: 6,
+                                                      scrollbarAlwaysShow: true,
+                                                      offset: const Offset(-20, 0),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                              if(UprovinceValue=="NATIONAL CAPITAL REGION - FOURTH DISTRICT"||UprovinceValue=="NATIONAL CAPITAL REGION - MANILA"
+                                                  ||UprovinceValue=="NATIONAL CAPITAL REGION - SECOND DISTRICT"||UprovinceValue=="NATIONAL CAPITAL REGION - THIRD DISTRICT"
+                                                  ||UprovinceValue=="TAGUIG - PATEROS")
+                                                Padding(
+                                                  padding: EdgeInsets.only(left: 20, right: 0,top:30),
+                                                  child:Text(Ucitymunicipality.join(","),style:TextStyle(fontSize:6,color:_colorFromHex(themeInputText))),
+                                                ),
+                                            ],
+                                          ),
+
+
+                                        ),
+                                        Container(height: 5),
+
+                                        Expanded(
+                                          child:
+                                          Container(
+                                            height: 45,
+                                            child:   Padding(
+                                              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                              child: DropdownButtonHideUnderline(
+                                                child: DropdownButton2(
+                                                  isExpanded: true,
+                                                  hint: Row(
+                                                    children:  [
+                                                      SizedBox(
+                                                        width: 4,
+                                                      ),
+                                                      Expanded(
+                                                        child: Text(
+                                                          VCityMunicipality,
+                                                          style: TextStyle(
+
+                                                              color: _colorFromHex( placeColor ),fontSize: 9
+                                                          ),
+                                                          overflow: TextOverflow.ellipsis,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  items: Ucitymunicipality
+                                                      .map((item) =>
+                                                      DropdownMenuItem<String>(
+                                                        value: item,
+                                                        child: Text(
+                                                          item,
+                                                          style: TextStyle(
+
+                                                              color: _colorFromHex(themeInputText),fontSize: 9
+                                                          ),
+                                                          overflow: TextOverflow.ellipsis,
+                                                        ),
+                                                      ))
+                                                      .toList(),
+                                                  value:UcitymunicipalityValue,
+                                                  onChanged: (value) {
+                                                    setState(() {
+                                                      Ubarangay.clear();
+                                                      UbarangayValue=null;
+                                                
+                                                      Vbarangay="Barangay (or nearest barangay)";
+                                                      Timer(Duration(seconds: 0), () {
+                                                        UgetBarangay();
+                                                        UbarangayTypeRegisterController.text="";
+                                                      });
+                                                      UcitymunicipalityValue = value as String;
+                                                    });
+                                                  },
+                                                  iconSize: 14,
+                                                  iconEnabledColor: _colorFromHex(themeContent),
+                                                  iconDisabledColor: Colors.grey,
+                                                  buttonHeight: 40,
+                                                  buttonPadding: const EdgeInsets.only(left: 14, right: 14),
+                                                  buttonDecoration: BoxDecoration(
+                                                    borderRadius: BorderRadius.circular(0),
+                                                    border: Border.all(
+                                                      color: Colors.black26,
+                                                    ),
+                                                    color:_colorFromHex(themeInput),
+                                                  ),
+                                                  buttonElevation: 2,
+                                                  itemHeight: 40,
+                                                  itemPadding: const EdgeInsets.only(left: 14, right: 14),
+                                                  dropdownMaxHeight: 200,
+                                                  style: TextStyle(fontSize: 12),
+                                                  dropdownPadding: null,
+                                                  dropdownDecoration: BoxDecoration(
+                                                    borderRadius: BorderRadius.circular(0),
+                                                    color: _colorFromHex(themeNewCard),
+                                                  ),
+                                                  dropdownElevation: 8,
+                                                  scrollbarRadius: const Radius.circular(40),
+                                                  scrollbarThickness: 6,
+                                                  scrollbarAlwaysShow: true,
+                                                  offset: const Offset(-20, 0),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+
+
+
+
+                                        ),
+
+                                        Container(height: 5),
+
+                                        Expanded(
+                                          child: Container(
+                                            height: 45,
+                                            child:   Padding(
+                                              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                              child: DropdownButtonHideUnderline(
+                                                child: DropdownButton2(
+                                                  isExpanded: true,
+                                                  hint: Row(
+                                                    children:  [
+                                                      SizedBox(
+                                                        width: 4,
+                                                      ),
+                                                      Expanded(
+                                                        child: Text(
+                                                          Vbarangay,
+                                                          style: TextStyle(
+                                                              color: _colorFromHex(placeColor),fontSize: 9
+                                                          ),
+                                                          overflow: TextOverflow.ellipsis,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  items: Ubarangay
+                                                      .map((item) =>
+                                                      DropdownMenuItem<String>(
+                                                        value: item,
+                                                        child: Text(
+                                                          item,
+                                                          style: TextStyle(
+
+                                                              color:  _colorFromHex(themeInputText),fontSize: 9
+                                                          ),
+                                                          overflow: TextOverflow.ellipsis,
+                                                        ),
+                                                      ))
+                                                      .toList(),
+                                                  value:UbarangayValue,
+                                                  onChanged: (value) {
+                                                    setState(() {
+                                                      UbarangayValue = value as String;
+                                                    });
+                                                  },
+                                                  iconSize: 14,
+                                                  iconEnabledColor: _colorFromHex(themeContent),
+                                                  iconDisabledColor: Colors.grey,
+                                                  buttonHeight: 40,
+                                                  buttonPadding: const EdgeInsets.only(left: 14, right: 14),
+                                                  buttonDecoration: BoxDecoration(
+                                                    borderRadius: BorderRadius.circular(0),
+                                                    border: Border.all(
+                                                      color: Colors.black26,
+                                                    ),
+                                                    color:_colorFromHex(themeInput),
+                                                  ),
+                                                  buttonElevation: 2,
+                                                  itemHeight: 40,
+                                                  itemPadding: const EdgeInsets.only(left: 14, right: 14),
+                                                  dropdownMaxHeight: 200,
+                                                  style: TextStyle(fontSize: 12),
+                                                  dropdownPadding: null,
+                                                  dropdownDecoration: BoxDecoration(
+                                                    borderRadius: BorderRadius.circular(0),
+                                                    color: _colorFromHex(themeNewCard),
+                                                  ),
+                                                  dropdownElevation: 8,
+                                                  scrollbarRadius: const Radius.circular(40),
+                                                  scrollbarThickness: 6,
+                                                  scrollbarAlwaysShow: true,
+                                                  offset: const Offset(-20, 0),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+
+
+                                        ),
+                                        Container(height:20),
+                                        Container(
+                                                                height: 45,
+                                                                alignment: Alignment.topRight,
+                                                                child:   Padding(
+                                                                  padding: EdgeInsets.symmetric(horizontal: 15, vertical: 0),
+                                                                  child:ElevatedButton(
+                                                                    child: Text('Set other barangay',style:TextStyle(color: Colors.yellow)),
+                                                                    onPressed: () {
+                                                                      setState(() {
+                                                                      changeVicinity();
+                                                                      });
+                                                                    },
+                                                                    style: ElevatedButton.styleFrom(
+                                                                        primary: _colorFromHex("#2786C9"),
+                                                                        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                                                                        textStyle: TextStyle(
+                                                                            fontWeight: FontWeight.bold)),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                              Container(height:50),
+                                                              Container(
+                                                                height: 45,
+                                                                alignment: Alignment.topRight,
+                                                                child:   Padding(
+                                                                  padding: EdgeInsets.symmetric(horizontal: 15, vertical: 0),
+                                                                  child:ElevatedButton(
+                                                                    child: Text('logout',style:TextStyle(color: Colors.white)),
+                                                                    onPressed: () {
+                                                                      setState(() {
+                                                                        lobby = "main";//main,lobby,editprofile
+                                                                        lobbySize = 75;
+                                                                        _Credentials("","");
+                                                                      });
+                                                                    },
+                                                                    style: ElevatedButton.styleFrom(
+                                                                        primary: _colorFromHex("#2786C9"),
+                                                                        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                                                                        textStyle: TextStyle(
+                                                                            fontWeight: FontWeight.bold)),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ]),
+                                                          ),
+                                                        ),
+                                                      ),
+
+
                                                   ]),
                                                 ),
                                               ]),
@@ -3661,7 +5797,7 @@ if(plattform=="androidiphone")
                           if(clickContinue=="finish")
                           Container(
                             child:Card(
-                              color: _colorFromHex(themeCard),
+                              color: _colorFromHex(themeNewCard),
                               child:   IntrinsicHeight(
                                 child: Column( children: [
                                   Expanded(
@@ -3688,14 +5824,15 @@ if(plattform=="androidiphone")
                                                   child:Image.asset('assets/logo/klackr_logo.png')
                                               ),
                                             ),
+                                           
                                             Flexible(
                                               flex:5,
                                               child: Column(
                                                   crossAxisAlignment: CrossAxisAlignment.start,
                                                   children: [
                                                     Text("Klackr",style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold,color:_colorFromHex(themeInputText))),
-                                                    Text("Follow friends and discover great",style: TextStyle(color:_colorFromHex("#6688A0"),fontSize: 10,fontWeight: FontWeight.bold)),
-                                                    Text("things in your vicinity and beyond",style: TextStyle(color:_colorFromHex("#6688A0"),fontSize: 10,fontWeight: FontWeight.bold)),
+                                                    Text("Follow friends and discover great",style: TextStyle(color:_colorFromHex(themeContent),fontSize: 10,fontWeight: FontWeight.bold)),
+                                                    Text("things in your vicinity and beyond",style: TextStyle(color:_colorFromHex(themeContent),fontSize: 10,fontWeight: FontWeight.bold)),
                                                   ]),
                                             ),
                                           ]
@@ -3707,7 +5844,7 @@ if(plattform=="androidiphone")
                                             alignment: Alignment.topLeft,
                                             child:   Padding(
                                               padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                              child:   Text("A message with a confirmation link has been sent to your email address. Please follow the link to activate your account. Please check your spam folder if you did not receive this email.",style: TextStyle(color:_colorFromHex("#6688A0"),fontWeight: FontWeight.bold)),
+                                              child:   Text("A message with a confirmation link has been sent to your email address. Please follow the link to activate your account. Please check your spam folder if you did not receive this email.",style: TextStyle(color:_colorFromHex(themeContent),fontWeight: FontWeight.bold)),
                                             ),
                                           ),
                                           Container(
@@ -3717,7 +5854,7 @@ if(plattform=="androidiphone")
                                             alignment: Alignment.topLeft,
                                             child:   Padding(
                                               padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                              child:   Text("The confirmation e-mail was sent to verceles@hotmail.com. If that e-mail address is not correct, you can change it in the account settings.",style: TextStyle(color:_colorFromHex("#6688A0"),fontWeight: FontWeight.bold)),
+                                              child:   Text("The confirmation e-mail was sent to verceles@hotmail.com. If that e-mail address is not correct, you can change it in the account settings.",style: TextStyle(color:_colorFromHex(themeContent),fontWeight: FontWeight.bold)),
                                             ),
                                           ),
                                           Container(
@@ -3727,7 +5864,7 @@ if(plattform=="androidiphone")
                                             alignment: Alignment.topLeft,
                                             child:   Padding(
                                               padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                              child:   Text("Account settings",style: TextStyle(color:_colorFromHex("#6688A0"),fontWeight: FontWeight.bold)),
+                                              child:   Text("Account settings",style: TextStyle(color:_colorFromHex(themeContent),fontWeight: FontWeight.bold)),
                                             ),
                                           ),
                                           Container(
@@ -3737,62 +5874,68 @@ if(plattform=="androidiphone")
                                             alignment: Alignment.topLeft,
                                             child:   Padding(
                                               padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                              child:   Text("Did not receive confirmation instructions?",style: TextStyle(color:_colorFromHex("#6688A0"),fontWeight: FontWeight.bold)),
+                                              child:   Text("Did not receive confirmation instructions?",style: TextStyle(color:_colorFromHex(themeContent),fontWeight: FontWeight.bold)),
                                             ),
                                           ),
                                           Container(
                                             height: 30,
                                           ),
-                                          Container(
-                                            height: 25,
-                                            child:    Padding(
-                                              padding: const EdgeInsets.only(
-                                                  left: 150, right:150, bottom: 0,top:0),
-                                              child:ElevatedButton(
-                                                child: Text('Back'),
-                                                onPressed: () {
-                                                  setState(() {
-                                                    clickContinue="false";
-                                                    firstnameRegisterController.text="";
-                                                    lastnameRegisterController.text="";
-                                                    suffixRegisterController.text="";
-                                                    genderRegisterController.text="";
-                                                    emailRegisterController.text="";
-                                                    usernameRegisterController.text="";
-                                                    passwordRegisterController.text="";
-                                                    confirmpasswordRegisterController.text="";
-                                                    birthdayRegisterController.text="";
-                                                    barangayTypeRegisterController.text="";
-                                                    cellphoneRegisterController.text="";
-                                                    regionValue=null;
-                                                    provinceValue=null;
-                                                    citymunicipalityValue=null;
-                                                    barangayValue=null;
-                                                    male=false;
-                                                    female=false;
-                                                    rather=false;
-                                                    monthValue=null;
-                                                    dayValue=null;
-                                                    yearValue=null;
-                                                    yesDraw=false;
-                                                    noDraw=false;
-                                                    wouldFollow=true;
-                                                    wouldReview=true;
-                                                    region.clear();
-                                                    province.clear();
-                                                    citymunicipality.clear();
-                                                    barangay.clear();
-                                                    getRegion();
-                                                  });
-                                                },
-                                                style: ElevatedButton.styleFrom(
-                                                    primary: _colorFromHex("#2786C9"),
-                                                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                                                    textStyle: TextStyle(
-                                                        fontWeight: FontWeight.bold)),
-                                              ),
-                                            ),
+                                          Row(
+                                                  mainAxisAlignment: MainAxisAlignment.end,
+                                              children:[
+                                                Container(
+                                                  height: 40,
+                                                  width:100,
+                                                  child:   Padding(
+                                                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                    child:ElevatedButton(
+                                                      child: Text('Back'),
+                                                      onPressed: () {
+                                                        setState(() {
+                                                          clickContinue="false";
+                                                          firstnameRegisterController.text="";
+                                                          lastnameRegisterController.text="";
+                                                          suffixRegisterController.text="";
+                                                          genderRegisterController.text="";
+                                                          emailRegisterController.text="";
+                                                          usernameRegisterController.text="";
+                                                          passwordRegisterController.text="";
+                                                          confirmpasswordRegisterController.text="";
+                                                          birthdayRegisterController.text="";
+                                                          barangayTypeRegisterController.text="";
+                                                          cellphoneRegisterController.text="";
+                                                          regionValue=null;
+                                                          provinceValue=null;
+                                                          citymunicipalityValue=null;
+                                                          barangayValue=null;
+                                                          male=false;
+                                                          female=false;
+                                                          rather=false;
+                                                          monthValue=null;
+                                                          dayValue=null;
+                                                          yearValue=null;
+                                                          yesDraw=false;
+                                                          noDraw=false;
+                                                          wouldFollow=true;
+                                                          wouldReview=true;
+                                                          region.clear();
+                                                          province.clear();
+                                                          citymunicipality.clear();
+                                                          barangay.clear();
+                                                          getRegion();
+                                                        });
+                                                      },
+                                                      style: ElevatedButton.styleFrom(
+                                                          primary: _colorFromHex("#2786C9"),
+                                                          padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                                                          textStyle: TextStyle(
+                                                              fontWeight: FontWeight.bold)),
+                                                    ),
+                                                  ),
+                                                ),
+                                          ]
                                           ),
+
                                           Container(
                                             height: 20,
                                           ),
@@ -3809,7 +5952,7 @@ if(plattform=="androidiphone")
                           if(clickContinue=="true")
                           Container(
                             child:Card(
-                              color: _colorFromHex(themeCard),
+                              color: _colorFromHex(themeNewCard),
                               child:   IntrinsicHeight(
                                 child: Column( children: [
                                   Expanded(
@@ -3834,14 +5977,15 @@ if(plattform=="androidiphone")
                                                       width: 50,
                                                       child:Image.asset('assets/logo/klackr_logo.png')),
                                                 ),
+                                                
                                                 Expanded(
                                                   flex: 10,
                                                   child: Column(
                                                       crossAxisAlignment: CrossAxisAlignment.start,
                                                       children: [
                                                         Text("Klackr",style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold,color:_colorFromHex(themeInputText))),
-                                                        Text("Follow friends and discover great",style: TextStyle(color:_colorFromHex("#6688A0"),fontSize: 10,fontWeight: FontWeight.bold)),
-                                                        Text("things in your vicinity and beyond",style: TextStyle(color:_colorFromHex("#6688A0"),fontSize: 10,fontWeight: FontWeight.bold)),
+                                                        Text("Follow friends and discover great",style: TextStyle(color:_colorFromHex(themeContent),fontSize: 10,fontWeight: FontWeight.bold)),
+                                                        Text("things in your vicinity and beyond",style: TextStyle(color:_colorFromHex(themeContent),fontSize: 10,fontWeight: FontWeight.bold)),
                                                       ]),
                                                 ),
                                                 Expanded(
@@ -3850,8 +5994,8 @@ if(plattform=="androidiphone")
                                                       crossAxisAlignment: CrossAxisAlignment.end,
                                                       children: [
                                                         Text("Klackr",style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold,color:Colors.transparent)),
-                                                        Text("Inventor & Administrator            ",style: TextStyle(color:_colorFromHex("#6688A0"),fontSize: 10,fontWeight: FontWeight.bold)),
-                                                        Text("Leandro Kuya Jun Verceles Jr.  ",style: TextStyle(color:_colorFromHex("#6688A0"),fontSize: 10,fontWeight: FontWeight.bold)),
+                                                        Text("Inventor & Administrator            ",style: TextStyle(color:Colors.transparent,fontSize: 10,fontWeight: FontWeight.bold)),
+                                                        Text("Leandro Kuya Jun Verceles Jr.  ",style: TextStyle(color:Colors.transparent,fontSize: 10,fontWeight: FontWeight.bold)),
                                                       ]),
                                                 ),
                                               ]),
@@ -3864,7 +6008,7 @@ if(plattform=="androidiphone")
                                             alignment: Alignment.topLeft,
                                             child:   Padding(
                                               padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                              child:   Text("Klackr terms & conditions and SIGN UP (at the end)",style: TextStyle(color:_colorFromHex("#6688A0"),fontWeight: FontWeight.bold)),
+                                              child:   Text("Klackr terms & conditions and SIGN UP (at the end)",style: TextStyle(color:_colorFromHex(themeContent),fontWeight: FontWeight.bold)),
                                             ),
                                           ),
                                           Container(
@@ -3874,7 +6018,7 @@ if(plattform=="androidiphone")
                                             alignment: Alignment.topLeft,
                                             child:   Padding(
                                               padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                              child:   Text("You can join the Klackr platform and Makabayan Bakuna Raffle Draws, and publish any private post, ad & commercial  post. The Klackr platfrom is run and the Makabayan Bakuna Raffle Draws managed by Klackr inventor & adminstrator Leandro Kuya Jun Verceles Jr. ",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                              child:   Text("You can join the Klackr platform and Makabayan Bakuna Raffle Draws, and publish any private post, ad & commercial  post. The Klackr platfrom is run and the Makabayan Bakuna Raffle Draws managed by Klackr inventor & adminstrator Leandro Kuya Jun Verceles Jr. ",style: TextStyle(color:_colorFromHex(themeContent))),
                                             ),
                                           ),
                                           Container(
@@ -3884,7 +6028,7 @@ if(plattform=="androidiphone")
                                             alignment: Alignment.topLeft,
                                             child:   Padding(
                                               padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                              child:   Text("You need to register only once for your Klackr acccount. If you are approached again to register, there is no need to register again. You’re good. ",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                              child:   Text("You need to register only once for your Klackr acccount. If you are approached again to register, there is no need to register again. You’re good. ",style: TextStyle(color:_colorFromHex(themeContent))),
                                             ),
                                           ),
                                           Container(
@@ -3894,7 +6038,7 @@ if(plattform=="androidiphone")
                                             alignment: Alignment.topLeft,
                                             child:   Padding(
                                               padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                              child:   Text("Klackr private posts",style: TextStyle(color:_colorFromHex("#6688A0"),fontWeight: FontWeight.bold)),
+                                              child:   Text("Klackr private posts",style: TextStyle(color:_colorFromHex(themeContent),fontWeight: FontWeight.bold)),
                                             ),
                                           ),
                                           Container(
@@ -3904,7 +6048,7 @@ if(plattform=="androidiphone")
                                             alignment: Alignment.topLeft,
                                             child:   Padding(
                                               padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                              child:   Text("Private posts are FREE for subscribers-users and have no limit of frequency of publication (subject to reasonable use). Private posts exclude Klackr ads & commercial posts.",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                              child:   Text("Private posts are FREE for subscribers-users and have no limit of frequency of publication (subject to reasonable use). Private posts exclude Klackr ads & commercial posts.",style: TextStyle(color:_colorFromHex(themeContent))),
                                             ),
                                           ),
                                           Container(
@@ -3914,7 +6058,7 @@ if(plattform=="androidiphone")
                                             alignment: Alignment.topLeft,
                                             child:   Padding(
                                               padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                              child:   Text("Private posts should not aim to advertise or promote businesses, products, services in the commercial sense; otherwise, they should be treated in the other category: Klackr ads & commercial posts. ",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                              child:   Text("Private posts should not aim to advertise or promote businesses, products, services in the commercial sense; otherwise, they should be treated in the other category: Klackr ads & commercial posts. ",style: TextStyle(color:_colorFromHex(themeContent))),
                                             ),
                                           ),
                                           Container(
@@ -3924,7 +6068,7 @@ if(plattform=="androidiphone")
                                             alignment: Alignment.topLeft,
                                             child:   Padding(
                                               padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                              child:   Text("Ads & commercial posts in the guise of private posts but actually election campaign or partisan political activity to support or defeat a candidate at any time is strictly prohibited. ",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                              child:   Text("Ads & commercial posts in the guise of private posts but actually election campaign or partisan political activity to support or defeat a candidate at any time is strictly prohibited. ",style: TextStyle(color:_colorFromHex(themeContent))),
                                             ),
                                           ),
                                           Container(
@@ -3934,7 +6078,7 @@ if(plattform=="androidiphone")
                                             alignment: Alignment.topLeft,
                                             child:   Padding(
                                               padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                              child:   Text("Private posts do not require pre-approval by the Klackr administrator and do not incur any waiting period to get published unlike ads & commercial posts. ",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                              child:   Text("Private posts do not require pre-approval by the Klackr administrator and do not incur any waiting period to get published unlike ads & commercial posts. ",style: TextStyle(color:_colorFromHex(themeContent))),
                                             ),
                                           ),
 
@@ -3945,7 +6089,7 @@ if(plattform=="androidiphone")
                                             alignment: Alignment.topLeft,
                                             child:   Padding(
                                               padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                              child:   Text("Klackr ads & commercial posts ",style: TextStyle(color:_colorFromHex("#6688A0"),fontWeight: FontWeight.bold)),
+                                              child:   Text("Klackr ads & commercial posts ",style: TextStyle(color:_colorFromHex(themeContent),fontWeight: FontWeight.bold)),
                                             ),
                                           ),
                                           Container(
@@ -3955,7 +6099,7 @@ if(plattform=="androidiphone")
                                             alignment: Alignment.topLeft,
                                             child:   Padding(
                                               padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                              child:   Text("Your ads & commercial posts are FREE for this beta test. ",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                              child:   Text("Your ads & commercial posts are FREE for this beta test. ",style: TextStyle(color:_colorFromHex(themeContent))),
                                             ),
                                           ),
                                           Container(
@@ -3965,7 +6109,7 @@ if(plattform=="androidiphone")
                                             alignment: Alignment.topLeft,
                                             child:   Padding(
                                               padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                              child:   Text("An ad or commercial post is evaluated by the Klackr.world administrator and if within 48 hours there is no reply, it is deemed as approved and will automatically be posted unless there is a violation of company rules then which it may be taken down at anytime. ",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                              child:   Text("An ad or commercial post is evaluated by the Klackr.world administrator and if within 48 hours there is no reply, it is deemed as approved and will automatically be posted unless there is a violation of company rules then which it may be taken down at anytime. ",style: TextStyle(color:_colorFromHex(themeContent))),
                                             ),
                                           ),
                                           Container(
@@ -3975,7 +6119,7 @@ if(plattform=="androidiphone")
                                             alignment: Alignment.topLeft,
                                             child:   Padding(
                                               padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                              child:   Text("Ads & commercial posts in the context of an election campaign or partisan political activity to support or defeat a candidate or partylist party at any time are strictly prohibited  without the approval of the Klackr administrator.",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                              child:   Text("Ads & commercial posts in the context of an election campaign or partisan political activity to support or defeat a candidate or partylist party at any time are strictly prohibited  without the approval of the Klackr administrator.",style: TextStyle(color:_colorFromHex(themeContent))),
                                             ),
                                           ),
                                           Container(
@@ -3985,7 +6129,7 @@ if(plattform=="androidiphone")
                                             alignment: Alignment.topLeft,
                                             child:   Padding(
                                               padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                              child:   Text("The post may be in the nature of at a discount.  ",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                              child:   Text("The post may be in the nature of at a discount.  ",style: TextStyle(color:_colorFromHex(themeContent))),
                                             ),
                                           ),
                                           Container(
@@ -3998,16 +6142,16 @@ if(plattform=="androidiphone")
                                                 child:  RichText(
                                                   text: TextSpan(
                                                     text: 'Publication by the same person, store, outlet, company, business outfit, or organization shall be limited to ',
-                                                    style: TextStyle(color: _colorFromHex("#6688A0")),
+                                                    style: TextStyle(color: _colorFromHex(themeContent)),
                                                     children: <TextSpan>[
                                                       TextSpan(
                                                         text: ' TWO ADS OR COMMERCIAL POSTS PER WEEK.',
                                                         style: TextStyle(
-                                                            color: _colorFromHex("#6688A0"),
+                                                            color: _colorFromHex(themeContent),
                                                             fontWeight: FontWeight.bold
                                                         ),
                                                       ),
-                                                      TextSpan(text: 'The ad or commercial post expires in 72 hours from the time of publication. ',style: TextStyle(color: _colorFromHex("#6688A0"))),
+                                                      TextSpan(text: 'The ad or commercial post expires in 72 hours from the time of publication. ',style: TextStyle(color: _colorFromHex(themeContent))),
                                                     ],
                                                   ),
                                                 )
@@ -4020,7 +6164,7 @@ if(plattform=="androidiphone")
                                             alignment: Alignment.topLeft,
                                             child:   Padding(
                                               padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                              child:   Text("Any strategy to duplicate persons or entities acting as separate publishers but discovered to be actually the same person or entity just to avoid the two posts per week limitation shall be dealt with severely and may lead to an immediate permanent ban from further publishing and/or use of the platform. ",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                              child:   Text("Any strategy to duplicate persons or entities acting as separate publishers but discovered to be actually the same person or entity just to avoid the two posts per week limitation shall be dealt with severely and may lead to an immediate permanent ban from further publishing and/or use of the platform. ",style: TextStyle(color:_colorFromHex(themeContent))),
                                             ),
                                           ),
                                           Container(
@@ -4030,7 +6174,7 @@ if(plattform=="androidiphone")
                                             alignment: Alignment.topLeft,
                                             child:   Padding(
                                               padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                              child:   Text("The publisher of the ad or  commercial post shall have the total responsibility of securing the necessary clearance or permit from the regulating agencies for the posting, if required. The publisher shall save free from any liability the Klackr company or any of its equity holders, officers, directors, administrator, managers, employees, and assigns because of the post. ",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                              child:   Text("The publisher of the ad or  commercial post shall have the total responsibility of securing the necessary clearance or permit from the regulating agencies for the posting, if required. The publisher shall save free from any liability the Klackr company or any of its equity holders, officers, directors, administrator, managers, employees, and assigns because of the post. ",style: TextStyle(color:_colorFromHex(themeContent))),
                                             ),
                                           ),
                                           Container(
@@ -4040,7 +6184,7 @@ if(plattform=="androidiphone")
                                             alignment: Alignment.topLeft,
                                             child:   Padding(
                                               padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                              child:   Text("100% REACH within your barangay",style: TextStyle(color:_colorFromHex("#6688A0"),fontWeight: FontWeight.bold)),
+                                              child:   Text("100% REACH within your barangay",style: TextStyle(color:_colorFromHex(themeContent),fontWeight: FontWeight.bold)),
                                             ),
                                           ),
                                           Container(
@@ -4050,7 +6194,7 @@ if(plattform=="androidiphone")
                                             alignment: Alignment.topLeft,
                                             child:   Padding(
                                               padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                              child:   Text("There are no algorithms on the platfrom so private posts, ads & commerical posts reach 100% the subscribers-users within your barangay upon their opening of the app. The private posts, ads & commercial posts are viewable for 72 hours from the time the material is downloaded. Sharing to followers or to any body else after the subscriber-user receives the original ad or commericial post is not automatic. If manually shared, it is viewable for another 72 hours from the time of sharing. ",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                              child:   Text("There are no algorithms on the platfrom so private posts, ads & commerical posts reach 100% the subscribers-users within your barangay upon their opening of the app. The private posts, ads & commercial posts are viewable for 72 hours from the time the material is downloaded. Sharing to followers or to any body else after the subscriber-user receives the original ad or commericial post is not automatic. If manually shared, it is viewable for another 72 hours from the time of sharing. ",style: TextStyle(color:_colorFromHex(themeContent))),
                                             ),
                                           ),
                                           Container(
@@ -4060,7 +6204,7 @@ if(plattform=="androidiphone")
                                             alignment: Alignment.topLeft,
                                             child:   Padding(
                                               padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                              child:   Text("Fake news, abusive language, responsible Information, trolling, violations of the Klackr company rules",style: TextStyle(color:_colorFromHex("#6688A0"),fontWeight: FontWeight.bold)),
+                                              child:   Text("Fake news, abusive language, responsible Information, trolling, violations of the Klackr company rules",style: TextStyle(color:_colorFromHex(themeContent),fontWeight: FontWeight.bold)),
                                             ),
                                           ),
                                           Container(
@@ -4070,7 +6214,7 @@ if(plattform=="androidiphone")
                                             alignment: Alignment.topLeft,
                                             child:   Padding(
                                               padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                              child:   Text("We espouse responsible information. Therefore, strictly prohibited on your private posts, ads & commercial posts are fake news and language that are abusive, cursing, cussing, profaning, blaspheming, racist, anti-minority, white supremancy, and intending to destroy the reputation of any person or group whether the latter is a public or government personality, celebrity, private individual, company, business, public or private institution. The defamatory, cyber libel, and other libel rules of the particular jurisdiction shall supplement the liability for fake news and prohibited language indicated herein.  ",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                              child:   Text("We espouse responsible information. Therefore, strictly prohibited on your private posts, ads & commercial posts are fake news and language that are abusive, cursing, cussing, profaning, blaspheming, racist, anti-minority, white supremancy, and intending to destroy the reputation of any person or group whether the latter is a public or government personality, celebrity, private individual, company, business, public or private institution. The defamatory, cyber libel, and other libel rules of the particular jurisdiction shall supplement the liability for fake news and prohibited language indicated herein.  ",style: TextStyle(color:_colorFromHex(themeContent))),
                                             ),
                                           ),
                                           Container(
@@ -4080,7 +6224,7 @@ if(plattform=="androidiphone")
                                             alignment: Alignment.topLeft,
                                             child:   Padding(
                                               padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                              child:   Text("Violation of the Klackr company policy and rules especially against fake news and prohibited language may lead to a suspension or total ban from the platform. ",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                              child:   Text("Violation of the Klackr company policy and rules especially against fake news and prohibited language may lead to a suspension or total ban from the platform. ",style: TextStyle(color:_colorFromHex(themeContent))),
                                             ),
                                           ),
                                           Container(
@@ -4090,7 +6234,7 @@ if(plattform=="androidiphone")
                                             alignment: Alignment.topLeft,
                                             child:   Padding(
                                               padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                              child:   Text("Trolling is strictly prohibited on the platform. An immediate permanent ban awaits the trollers once discovered. ",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                              child:   Text("Trolling is strictly prohibited on the platform. An immediate permanent ban awaits the trollers once discovered. ",style: TextStyle(color:_colorFromHex(themeContent))),
                                             ),
                                           ),
                                           Container(
@@ -4100,7 +6244,7 @@ if(plattform=="androidiphone")
                                             alignment: Alignment.topLeft,
                                             child:   Padding(
                                               padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                              child:   Text("HARMLESS FROM LIABILITY FOR THE KLACKR COMPANY",style: TextStyle(color:_colorFromHex("#6688A0"),fontWeight: FontWeight.bold)),
+                                              child:   Text("HARMLESS FROM LIABILITY FOR THE KLACKR COMPANY",style: TextStyle(color:_colorFromHex(themeContent),fontWeight: FontWeight.bold)),
                                             ),
                                           ),
                                           Container(
@@ -4110,7 +6254,7 @@ if(plattform=="androidiphone")
                                             alignment: Alignment.topLeft,
                                             child:   Padding(
                                               padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                              child:   Text("The Klackr platform is merely the vessel of your private posts, ads & commercial posts. Hence, the the Klackr company bears no responsibility to the contents of said private posts, ads & commercial posts. The publisher saves harmless from all liabilities and damages the Klackr company, its equity holders, officers, directors, managers, employees, and assigns because of said private posts, ads & commercial posts.    ",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                              child:   Text("The Klackr platform is merely the vessel of your private posts, ads & commercial posts. Hence, the the Klackr company bears no responsibility to the contents of said private posts, ads & commercial posts. The publisher saves harmless from all liabilities and damages the Klackr company, its equity holders, officers, directors, managers, employees, and assigns because of said private posts, ads & commercial posts.    ",style: TextStyle(color:_colorFromHex(themeContent))),
                                             ),
                                           ),
                                           Container(
@@ -4120,7 +6264,7 @@ if(plattform=="androidiphone")
                                             alignment: Alignment.topLeft,
                                             child:   Padding(
                                               padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                              child:   Text("CONFIDENTIALITY  ",style: TextStyle(color:_colorFromHex("#6688A0"),fontWeight: FontWeight.bold)),
+                                              child:   Text("CONFIDENTIALITY  ",style: TextStyle(color:_colorFromHex(themeContent),fontWeight: FontWeight.bold)),
                                             ),
                                           ),
                                           Container(
@@ -4130,7 +6274,7 @@ if(plattform=="androidiphone")
                                             alignment: Alignment.topLeft,
                                             child:   Padding(
                                               padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                              child:   Text("Your personal information are strictly confidential. Respecting your rights, any collected information that will directly identify you to third parties unless ordered by the courts or by law or lawfull regulation covering any transaction, sale, transfer, trade, barter, donation, or any other kind of disposition on the Klackr platform will not be done without your express permission. We subscribe to the PHILIPPINE DATA PRIVACY ACT. ",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                              child:   Text("Your personal information are strictly confidential. Respecting your rights, any collected information that will directly identify you to third parties unless ordered by the courts or by law or lawfull regulation covering any transaction, sale, transfer, trade, barter, donation, or any other kind of disposition on the Klackr platform will not be done without your express permission. We subscribe to the PHILIPPINE DATA PRIVACY ACT. ",style: TextStyle(color:_colorFromHex(themeContent))),
                                             ),
                                           ),
                                           Container(
@@ -4138,9 +6282,10 @@ if(plattform=="androidiphone")
                                           ),
                                           Row(children: [
                                             Flexible(
-                                              flex:3,
+                                              flex:4,
                                               child: Container(
-                                                height: 30,
+                                                height: 40,
+                                                width:150,
                                                 child:   Padding(
                                                   padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
                                                   child:ElevatedButton(
@@ -4161,7 +6306,7 @@ if(plattform=="androidiphone")
                                             ),
                                             Flexible(
                                               flex:9,
-                                              child: Text("I agree and will abide by the above terms and conditions for the use of the Klackr.world  platform and, therefore, am signing up.    ",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                              child: Text("I agree and will abide by the above terms and conditions for the use of the Klackr.world  platform and, therefore, am signing up.    ",style: TextStyle(color:_colorFromHex(themeContent))),
                                             ),
 
                                             //  Container(height: 100.0, color: Colors.cyan),
@@ -4170,11 +6315,14 @@ if(plattform=="androidiphone")
                                           Container(
                                             height: 35,
                                           ),
-                                          Container(
-                                            height: 25,
-                                            child:    Padding(
-                                              padding: const EdgeInsets.only(
-                                                  left: 150, right:150, bottom: 0,top:0),
+                                    Row(
+                                        mainAxisAlignment: MainAxisAlignment.end,
+                                        children:[
+                                        Container(
+                                        height: 40,
+                                        width:100,
+                                          child:   Padding(
+                                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
                                               child:ElevatedButton(
                                                 child: Text('Back'),
                                                 onPressed: () {
@@ -4190,11 +6338,14 @@ if(plattform=="androidiphone")
                                               ),
                                             ),
                                           ),
+                                          ]
+                                    ),
                                           Container(
                                             height: 20,
                                           ),
                                         ]
                                     ),
+                                    
                                   ),
 
                                 ]),
@@ -4223,14 +6374,17 @@ if(plattform=="androidiphone")
                                         width: 50,
                                         child:Image.asset('assets/logo/klackr_logo.png')),
                                   ),
+                                  Container(
+                                    width:5,
+                                  ),
                                   Expanded(
                                     flex: 10,
                                     child: Column(
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
                                           Text("Klackr",style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold,color:_colorFromHex(themeTitle))),
-                                          Text("Follow friends and discover great",style: TextStyle(color:_colorFromHex("#6688A0"),fontSize: 10,fontWeight: FontWeight.bold)),
-                                          Text("things in your vicinity and beyond",style: TextStyle(color:_colorFromHex("#6688A0"),fontSize: 10,fontWeight: FontWeight.bold)),
+                                          Text("Follow friends and discover great",style: TextStyle(color:_colorFromHex(themeContent),fontSize: 10,fontWeight: FontWeight.bold)),
+                                          Text("things in your vicinity and beyond",style: TextStyle(color:_colorFromHex(themeContent),fontSize: 10,fontWeight: FontWeight.bold)),
                                         ]),
                                   ),
 
@@ -4246,41 +6400,17 @@ if(plattform=="androidiphone")
                               child: Container(
                                 child:   IntrinsicHeight(
                                   child: Column( children: [
-                                    Expanded(
-                                      flex:3,
-                                  child: Row( children: [
-                                        Text("Filipino",style: TextStyle(color:_colorFromHex("#6688A0"))),
-                                        Theme(
-                                          data: ThemeData(
-                                            primarySwatch: Colors.blue,
-                                            unselectedWidgetColor: _colorFromHex("#6688A0"), // Your color
-                                          ),
-                                          child: Checkbox(
-                                            value: false,
-                                            checkColor: Colors.black,
-                                            activeColor: Colors.grey,
-                                            onChanged: (value) {
-                                              setState(() {
-                                                if(pilipino==false){
-                                                  pilipino=true;
-                                                  english=false;
-                                                }
-                                              });
-                                            },),
+                                    Flexible(
+                                    child:IntrinsicHeight(
+                                      child: Row( children: [
+                                        Container(
+                                          width:10,
                                         ),
                                      
-                                    
-                                      ]),
-                                    ),
-                                    Expanded(
-                                      flex:3,
-                                      child: Row( children: [
-                                      
-                                        Text("English",style: TextStyle(color:_colorFromHex("#6688A0"))),
                                         Theme(
                                           data: ThemeData(
                                             primarySwatch: Colors.blue,
-                                            unselectedWidgetColor: _colorFromHex("#6688A0"), // Your color
+                                            unselectedWidgetColor: _colorFromHex(themeContent), // Your color
                                           ),
                                           child: Checkbox(
                                             value: true,
@@ -4296,42 +6426,88 @@ if(plattform=="androidiphone")
                                               });
                                             },),
                                         ),
-                                     
-
-                                      ]),
-                                    ),
-
-                                    Expanded(
-                                      flex:3,
-                                      child: Row( children: [
-                                   
-                                        Text("Dark Theme",style: TextStyle(color:_colorFromHex("#6688A0"))),
+   Text("English",style: TextStyle(color:_colorFromHex(themeInputText))),
+                                        Container(
+                                        width:20,
+                                        ),
+                                       
                                         Theme(
                                           data: ThemeData(
                                             primarySwatch: Colors.blue,
-                                            unselectedWidgetColor: _colorFromHex("#6688A0"), // Your color
+                                            unselectedWidgetColor: _colorFromHex(themeContent), // Your color
                                           ),
                                           child: Checkbox(
-                                            value: themeColor,
+                                            value: themeColorWhite,
                                             checkColor: Colors.black,
-                                            activeColor:_colorFromHex("#6688A0"),
+                                            activeColor: Colors.grey,
                                             onChanged: (value) {
                                               setState(() {
-                                                if(themeColor==false){
-                                                  themeColor=true;
-                                                  darkTheme();
-                                                }else{
-                                                  themeColor=false;
+                                                if(themeColorDark==true){
+                                                  themeColorDark=false;
+                                                  themeColorWhite=true;
                                                   whiteTheme();
                                                 }
                                               });
                                             },),
-                                        )
-
-
+                                        ),
+ Text("light theme",style: TextStyle(color:_colorFromHex(themeContent))),
                                       ]),
                                     ),
-
+                                    ),
+                                    Flexible(
+                                    child:IntrinsicHeight(
+                                      child: Row( children: [
+                                        Container(
+                                          width:9.8,
+                                        ),
+                                       
+                                        Theme(
+                                          data: ThemeData(
+                                            primarySwatch: Colors.blue,
+                                            unselectedWidgetColor: _colorFromHex(themeContent), // Your color
+                                          ),
+                                          child: Checkbox(
+                                            value: false,
+                                            checkColor: Colors.black,
+                                            activeColor: Colors.grey,
+                                            onChanged: (value) {
+                                              setState(() {
+                                                if(pilipino==false){
+                                                  pilipino=true;
+                                                  english=false;
+                                                }
+                                              });
+                                            },),
+                                        ),
+ Text("Tagalog",style: TextStyle(color:_colorFromHex(themeInputText))),
+                                        Container(
+                                          width:15.5,
+                                        ),
+                                        Theme(
+                                          data: ThemeData(
+                                            primarySwatch: Colors.blue,
+                                            unselectedWidgetColor: _colorFromHex(themeContent), // Your color
+                                          ),
+                                          child: Checkbox(
+                                            value: themeColorDark,
+                                            checkColor: Colors.black,
+                                            activeColor:_colorFromHex("#6688A0"),
+                                            onChanged: (value) {
+                                              setState(() {
+                                                if(themeColorWhite==true){
+                                                  themeColorWhite=false;
+                                                  themeColorDark=true;
+                                                  darkTheme();
+                                                }
+                                              });
+                                            },),
+                                        ),
+                                        Text("dark theme",style: TextStyle(color:_colorFromHex(themeContent))),
+                                      ]),
+                                    ),
+                                    ),
+                                    Container(height:20),
+                                
                                   ]),
                                 ),
                               ),
@@ -4346,7 +6522,7 @@ if(plattform=="androidiphone")
                                   child: Column(children: [
                                     Container(
                                       child:Card(
-                                        color: _colorFromHex(themeCard),
+                                        color: _colorFromHex(themeNewCard),
                                         child:   IntrinsicHeight(
                                           child: Column( children: [
                                             Expanded(
@@ -4358,31 +6534,37 @@ if(plattform=="androidiphone")
                                                   alignment: Alignment.topLeft,
                                                   child:   Padding(
                                                     padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                    child:  Text("Login in now",style: TextStyle(color:_colorFromHex("#6688A0"),fontWeight: FontWeight.bold,fontSize: 15)),
+                                                    child:  Text("Login",style: TextStyle(color:_colorFromHex(themeContent),fontWeight: FontWeight.bold,fontSize: 15)),
                                                   ),
                                                 ),
                                                 Container(
                                                   height: 10,
                                                 ),
-                                                Container(
-                                                  height: 45,
-                                                  child:   Padding(
-                                                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                    child: TextField(
-                                                      controller: emailLogin,
-                                                      decoration: InputDecoration(
-                                                        filled: true,
-                                                        fillColor: _colorFromHex(themeInput),
-                                                        border: OutlineInputBorder(
 
-                                                        ),
-                                                        hintText: 'Email address',
-                                                        hintStyle: TextStyle(color:_colorFromHex("#6688A0")),
-                                                      ),
-                                                      style: TextStyle(color:  _colorFromHex(themeInputText)),
-                                                    ),
-                                                  ),
-                                                ),
+                                                Container(
+                                                height: 50,
+                                                child:   Padding(
+    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+    child: TextField(
+    controller:emailLogin,
+    keyboardType: TextInputType.emailAddress,
+
+    decoration: InputDecoration(
+    floatingLabelBehavior: FloatingLabelBehavior.never, //Hides label on focus or if filled
+    hintText: 'Email address',
+    hintStyle: TextStyle(color:_colorFromHex(themeContent)),
+    filled: true, // Needed for adding a fill color
+    fillColor:  _colorFromHex(themeInput),
+    isDense: true,  // Reduces height a bit
+    border: OutlineInputBorder(
+    // Apply corner radius
+    ),
+
+    ),
+    style: TextStyle(color: _colorFromHex(themeInputText)),
+    ),
+    ),
+    ),
                                                 Container(
                                                   height: 5,
                                                 ),
@@ -4399,7 +6581,7 @@ if(plattform=="androidiphone")
                                                       decoration: InputDecoration(
                                                         floatingLabelBehavior: FloatingLabelBehavior.never, //Hides label on focus or if filled
                                                         hintText: 'Password',
-                                                        hintStyle: TextStyle(color:_colorFromHex("#6688A0")),
+                                                        hintStyle: TextStyle(color:_colorFromHex(themeContent)),
                                                         filled: true, // Needed for adding a fill color
                                                         fillColor:  _colorFromHex(themeInput),
                                                         isDense: true,  // Reduces height a bit
@@ -4413,7 +6595,7 @@ if(plattform=="androidiphone")
                                                             child: Icon(
                                                               _obscured3 ? Icons.visibility_off_rounded: Icons.visibility_rounded ,
                                                               size: 24,
-                                                              color: _colorFromHex("#6688A0"),
+                                                              color: _colorFromHex(themeContent),
                                                             ),
                                                           ),
                                                         ),
@@ -4464,6 +6646,13 @@ if(plattform=="androidiphone")
                                                     ),
                                                   ),
                                                 ),
+                                                if(forgot=="true")
+                                                  TextButton(
+                                                    child: const Text('Forget password?'),
+                                                    onPressed: () {
+
+                                                    },
+                                                  ),
                                                 Container(
                                                   height: 15,
                                                 ),
@@ -4478,27 +6667,7 @@ if(plattform=="androidiphone")
                                     Container(height: 10),
                                     Container(
                                       child:Card(
-                                        color: _colorFromHex(themeCard),
-                                        child:   IntrinsicHeight(
-                                          child: Column( children: [
-                                            Expanded(
-                                              child: Column(children: [
-                                                Container(
-                                                  height: 150,
-                                                ),
-
-                                              ]
-                                              ),
-                                            ),
-
-                                          ]),
-                                        ),
-                                      ),
-                                    ),
-                                    Container(height: 10),
-                                    Container(
-                                      child:Card(
-                                        color: _colorFromHex(themeCard),
+                                        color: _colorFromHex(themeNewCard),
                                         child:   IntrinsicHeight(
                                           child: Column( children: [
                                             Expanded(
@@ -4517,7 +6686,7 @@ if(plattform=="androidiphone")
                                                             alignment: Alignment.topLeft,
                                                             child:   Padding(
                                                               padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                              child:  Text("Inventor & Administrator",style: TextStyle(color:_colorFromHex("#6688A0"),fontWeight: FontWeight.bold,fontSize: 17)),
+                                                              child:  Text("Inventor & Administrator",style: TextStyle(color:_colorFromHex(themeContent),fontWeight: FontWeight.bold,fontSize: 17)),
                                                             ),
                                                           ),
                                                           Container(height: 5),
@@ -4525,40 +6694,73 @@ if(plattform=="androidiphone")
                                                             alignment: Alignment.topLeft,
                                                             child:   Padding(
                                                               padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                              child:  Text("running the Klackr platform and managing the Makabayan Pilipino Bakuna Raffle Draws:",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                                              child:  Text("Running the Klackr platform and managing the Makabayan Pilipino Bakuna Raffle Draws:",style: TextStyle(color:_colorFromHex(themeContent))),
                                                             ),
                                                           ),
-                                                          Container(
-                                                            alignment: Alignment.topLeft,
-                                                            child:   Padding(
-                                                              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                              child:  Text("Leandro Kuya Jun Verceles Jr.",style: TextStyle(color:_colorFromHex("#6688A0"),fontWeight: FontWeight.bold,fontSize: 17)),
-                                                            ),
-                                                          ),
-                                                          Container(
-                                                            alignment: Alignment.topLeft,
-                                                            child:   Padding(
-                                                              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                              child:  Text("KuyaJunVerceles@Klackr.world",style: TextStyle(color:_colorFromHex("#6688A0"))),
-                                                            ),
-                                                          ),
+
+                                                         Container(
+
+    height:35,
+              child:InkWell(                                           child: Column(children:[
+                                                          
+     Row(children:[
+
+        Container(
+                                                                alignment: Alignment.topLeft,
+                                                                child:   Padding(
+                                                                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+  child:RichText(
+    text: TextSpan(
+    text: 'Leandro ',
+    style: TextStyle(color: _colorFromHex(themeContent),  fontWeight: FontWeight.bold),
+    children: <TextSpan>[
+    TextSpan(
+    text: 'Kuya Jun ',
+    style: TextStyle(
+    color: _colorFromHex(themeContent),
+    fontWeight: FontWeight.bold,
+    fontStyle: FontStyle.italic
+    ),
+    ),
+    TextSpan(text: 'Verceles Jr. ',style: TextStyle(  fontWeight: FontWeight.bold,color: _colorFromHex(themeContent))),
+    ],
+    ),
+    ),
+                                                                ),
+        ),
+
+    ]),
+    Row(children:[
+  Container(
+                                                                alignment: Alignment.topLeft,
+                                                                child:   Padding(
+                                                                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                                  child:  Text("verceles@hotmail.com",style: TextStyle(color:_colorFromHex(themeContent))),
+                                                                ),
+                                                              ),
+    ]),
+                                                      
+                                                          ]),
+                                                          onTap:(){
+                                                         
+                                                          }
+    ),
+                                                         ),
                                                           Container(height: 5),
                                                           Container(
-                                                            alignment: Alignment.topLeft,
-                                                              child:   Padding(
-                                                                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                                  child:Image.asset('assets/leandro.png'),
-                                                              ),  
-                                                          ),
-                                                          Container(
-                                                            height: 140,
+                                                            height:70,
+                                                            alignment: Alignment .topLeft,
+                                                            child:   Padding(
+                                                              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                              child:Image.asset('assets/leandro.png'),
+                                                            ),
                                                           ),
                                                         ]
                                                         ),
                                                       ),
                                                     ),
                                                   ),
-                                                  Flexible(
+                                                 /* Flexible(
                                                     child:Container(
                                                       alignment: Alignment.topLeft,
                                                       child:   Padding(
@@ -4568,14 +6770,14 @@ if(plattform=="androidiphone")
                                                             alignment: Alignment.topLeft,
                                                             child:   Padding(
                                                               padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                              child:  Text("Subscribers-users STATS",style: TextStyle(color:_colorFromHex("#6688A0"),fontWeight: FontWeight.bold,fontSize: 15)),
+                                                              child:  Text("Subscribers-users STATS",style: TextStyle(color:_colorFromHex(themeContent),fontWeight: FontWeight.bold,fontSize: 15)),
                                                             ),
                                                           ),
                                                           Container(
                                                             alignment: Alignment.topLeft,
                                                             child:   Padding(
                                                               padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                              child:  Text("(in real time):",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                                              child:  Text("(in real time):",style: TextStyle(color:_colorFromHex(themeContent))),
                                                             ),
                                                           ),
                                                           Container(height: 20),
@@ -4583,7 +6785,7 @@ if(plattform=="androidiphone")
                                                             alignment: Alignment.topLeft,
                                                             child:   Padding(
                                                               padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                              child:  Text("Subscribers-users registered:",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                                              child:  Text("Subscribers-users registered:",style: TextStyle(color:_colorFromHex(themeContent))),
                                                             ),
                                                           ),
                                                           Container(
@@ -4597,7 +6799,7 @@ if(plattform=="androidiphone")
                                                             alignment: Alignment.topLeft,
                                                             child:   Padding(
                                                               padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                              child:  Text("18 years old and above",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                                              child:  Text("18 years old and above",style: TextStyle(color:_colorFromHex(themeContent))),
                                                             ),
                                                           ),
                                                           Container(
@@ -4611,7 +6813,7 @@ if(plattform=="androidiphone")
                                                             alignment: Alignment.topLeft,
                                                             child:   Padding(
                                                               padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                              child:  Text("14-17 years old",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                                              child:  Text("14-17 years old",style: TextStyle(color:_colorFromHex(themeContent))),
                                                             ),
                                                           ),
                                                           Container(
@@ -4625,7 +6827,7 @@ if(plattform=="androidiphone")
                                                             alignment: Alignment.topLeft,
                                                             child:   Padding(
                                                               padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                              child:  Text("13 years old and below",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                                              child:  Text("13 years old and below",style: TextStyle(color:_colorFromHex(themeContent))),
                                                             ),
                                                           ),
                                                           Container(
@@ -4633,7 +6835,7 @@ if(plattform=="androidiphone")
                                                           ),
                                                           Container(
                                                             height: 1,
-                                                            color:_colorFromHex("#6688A0"),
+                                                            color:_colorFromHex(themeContent),
                                                           ),
                                                           Container(
                                                             height: 5,
@@ -4649,7 +6851,7 @@ if(plattform=="androidiphone")
                                                             alignment: Alignment.topLeft,
                                                             child:   Padding(
                                                               padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                              child:  Text("total subscribers-users on the Klackr platform",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                                              child:  Text("total subscribers-users on the Klackr platform",style: TextStyle(color:_colorFromHex(themeContent))),
                                                             ),
                                                           ),
                                                           Container(
@@ -4666,7 +6868,7 @@ if(plattform=="androidiphone")
                                                             alignment: Alignment.topLeft,
                                                             child:   Padding(
                                                               padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                              child:  Text("active users 18 years old and above",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                                              child:  Text("active users 18 years old and above",style: TextStyle(color:_colorFromHex(themeContent))),
                                                             ),
                                                           ),
                                                           Container(
@@ -4676,7 +6878,7 @@ if(plattform=="androidiphone")
                                                         ),
                                                       ),
                                                     ),
-                                                  ),
+                                                  ),*/
                                                 ]
                                                 ),
                                               ]
@@ -4687,7 +6889,7 @@ if(plattform=="androidiphone")
                                         ),
                                       ),
                                     ),
-
+                                   
                                   ]
                                   ),
                                 ),
@@ -4701,7 +6903,7 @@ if(plattform=="androidiphone")
     padding: EdgeInsets.symmetric(horizontal: 8 , vertical: 0),
                             child:Container(
                               child:Card(
-                                color: _colorFromHex(themeCard),
+                                color: _colorFromHex(themeNewCard),
                                 child:   IntrinsicHeight(
                                   child: Column( children: [
                                     Expanded(
@@ -4713,7 +6915,7 @@ if(plattform=="androidiphone")
                                           alignment: Alignment.topLeft,
                                           child:   Padding(
                                             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                            child:  Text("Makabayan Pilipino:",style: TextStyle(color:_colorFromHex("#6688A0"),fontWeight: FontWeight.bold,fontSize: 19)),
+                                            child:  Text("Makabayan Pilipino:",style: TextStyle(color:_colorFromHex(themeContent),fontWeight: FontWeight.bold,fontSize: 19)),
                                           ),
                                         ),
                                         Container(
@@ -4723,7 +6925,7 @@ if(plattform=="androidiphone")
                                           alignment: Alignment.topLeft,
                                           child:   Padding(
                                             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                            child:   Text("Register to join the Makabayan Pilipino Bakuna Raffle Draws for big cash and other prizes. All FREE! Bigger cash and prizes if vaccinated. And even if not vaccinated, you can still participate.",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                            child:   Text("Register to join the Makabayan Pilipino Bakuna Raffle Draws for big cash and other prizes. All FREE! Bigger cash and prizes if vaccinated. And even if not vaccinated, you can still join.",style: TextStyle(color:_colorFromHex(themeContent))),
                                           ),
                                         ),
                                         Container(
@@ -4742,7 +6944,7 @@ if(plattform=="androidiphone")
 
                                                 ),
                                                 hintText: 'First name',
-                                                hintStyle: TextStyle(color:_colorFromHex("#6688A0")),
+                                                hintStyle: TextStyle(color:_colorFromHex(themeContent)),
                                               ),
                                               style: TextStyle(color: _colorFromHex(themeInputText)),
                                             ),
@@ -4764,7 +6966,7 @@ if(plattform=="androidiphone")
 
                                                 ),
                                                 hintText: 'Last name',
-                                                hintStyle: TextStyle(color:_colorFromHex("#6688A0")),
+                                                hintStyle: TextStyle(color:_colorFromHex(themeContent)),
                                               ),
                                               style: TextStyle(color: _colorFromHex(themeInputText)),
                                             ),
@@ -4786,7 +6988,7 @@ if(plattform=="androidiphone")
 
                                                 ),
                                                 hintText: 'Suffix',
-                                                hintStyle: TextStyle(color:_colorFromHex("#6688A0")),
+                                                hintStyle: TextStyle(color:_colorFromHex(themeContent)),
                                               ),
                                               style: TextStyle(color:  _colorFromHex(themeInputText)),
                                             ),
@@ -4795,22 +6997,29 @@ if(plattform=="androidiphone")
                                         Container(
                                           height: 15,
                                         ),
-                                        Text("Gender",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                      Row(children: [
+                                        Container(
+                                          width: 10,
+                                        ),
+                                        Text("Gender",textAlign: TextAlign.start,style: TextStyle(color:_colorFromHex(themeContent))),
+                                      ]
+ ),
+                                        
                                         Row(children: [
                                           Container(
-                                            width: 10,
+                                            width: 15,
                                           ),
 
                                           Flexible(
                                             child:Theme(
                                               data: ThemeData(
                                                 primarySwatch: Colors.blue,
-                                                unselectedWidgetColor: _colorFromHex("#6688A0"), // Your color
+                                                unselectedWidgetColor: _colorFromHex(themeContent), // Your color
                                               ),
                                               child: Checkbox(
                                                 value: male,
-                                                checkColor: Colors.black,
-                                                activeColor: _colorFromHex("#6688A0"),
+                                                checkColor: Colors.white,
+                                                activeColor: _colorFromHex(themeContent),
                                                 onChanged: (value) {
                                                   setState(() {
                                                     if(male==false){
@@ -4827,20 +7036,26 @@ if(plattform=="androidiphone")
                                                 },),
                                             ),
                                           ),
-
+                                          Container(
+                                            width:10,
+                                          ),
                                           Flexible(
-                                            child:      Text("Male",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                            flex:9,
+                                            child:      Text("Male",style: TextStyle(color:_colorFromHex(themeContent))),
+                                          ),
+                                          Container(
+                                              width:10,
                                           ),
                                           Flexible(
                                             child: Theme(
                                               data: ThemeData(
                                                 primarySwatch: Colors.blue,
-                                                unselectedWidgetColor: _colorFromHex("#6688A0"), // Your color
+                                                unselectedWidgetColor: _colorFromHex(themeContent), // Your color
                                               ),
                                               child: Checkbox(
                                                 value: female,
-                                                checkColor: Colors.black,
-                                                activeColor:_colorFromHex("#6688A0"),
+                                                checkColor: Colors.white,
+                                                activeColor:_colorFromHex(themeContent),
                                                 onChanged: (value) {
                                                   setState(() {
                                                     if(female==false){
@@ -4857,19 +7072,28 @@ if(plattform=="androidiphone")
                                                 },),
                                             ),
                                           ),
-                                          Flexible(
-                                            child: Text("Female",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                        
+                                          Container(
+                                            width:10,
                                           ),
                                           Flexible(
+                                            flex:9,
+                                            child:      Text("Female",style: TextStyle(color:_colorFromHex(themeContent))),
+                                          ),
+                                          Container(
+                                            width:10,
+                                          ),
+                                          Flexible(
+                                           
                                             child: Theme(
                                               data: ThemeData(
                                                 primarySwatch: Colors.blue,
-                                                unselectedWidgetColor: _colorFromHex("#6688A0"), // Your color
+                                                unselectedWidgetColor: _colorFromHex(themeContent), // Your color
                                               ),
                                               child: Checkbox(
                                                 value: rather,
-                                                checkColor: Colors.black,
-                                                activeColor:_colorFromHex("#6688A0"),
+                                                checkColor: Colors.white,
+                                                activeColor:_colorFromHex(themeContent),
                                                 onChanged: (value) {
                                                   setState(() {
                                                     if(rather==false){
@@ -4886,11 +7110,14 @@ if(plattform=="androidiphone")
                                                 },),
                                             ),
                                           ),
-                                          Flexible(
-                                            flex: 2,
-                                            child: Text("Rather not say",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                          Container(
+                                            width:10,
                                           ),
-
+                                          Flexible(
+                                            flex:0  ,
+                                            child:Text("Rather not say",style: TextStyle(color:_colorFromHex(themeContent))),
+                                          ),
+                                         
                                         ]
                                         ),
 
@@ -4910,7 +7137,7 @@ if(plattform=="androidiphone")
 
                                                 ),
                                                 hintText: 'Email address',
-                                                hintStyle: TextStyle(color:_colorFromHex("#6688A0")),
+                                                hintStyle: TextStyle(color:_colorFromHex(themeContent)),
                                               ),
                                               style: TextStyle(color:  _colorFromHex(themeInputText)),
                                             ),
@@ -4934,7 +7161,7 @@ if(plattform=="androidiphone")
 
                                                     ),
                                                     hintText: 'Username',
-                                                    hintStyle: TextStyle(color:_colorFromHex("#6688A0")),
+                                                    hintStyle: TextStyle(color:_colorFromHex(themeContent)),
                                                   ),
                                                   style: TextStyle(color: _colorFromHex(themeInputText)),
                                                 ),
@@ -4957,7 +7184,7 @@ if(plattform=="androidiphone")
                                               decoration: InputDecoration(
                                                 floatingLabelBehavior: FloatingLabelBehavior.never, //Hides label on focus or if filled
                                                 hintText: 'Password',
-                                                hintStyle: TextStyle(color:_colorFromHex("#6688A0")),
+                                                hintStyle: TextStyle(color:_colorFromHex(themeContent)),
                                                 filled: true, // Needed for adding a fill color
                                                 fillColor:  _colorFromHex(themeInput),
                                                 isDense: true,  // Reduces height a bit
@@ -4971,7 +7198,7 @@ if(plattform=="androidiphone")
                                                     child: Icon(
                                                       _obscured ? Icons.visibility_off_rounded: Icons.visibility_rounded ,
                                                       size: 24,
-                                                      color: _colorFromHex("#6688A0"),
+                                                      color: _colorFromHex(themeContent),
                                                     ),
                                                   ),
                                                 ),
@@ -4995,7 +7222,7 @@ if(plattform=="androidiphone")
                                               decoration: InputDecoration(
                                                 floatingLabelBehavior: FloatingLabelBehavior.never, //Hides label on focus or if filled
                                                 hintText: 'Confirm password',
-                                                hintStyle: TextStyle(color:_colorFromHex("#6688A0")),
+                                                hintStyle: TextStyle(color:_colorFromHex(themeContent)),
                                                 filled: true, // Needed for adding a fill color
                                                 fillColor:  _colorFromHex(themeInput),
                                                 isDense: true,  // Reduces height a bit
@@ -5009,7 +7236,7 @@ if(plattform=="androidiphone")
                                                     child: Icon(
                                                       _obscured2 ? Icons.visibility_off_rounded: Icons.visibility_rounded ,
                                                       size: 24,
-                                                      color: _colorFromHex("#6688A0"),
+                                                      color: _colorFromHex(themeContent),
                                                     ),
                                                   ),
                                                 ),
@@ -5026,7 +7253,7 @@ if(plattform=="androidiphone")
                                               alignment: Alignment.topLeft,
                                               child:   Padding(
                                                 padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                child: Text("Registration is any age 14 years old and above. To join the Makabayan Pilipino Bakuna Raffle Draws, you must be 18 years of age by the day of the vacination raffle draws planned to start on February 15, 2022.",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                                child: Text("Registration is any age 14 years old and above. To join the Makabayan Pilipino Bakuna Raffle Draws, you must be 18 years of age by the day of the vacination raffle draws planned to start in May 2022.",style: TextStyle(color:_colorFromHex(themeContent))),
                                               ),
                                             ),
                                           ),
@@ -5042,7 +7269,9 @@ if(plattform=="androidiphone")
                                               alignment: Alignment.center,
                                               child:   Padding(
                                                 padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                child: Text("Date of birth",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                                child: Row(children:[
+                                                  Text("Date of birth",style: TextStyle(color:_colorFromHex(themeContent))),
+                                                ]),
                                               ),
                                             ),
                                         Container(
@@ -5083,7 +7312,7 @@ if(plattform=="androidiphone")
                                                     });
                                                   },
                                                   iconSize: 14,
-                                                  iconEnabledColor:_colorFromHex("#6688A0"),
+                                                  iconEnabledColor:_colorFromHex(themeContent),
                                                   iconDisabledColor: Colors.grey,
                                                   buttonHeight: 30,
                                                   buttonWidth: 100,
@@ -5102,7 +7331,7 @@ if(plattform=="androidiphone")
                                                   dropdownPadding: null,
                                                   dropdownDecoration: BoxDecoration(
                                                     borderRadius: BorderRadius.circular(0),
-                                                    color: _colorFromHex(themeCard),
+                                                    color: _colorFromHex(themeNewCard),
                                                   ),
                                                   dropdownElevation: 8,
                                                   scrollbarRadius: const Radius.circular(40),
@@ -5117,7 +7346,7 @@ if(plattform=="androidiphone")
                                             ),
                                             Flexible(
                                                 flex:2  ,
-                                              child: Text("Month",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                              child: Text("Month",style: TextStyle(color:_colorFromHex(themeContent))),
                                             ),
                                             Container(
                                               width:15,
@@ -5153,7 +7382,7 @@ if(plattform=="androidiphone")
                                                   },
 
                                                   iconSize: 14,
-                                                  iconEnabledColor:_colorFromHex("#6688A0"),
+                                                  iconEnabledColor:_colorFromHex(themeContent),
                                                   iconDisabledColor: Colors.grey,
                                                   buttonHeight: 30,
                                                   buttonWidth: 100,
@@ -5173,7 +7402,7 @@ if(plattform=="androidiphone")
                                                   dropdownPadding: null,
                                                   dropdownDecoration: BoxDecoration(
                                                     borderRadius: BorderRadius.circular(0),
-                                                    color: _colorFromHex(themeCard),
+                                                    color: _colorFromHex(themeNewCard),
                                                   ),
                                                   dropdownElevation: 8,
                                                   scrollbarRadius: const Radius.circular(40),
@@ -5188,9 +7417,9 @@ if(plattform=="androidiphone")
                                             ),
                                             Flexible(
                                                 flex:2,
-                                              child: Text("Day",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                              child: Text("Day",style: TextStyle(color:_colorFromHex(themeContent))),
                                             ),
-                                            Container(width: 20),
+                                            Container(width: 15),
                                             Flexible(
                                                 flex:3,
                                               child: DropdownButtonHideUnderline(
@@ -5222,7 +7451,7 @@ if(plattform=="androidiphone")
                                                   },
 
                                                   iconSize: 14,
-                                                  iconEnabledColor:_colorFromHex("#6688A0"),
+                                                  iconEnabledColor:_colorFromHex(themeContent),
                                                   iconDisabledColor: Colors.grey,
                                                   buttonHeight: 30,
                                                   buttonWidth: 100,
@@ -5242,7 +7471,7 @@ if(plattform=="androidiphone")
                                                   dropdownPadding: null,
                                                   dropdownDecoration: BoxDecoration(
                                                     borderRadius: BorderRadius.circular(0),
-                                                    color: _colorFromHex(themeCard),
+                                                    color: _colorFromHex(themeNewCard),
                                                   ),
                                                   dropdownElevation: 8,
                                                   scrollbarRadius: const Radius.circular(40),
@@ -5255,7 +7484,7 @@ if(plattform=="androidiphone")
                                             Container(width: 5),
                                             Flexible(
                                                 flex:0,
-                                              child: Text("Year",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                              child: Text("Year",style: TextStyle(color:_colorFromHex(themeContent))),
                                             ),
                                           ]
                                           ),
@@ -5268,7 +7497,7 @@ if(plattform=="androidiphone")
                                           alignment: Alignment.topLeft,
                                           child:   Padding(
                                             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                            child:   Text("We will please need your residence address in the Philippines to locate you in case you win any of the big cash and others prizes.",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                            child:   Text("We will please need your residence address in the Philippines to locate you in case you win any of the big cash and others prizes.",style: TextStyle(color:_colorFromHex(themeContent))),
                                           ),
                                         ),
                                         Container(
@@ -5292,7 +7521,7 @@ if(plattform=="androidiphone")
                                                         child: Text(
                                                           'Region',
                                                           style: TextStyle(
-                                                            color: _colorFromHex("#6688A0"),
+                                                            color: _colorFromHex(themeContent),fontSize: 9
                                                           ),
                                                           overflow: TextOverflow.ellipsis,
                                                         ),
@@ -5306,7 +7535,7 @@ if(plattform=="androidiphone")
                                                         child: Text(
                                                           item,
                                                           style:  TextStyle(
-                                                            color:  _colorFromHex(themeInputText),
+                                                            color:  _colorFromHex(themeInputText),fontSize: 9
                                                           ),
                                                           overflow: TextOverflow.ellipsis,
                                                         ),
@@ -5324,12 +7553,13 @@ if(plattform=="androidiphone")
                                                         barangayValue=null;
                                                         provinceValue=null;
                                                         getProvince();
+                                                        barangayTypeRegisterController.text="";
                                                       });
                                                       regionValue = value as String;
                                                     });
                                                   },
                                                   iconSize: 14,
-                                                  iconEnabledColor: _colorFromHex("#6688A0"),
+                                                  iconEnabledColor: _colorFromHex(themeContent),
                                                   iconDisabledColor: Colors.grey,
                                                   buttonHeight: 40,
                                                   buttonPadding: const EdgeInsets.only(left: 14, right: 14),
@@ -5348,7 +7578,7 @@ if(plattform=="androidiphone")
                                                   dropdownPadding: null,
                                                   dropdownDecoration: BoxDecoration(
                                                     borderRadius: BorderRadius.circular(0),
-                                                    color: _colorFromHex(themeCard),
+                                                    color: _colorFromHex(themeNewCard),
                                                   ),
                                                   dropdownElevation: 8,
                                                   scrollbarRadius: const Radius.circular(40),
@@ -5365,168 +7595,187 @@ if(plattform=="androidiphone")
                                         Container(height: 5),
 
                                         Expanded(
-                                          child: Container(
-                                            height: 45,
-                                            child:   Padding(
-                                              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                              child: DropdownButtonHideUnderline(
-                                                child: DropdownButton2(
-                                                  isExpanded: true,
-                                                  hint: Row(
-                                                    children:  [
-                                                      SizedBox(
-                                                        width: 4,
-                                                      ),
-                                                      Expanded(
-                                                        child: Text(
-                                                          'Province',
-                                                          style: TextStyle(
-                                                            color: _colorFromHex("#6688A0"),
-                                                          ),
-                                                          overflow: TextOverflow.ellipsis,
+                                          child: Stack(
+                                            children:[
+                                            Container(
+                                              height: 45,
+                                              child:   Padding(
+                                                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                child: DropdownButtonHideUnderline(
+                                                  child: DropdownButton2(
+                                                    isExpanded: true,
+                                                    hint: Row(
+                                                      children:  [
+                                                        SizedBox(
+                                                          width: 4,
                                                         ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  items: province
-                                                      .map((item) =>
-                                                      DropdownMenuItem<String>(
-                                                        value: item,
-                                                        child: Text(
-                                                          item,
-                                                          style:  TextStyle(
-                                                            color: _colorFromHex(themeInputText),
+                                                        Expanded(
+                                                          child: Text(
+                                                            'Province',
+                                                            style: TextStyle(
+                                                                color: _colorFromHex(themeContent),fontSize: 9
+                                                            ),
+                                                            overflow: TextOverflow.ellipsis,
                                                           ),
-                                                          overflow: TextOverflow.ellipsis,
                                                         ),
-                                                      ))
-                                                      .toList(),
-                                                  value: provinceValue,
-                                                  onChanged: (value) {
-                                                    setState(() {
-                                                      citymunicipality.clear();
-                                                      citymunicipalityValue=null;
-                                                      barangay.clear();
-                                                      barangayValue=null;
-                                                      getMunicipality();
-                                                      provinceValue = value as String;
-                                                    });
-                                                  },
-                                                  iconSize: 14,
-                                                  iconEnabledColor: _colorFromHex("#6688A0"),
-                                                  iconDisabledColor: Colors.grey,
-                                                  buttonHeight: 40,
-                                                  buttonPadding: const EdgeInsets.only(left: 14, right: 14),
-                                                  buttonDecoration: BoxDecoration(
-                                                    borderRadius: BorderRadius.circular(0),
-                                                    border: Border.all(
-                                                      color: Colors.black26,
+                                                      ],
                                                     ),
-                                                    color:_colorFromHex(themeInput),
-                                                  ),
-                                                  buttonElevation: 2,
-                                                  itemHeight: 40,
-                                                  itemPadding: const EdgeInsets.only(left: 14, right: 14),
-                                                  dropdownMaxHeight: 200,
-                                                  dropdownPadding: null,
-                                                  style: TextStyle(fontSize: 12),
-                                                  dropdownDecoration: BoxDecoration(
-                                                    borderRadius: BorderRadius.circular(0),
-                                                    color: _colorFromHex(themeCard),
-                                                  ),
-                                                  dropdownElevation: 8,
-                                                  scrollbarRadius: const Radius.circular(40),
-                                                  scrollbarThickness: 6,
-                                                  scrollbarAlwaysShow: true,
-                                                  offset: const Offset(-20, 0),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-
-
-                                        ),
-                                        Container(height: 5),
-
-                                        Expanded(
-                                          child: Container(
-                                            height: 45,
-                                            child:   Padding(
-                                              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                              child: DropdownButtonHideUnderline(
-                                                child: DropdownButton2(
-                                                  isExpanded: true,
-                                                  hint: Row(
-                                                    children:  [
-                                                      SizedBox(
-                                                        width: 4,
-                                                      ),
-                                                      Expanded(
-                                                        child: Text(
-                                                          'City/Municipality',
-                                                          style: TextStyle(
-
-                                                            color: _colorFromHex("#6688A0"),
+                                                    items: province.map((item) =>
+                                                        DropdownMenuItem<String>(
+                                                          value: item,
+                                                          child: Text(
+                                                            item,
+                                                            style:  TextStyle(
+                                                                color: _colorFromHex(themeInputText),fontSize: 9
+                                                            ),
+                                                            overflow: TextOverflow.ellipsis,
                                                           ),
-                                                          overflow: TextOverflow.ellipsis,
-                                                        ),
+                                                        ))
+                                                        .toList(),
+                                                    value: provinceValue,
+                                                    onChanged: (value) {
+                                                      setState(() {
+                                                        citymunicipality.clear();
+                                                        citymunicipalityValue=null;
+                                                        barangay.clear();
+                                                        barangayValue=null;
+                                                        Timer(Duration(seconds: 0), () {
+                                                          getMunicipality();
+                                                          barangayTypeRegisterController.text="";
+                                                        });
+                                                        provinceValue = value as String;
+                                                      });
+                                                    },
+                                                    iconSize: 14,
+                                                    iconEnabledColor: _colorFromHex(themeContent),
+                                                    iconDisabledColor: Colors.grey,
+                                                    buttonHeight: 40,
+                                                    buttonPadding: const EdgeInsets.only(left: 14, right: 14),
+                                                    buttonDecoration: BoxDecoration(
+                                                      borderRadius: BorderRadius.circular(0),
+                                                      border: Border.all(
+                                                        color: Colors.black26,
                                                       ),
-                                                    ],
-                                                  ),
-                                                  items: citymunicipality
-                                                      .map((item) =>
-                                                      DropdownMenuItem<String>(
-                                                        value: item,
-                                                        child: Text(
-                                                          item,
-                                                          style: TextStyle(
-
-                                                            color: _colorFromHex(themeInputText),
-                                                          ),
-                                                          overflow: TextOverflow.ellipsis,
-                                                        ),
-                                                      ))
-                                                      .toList(),
-                                                  value:citymunicipalityValue,
-                                                  onChanged: (value) {
-                                                    setState(() {
-                                                      barangay.clear();
-                                                      barangayValue=null;
-                                                      getBarangay();
-                                                      citymunicipalityValue = value as String;
-                                                    });
-                                                  },
-                                                  iconSize: 14,
-                                                  iconEnabledColor: _colorFromHex("#6688A0"),
-                                                  iconDisabledColor: Colors.grey,
-                                                  buttonHeight: 40,
-                                                  buttonPadding: const EdgeInsets.only(left: 14, right: 14),
-                                                  buttonDecoration: BoxDecoration(
-                                                    borderRadius: BorderRadius.circular(0),
-                                                    border: Border.all(
-                                                      color: Colors.black26,
+                                                      color:_colorFromHex(themeInput),
                                                     ),
-                                                    color:_colorFromHex(themeInput),
+                                                    buttonElevation: 2,
+                                                    itemHeight: 40,
+                                                    itemPadding: const EdgeInsets.only(left: 14, right: 14),
+                                                    dropdownMaxHeight: 200,
+                                                    dropdownPadding: null,
+                                                    style: TextStyle(fontSize: 12),
+                                                    dropdownDecoration: BoxDecoration(
+                                                      borderRadius: BorderRadius.circular(0),
+                                                      color: _colorFromHex(themeNewCard),
+                                                    ),
+                                                    dropdownElevation: 8,
+                                                    scrollbarRadius: const Radius.circular(40),
+                                                    scrollbarThickness: 6,
+                                                    scrollbarAlwaysShow: true,
+                                                    offset: const Offset(-20, 0),
                                                   ),
-                                                  buttonElevation: 2,
-                                                  itemHeight: 40,
-                                                  itemPadding: const EdgeInsets.only(left: 14, right: 14),
-                                                  dropdownMaxHeight: 200,
-                                                  style: TextStyle(fontSize: 12),
-                                                  dropdownPadding: null,
-                                                  dropdownDecoration: BoxDecoration(
-                                                    borderRadius: BorderRadius.circular(0),
-                                                    color: _colorFromHex(themeCard),
-                                                  ),
-                                                  dropdownElevation: 8,
-                                                  scrollbarRadius: const Radius.circular(40),
-                                                  scrollbarThickness: 6,
-                                                  scrollbarAlwaysShow: true,
-                                                  offset: const Offset(-20, 0),
                                                 ),
                                               ),
                                             ),
+                                          if(provinceValue=="NATIONAL CAPITAL REGION - FOURTH DISTRICT"||provinceValue=="NATIONAL CAPITAL REGION - MANILA"
+                                              ||provinceValue=="NATIONAL CAPITAL REGION - SECOND DISTRICT"||provinceValue=="NATIONAL CAPITAL REGION - THIRD DISTRICT"
+                                              ||provinceValue=="TAGUIG - PATEROS")
+                                          Padding(
+                                            padding: EdgeInsets.only(left: 20, right: 0,top:30),
+                                              child:Text(citymunicipality.join(","),style:TextStyle(fontSize:6,color:_colorFromHex(themeInputText))),
                                           ),
+                                          ],
+                                          ),
+
+
+                                        ),
+                                        Container(height: 5),
+
+                                        Expanded(
+                                          child:
+                                                Container(
+                                                  height: 45,
+                                                  child:   Padding(
+                                                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                    child: DropdownButtonHideUnderline(
+                                                      child: DropdownButton2(
+                                                        isExpanded: true,
+                                                        hint: Row(
+                                                          children:  [
+                                                            SizedBox(
+                                                              width: 4,
+                                                            ),
+                                                            Expanded(
+                                                              child: Text(
+                                                                'City/Municipality',
+                                                                style: TextStyle(
+
+                                                                    color: _colorFromHex(themeContent),fontSize: 9
+                                                                ),
+                                                                overflow: TextOverflow.ellipsis,
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        items: citymunicipality
+                                                            .map((item) =>
+                                                            DropdownMenuItem<String>(
+                                                              value: item,
+                                                              child: Text(
+                                                                item,
+                                                                style: TextStyle(
+
+                                                                  color: _colorFromHex(themeInputText),fontSize: 9
+                                                                ),
+                                                                overflow: TextOverflow.ellipsis,
+                                                              ),
+                                                            ))
+                                                            .toList(),
+                                                        value:citymunicipalityValue,
+                                                        onChanged: (value) {
+                                                          setState(() {
+                                                            barangay.clear();
+                                                            barangayValue=null;
+                                                            Timer(Duration(seconds: 0), () {
+                                                              getBarangay();
+                                                              barangayTypeRegisterController.text="";
+                                                            });
+                                                            citymunicipalityValue = value as String;
+                                                          });
+                                                        },
+                                                        iconSize: 14,
+                                                        iconEnabledColor: _colorFromHex(themeContent),
+                                                        iconDisabledColor: Colors.grey,
+                                                        buttonHeight: 40,
+                                                        buttonPadding: const EdgeInsets.only(left: 14, right: 14),
+                                                        buttonDecoration: BoxDecoration(
+                                                          borderRadius: BorderRadius.circular(0),
+                                                          border: Border.all(
+                                                            color: Colors.black26,
+                                                          ),
+                                                          color:_colorFromHex(themeInput),
+                                                        ),
+                                                        buttonElevation: 2,
+                                                        itemHeight: 40,
+                                                        itemPadding: const EdgeInsets.only(left: 14, right: 14),
+                                                        dropdownMaxHeight: 200,
+                                                        style: TextStyle(fontSize: 12),
+                                                        dropdownPadding: null,
+                                                        dropdownDecoration: BoxDecoration(
+                                                          borderRadius: BorderRadius.circular(0),
+                                                          color: _colorFromHex(themeNewCard),
+                                                        ),
+                                                        dropdownElevation: 8,
+                                                        scrollbarRadius: const Radius.circular(40),
+                                                        scrollbarThickness: 6,
+                                                        scrollbarAlwaysShow: true,
+                                                        offset: const Offset(-20, 0),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                               
+                                           
 
 
                                         ),
@@ -5548,10 +7797,9 @@ if(plattform=="androidiphone")
                                                       ),
                                                       Expanded(
                                                         child: Text(
-                                                          'Barangay (if your barangay does not appear, type in box below)',
+                                                          'Barangay (or nearest barangay)',
                                                           style: TextStyle(
-
-                                                            color: _colorFromHex("#6688A0"),
+                                                            color: _colorFromHex(themeContent),fontSize: 9
                                                           ),
                                                           overflow: TextOverflow.ellipsis,
                                                         ),
@@ -5566,7 +7814,7 @@ if(plattform=="androidiphone")
                                                           item,
                                                           style: TextStyle(
 
-                                                            color:  _colorFromHex(themeInputText),
+                                                            color:  _colorFromHex(themeInputText),fontSize: 9
                                                           ),
                                                           overflow: TextOverflow.ellipsis,
                                                         ),
@@ -5579,7 +7827,7 @@ if(plattform=="androidiphone")
                                                     });
                                                   },
                                                   iconSize: 14,
-                                                  iconEnabledColor: _colorFromHex("#6688A0"),
+                                                  iconEnabledColor: _colorFromHex(themeContent),
                                                   iconDisabledColor: Colors.grey,
                                                   buttonHeight: 40,
                                                   buttonPadding: const EdgeInsets.only(left: 14, right: 14),
@@ -5598,7 +7846,7 @@ if(plattform=="androidiphone")
                                                   dropdownPadding: null,
                                                   dropdownDecoration: BoxDecoration(
                                                     borderRadius: BorderRadius.circular(0),
-                                                    color: _colorFromHex(themeCard),
+                                                    color: _colorFromHex(themeNewCard),
                                                   ),
                                                   dropdownElevation: 8,
                                                   scrollbarRadius: const Radius.circular(40),
@@ -5613,7 +7861,7 @@ if(plattform=="androidiphone")
 
                                         ),
                                         Container(height: 5,),
-                                        Container(
+                                       /* Container(
                                           height: 45,
                                           child:   Padding(
                                             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
@@ -5625,7 +7873,7 @@ if(plattform=="androidiphone")
 
                                                 ),
                                                 hintText: '  Type here your barangay if not seen when scrolling in the box above',
-                                                hintStyle: TextStyle(color:_colorFromHex("#6688A0")),
+                                                hintStyle: TextStyle(color:_colorFromHex(themeContent),fontSize: 9),
                                               ),
                                               style: TextStyle(color:  _colorFromHex(themeInputText)),
                                               onChanged: (value){
@@ -5642,7 +7890,7 @@ if(plattform=="androidiphone")
                                               controller: barangayTypeRegisterController,
                                             ),
                                           ),
-                                        ),
+                                        ),*/
                                         Container(height: 5,),
                                         Container(
                                           height: 45,
@@ -5656,10 +7904,10 @@ if(plattform=="androidiphone")
                                                 border: OutlineInputBorder(
 
                                                 ),
-                                                hintText: '  Cellphone No.',
-                                                hintStyle: TextStyle(color:_colorFromHex("#6688A0")),
+                                                hintText: '  Cellphone No.(optional)',
+                                                hintStyle: TextStyle(color:_colorFromHex(themeContent),fontSize: 9),
                                               ),
-                                              style: TextStyle(color:  _colorFromHex(themeInputText)),
+                                              style: TextStyle(color:  _colorFromHex(themeInputText),fontSize: 9),
                                             ),
                                           ),
                                         ),
@@ -5670,7 +7918,7 @@ if(plattform=="androidiphone")
                                           alignment: Alignment.topLeft,
                                           child:   Padding(
                                             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                            child:   Text("Will you have had at least your first dose before the day of the Makabayan Pilipino Bakuna Raffle Draws planned on February 15, 2022 or later raffle draws?",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                            child:   Text("Will you have had at least your first dose before the day of the Makabayan Pilipino Bakuna Raffle Draws planned in May 2022 or later raffle draws?",style: TextStyle(color:_colorFromHex(themeContent))),
                                           ),
                                         ),
                                         Row(children: [
@@ -5681,12 +7929,12 @@ if(plattform=="androidiphone")
                                             child:Theme(
                                               data: ThemeData(
                                                 primarySwatch: Colors.blue,
-                                                unselectedWidgetColor: _colorFromHex("#6688A0"), // Your color
+                                                unselectedWidgetColor: _colorFromHex(themeContent), // Your color
                                               ),
                                               child: Checkbox(
                                                 value: yesDraw,
-                                                checkColor: Colors.black,
-                                                activeColor: _colorFromHex("#6688A0"),
+                                                checkColor: Colors.white,
+                                                activeColor: _colorFromHex(themeContent),
                                                 onChanged: (value) {
                                                   setState(() {
                                                     if(yesDraw==false){
@@ -5701,18 +7949,22 @@ if(plattform=="androidiphone")
                                           ),
 
                                           Flexible(
-                                            child:      Text("Yes",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                          flex:9,
+                                            child: Text("Yes",style: TextStyle(color:_colorFromHex(themeContent))),
+                                          ),
+                                          Container(
+                                            width:10,
                                           ),
                                           Flexible(
                                             child: Theme(
                                               data: ThemeData(
                                                 primarySwatch: Colors.blue,
-                                                unselectedWidgetColor: _colorFromHex("#6688A0"), // Your color
+                                                unselectedWidgetColor: _colorFromHex(themeContent), // Your color
                                               ),
                                               child: Checkbox(
                                                 value: noDraw,
-                                                checkColor: Colors.black,
-                                                activeColor:_colorFromHex("#6688A0"),
+                                                checkColor: Colors.white,
+                                                activeColor:_colorFromHex(themeContent),
                                                 onChanged: (value) {
                                                   setState(() {
                                                     if(noDraw==false){
@@ -5726,8 +7978,9 @@ if(plattform=="androidiphone")
                                                 },),
                                             ),
                                           ),
+
                                           Flexible(
-                                            child: Text("No",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                            child: Text("No",style: TextStyle(color:_colorFromHex(themeContent))),
                                           ),
 
                                         ],
@@ -5735,33 +7988,38 @@ if(plattform=="androidiphone")
                                         Container(height: 10),
                                         Row(children: [
                                           Container(
-                                            width: 10,
+                                            width: 2,
                                           ),
                                           Flexible(
-                                            child:Theme(
-                                              data: ThemeData(
-                                                primarySwatch: Colors.blue,
-                                                unselectedWidgetColor: _colorFromHex("#6688A0"), // Your color
+                                            child:Column(children:[
+                                              Theme(
+                                                data: ThemeData(
+                                                  primarySwatch: Colors.blue,
+                                                  unselectedWidgetColor: _colorFromHex(themeContent), // Your color
+                                                ),
+                                                child: Checkbox(
+                                                  value: wouldFollow,
+                                                  checkColor: Colors.white,
+                                                  activeColor: _colorFromHex(themeContent),
+                                                  onChanged: (value) {
+                                                    setState(() {
+                                                      if(wouldFollow==false){
+                                                        wouldFollow=true;
+                                                      }else{
+                                                        wouldFollow=false;
+                                                      }
+                                                    });
+                                                  },),
                                               ),
-                                              child: Checkbox(
-                                                value: wouldFollow,
-                                                checkColor: Colors.black,
-                                                activeColor: _colorFromHex("#6688A0"),
-                                                onChanged: (value) {
-                                                  setState(() {
-                                                    if(wouldFollow==false){
-                                                      wouldFollow=true;
-                                                    }else{
-                                                      wouldFollow=false;
-                                                    }
-                                                  });
-                                                },),
-                                            ),
+                                              Container(
+                                                  height:50,
+                                              ),
+                                            ]),
                                           ),
 
                                           Flexible(
                                             flex:9,
-                                            child:      Text(" I would like to join and follow the Makabayan Pilipino Bakuna Raffle Draws for big cash and other prizes. All FREE! Bigger cash and prizes if I am vaccinated. Even if not vaccinated, I can still join and win.",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                            child:      Text("I would like to join and follow the Makabayan Pilipino Bakuna Raffle Draws for big cash and other prizes. All FREE! Bigger cash and prizes if I am vaccinated. Even if not vaccinated, I can still join and win.",style: TextStyle(color:_colorFromHex(themeContent))),
                                           ),
 
                                         ],
@@ -5770,33 +8028,40 @@ if(plattform=="androidiphone")
                                         Container(height: 10),
                                         Row(children: [
                                           Container(
-                                            width: 10,
+                                            width: 2,
                                           ),
                                           Flexible(
-                                            child:Theme(
-                                              data: ThemeData(
-                                                primarySwatch: Colors.blue,
-                                                unselectedWidgetColor: _colorFromHex("#6688A0"), // Your color
+                                            child:Column(
+                                                children:[
+                                              Theme(
+                                                data: ThemeData(
+                                                  primarySwatch: Colors.blue,
+                                                  unselectedWidgetColor: _colorFromHex(themeContent), // Your color
+                                                ),
+                                                child: Checkbox(
+                                                  value: wouldReview,
+                                                  checkColor: Colors.white,
+                                                  activeColor: _colorFromHex(themeContent),
+                                                  onChanged: (value) {
+                                                    setState(() {
+                                                      if(wouldReview==false){
+                                                        wouldReview=true;
+                                                      }else{
+                                                        wouldReview=false;
+                                                      }
+                                                    });
+                                                  },),
                                               ),
-                                              child: Checkbox(
-                                                value: wouldReview,
-                                                checkColor: Colors.black,
-                                                activeColor: _colorFromHex("#6688A0"),
-                                                onChanged: (value) {
-                                                  setState(() {
-                                                    if(wouldReview==false){
-                                                      wouldReview=true;
-                                                    }else{
-                                                      wouldReview=false;
-                                                    }
-                                                  });
-                                                },),
-                                            ),
+                                                      Container(
+                                                    height:20,
+                                                  ),
+                                            ]
+                                            )
                                           ),
 
                                           Flexible(
                                             flex:9,
-                                            child:Text("I would like to review the terms, conditions, and rules of the Klackr.world  platform, then to sign up at the end.",style: TextStyle(color:_colorFromHex("#6688A0"))),
+                                            child:Text("I would like to review the terms, conditions, and rules of the Klackr.world  platform, then to sign up at the end.",style: TextStyle(color:_colorFromHex(themeContent))),
                                           ),
 
                                         ],
@@ -5806,7 +8071,7 @@ if(plattform=="androidiphone")
                                           alignment: Alignment.topLeft,
                                           child:   Padding(
                                             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                            child:   Text("Unclick any box if you do not agree. ",style: TextStyle(color:_colorFromHex("#6688A0"),fontSize: 10)),
+                                            child:   Text("Unclick any box if you do not agree. ",style: TextStyle(color:_colorFromHex(themeContent),fontSize: 10)),
                                           ),
                                         ),
                                         Container(height: 20),
@@ -5821,8 +8086,7 @@ if(plattform=="androidiphone")
                                                     ||genderRegisterController.text==""||emailRegisterController.text==""
                                                     ||usernameRegisterController.text==""||passwordRegisterController.text==""
                                                     ||confirmpasswordRegisterController.text==""||monthValue==""||dayValue==""||yearValue==""
-                                                    ||regionValue==null||provinceValue==null||citymunicipalityValue==null
-                                                    ||cellphoneRegisterController.text==""){
+                                                    ||regionValue==null||provinceValue==null||citymunicipalityValue==null){
                                                   if(allow=="on"){
                                                     allow="off";
                                                     Fluttertoast.showToast(
@@ -5892,53 +8156,8 @@ if(plattform=="androidiphone")
                                         Container(
                                           height: 20,
                                         ),
-                                        Container(
-                                          alignment: Alignment.topLeft,
-                                          child:   Padding(
-                                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                            child:   Text(" Mandatory field",style: TextStyle(color:_colorFromHex("#6688A0"))),
-                                          ),
-                                        ),
-                                        Container(height: 5),
-                                        Container(
-                                          alignment: Alignment.topLeft,
-                                          child:   Padding(
-                                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                            child:   Text(" Also to be followed are -",style: TextStyle(color:_colorFromHex("#6688A0"))),
-                                          ),
-                                        ),
-                                        Container(height: 15),
-                                        Container(
-                                          alignment: Alignment.topLeft,
-                                          child:   Padding(
-                                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                            child:   Text(" Klackr.world/vicinity.tidbits",style: TextStyle(color:_colorFromHex("#6688A0"),fontWeight: FontWeight.bold)),
-                                          ),
-                                        ),
-                                        Container(
-                                          alignment: Alignment.topLeft,
-                                          child:   Padding(
-                                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                            child:   Text(" to discover great things about your vicinity and beyond",style: TextStyle(color:_colorFromHex("#6688A0"))),
-                                          ),
-                                        ),
-                                        Container(height: 5),
-                                        Container(
-                                          alignment: Alignment.topLeft,
-                                          child:   Padding(
-                                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                            child:   Text(" Leandro Kuya Jun Verceles Jr. ",style: TextStyle(color:_colorFromHex("#6688A0"),fontWeight: FontWeight.bold)),
-                                          ),
-                                        ),
-                                        Container(
-                                          alignment: Alignment.topLeft,
-                                          child:   Padding(
-                                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                            child:   Text(" running the Klackr platform and being the manager of the Makabayan Pilipino Bakuna Raffle Draws, and to discover great things",style: TextStyle(color:_colorFromHex("#6688A0"))),
-                                          ),
-                                        ),
-                                        Container(height: 15),
-
+                                     
+                                       
 
 
 
@@ -5974,17 +8193,79 @@ if(plattform=="androidiphone")
   }
 }
 
+typedef OnPickImageCallback = void Function(
+    double? maxWidth, double? maxHeight, int? quality);
+
+class AspectRatioVideo extends StatefulWidget {
+  const AspectRatioVideo(this.controller);
+
+  final VideoPlayerController? controller;
+
+  @override
+  AspectRatioVideoState createState() => AspectRatioVideoState();
+}
+
+class AspectRatioVideoState extends State<AspectRatioVideo> {
+  VideoPlayerController? get controller => widget.controller;
+  bool initialized = false;
+
+  void _onVideoControllerUpdate() {
+    if (!mounted) {
+      return;
+    }
+    if (initialized != controller!.value.isInitialized) {
+      initialized = controller!.value.isInitialized;
+      setState(() {});
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    controller!.addListener(_onVideoControllerUpdate);
+  }
+
+  @override
+  void dispose() {
+    controller!.removeListener(_onVideoControllerUpdate);
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (initialized) {
+      return Center(
+        child: AspectRatio(
+          aspectRatio: controller!.value.aspectRatio,
+          child: VideoPlayer(controller!),
+        ),
+      );
+    } else {
+      return Container();
+    }
+  }
+}
+
+
 Color _colorFromHex(String hexColor) {
   final hexCode = hexColor.replaceAll('#', '');
   return Color(int.parse('FF$hexCode', radix: 16));
 }
+String red = "#ff1100";
+String dark = "#3a9bde";
+String iconLogin = red;
+String iconSignup = dark;
+String iconSetting = dark;
+String iconSetting2 = dark;
+String iconAdd = dark;
+String iconVicinity = red;
 
 
 
 bool english=true;
 bool pilipino=false;
 
-List<String> region=[];
+List<String> region=['NCR', 'CAR', 'REGION I', 'REGION II', 'REGION III', 'REGION IV-A', 'REGION IV-B', 'REGION V', 'REGION VI', 'REGION VII', 'REGION VIII', 'REGION IX', 'REGION X', 'REGION XI', 'REGION XII', 'REGION XIII', 'BARMM'];
 List<String> province=[];
 List<String> citymunicipality=[];
 List<String> barangay=[];
@@ -6002,7 +8283,7 @@ bool rather=false;
 String? monthValue;
 String? dayValue;
 String? yearValue;
-var month = [for(var i=1; i<13; i+=1) i];
+var month = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 var day = [for(var i=1; i<32; i+=1) i];
 var year = [for(var i=1930; i<2022; i+=1) i];
 bool yesDraw=false;
@@ -6045,7 +8326,7 @@ bool Urather=false;
 String? UmonthValue;
 String? UdayValue;
 String? UyearValue;
-var Umonth = [for(var i=1; i<13; i+=1) i];
+var Umonth = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 var Uday = [for(var i=1; i<32; i+=1) i];
 var Uyear = [for(var i=1930; i<2022; i+=1) i];
 final UfirstnameRegisterController = TextEditingController();
@@ -6060,7 +8341,7 @@ final UbirthdayRegisterController = TextEditingController();
 final UbarangayTypeRegisterController = TextEditingController();
 final UcellphoneRegisterController = TextEditingController();
 final UpostController = TextEditingController();
-List<String> Uregion=[];
+List<String> Uregion=['NCR', 'CAR', 'REGION I', 'REGION II', 'REGION III', 'REGION IV-A', 'REGION IV-B', 'REGION V', 'REGION VI', 'REGION VII', 'REGION VIII', 'REGION IX', 'REGION X', 'REGION XI', 'REGION XII', 'REGION XIII', 'BARMM'];
 List<String> Uprovince=[];
 List<String> Ucitymunicipality=[];
 List<String> Ubarangay=[];
@@ -6076,6 +8357,8 @@ String Whitebasecolor = "#cccccc";
 String Darkblue = "#6688A0";
 String DarkcardColor = "#363A48";
 String DarkbaseColor = "#282C36";
+String contentDark = "#3a9bde";
+String contentWhite = "#002b75";
 String themeCard = white;
 String themeBase = Whitecardcolor;
 String themeInputText = black;
@@ -6084,31 +8367,48 @@ String themeInput = whiteinput;
 String themeAppbard = grey;
 bool themeColor = false;
 
+String themeNewCard = white;
+String themeContent = contentWhite;
+bool themeColorWhite = true;
+bool themeColorDark = false;
+String placeColor = black;
+
 
 int one = 3;
 int two = 5;
 int third = 2;
 String refreshing = "false";
-String APItoken = "https://klackr.teravibe.com:5000/auth/login/";
-String APIlocation = "https://klackr.teravibe.com:5000/auth/location/";
-String APIregister = "https://klackr.teravibe.com:5000/auth/register/";
-String APIlogin = "https://klackr.teravibe.com:5000/auth/login/";
-String APIposting = "https://klackr.teravibe.com:5000/homepage/posts/";
-String APIgetpost = "https://klackr.teravibe.com:5000/homepage/posts/?limit=30&offset=0";
-String APIgetprofile = "https://klackr.teravibe.com:5000/homepage/profile/";
-String APIgetuser="https://klackr.teravibe.com:5000/auth/users_count/";
-String role = "influencer";
+String APItoken = "https://data.klackr.world/auth/login/";
+String APIlocation = "https://data.klackr.world/auth/location/";
+String APIregister = "https://data.klackr.world/auth/register/";
+String APIlogin = "https://data.klackr.world/auth/login/";
+String APIposting = "https://data.klackr.world/homepage/posts/";
+String APIgetpost = "https://data.klackr.world/homepage/posts/?limit=30&offset=0";
+String APIgetprofile = "https://data.klackr.world/homepage/profile/";
+String APIgetuser="https://data.klackr.world/auth/users_count/";
+
+String VRegion="";
+String VProvince="";
+String VCityMunicipality="";
+String Vbarangay="";
+String ORegion="";
+String OProvince="";
+String OCityMunicipality="";
+String Obarangay="";
 String info = "false";//false
 const appleType = "apple";
 const androidType = "android";
-String lobbyselect = "lobbygetpost";
 String edit = "false";
 String IDpost = "";
 String CPpost = "";
 RefreshController _refreshController =
 RefreshController(initialRefresh: false);
 String getUserCount="0";
-
+List<VideoPlayerController> _Video = [];
+String forgot = "false";
+String role = "influencer";
+String profilePic = "";
 String plattform = "web";
+String lobbyselect = "lobbygetpost";//lobbygetpost
 String lobby = "main";//main,lobby,editprofile
 double lobbySize = 75;//75
