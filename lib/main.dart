@@ -1570,7 +1570,7 @@ birthday= UmonthValue.toString()+" "+UdayValue.toString()+", "+UyearValue.toStri
   @override void initState() {
     super.initState();
     Timer(Duration(seconds: 0), () {
-      OSindentifyer(); 
+    //  OSindentifyer();
     });
 
   }
