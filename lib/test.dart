@@ -1,141 +1,258 @@
+import 'dart:async';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/widgets.dart';
+import 'package:mailer/mailer.dart';
+import 'package:mailer/smtp_server.dart';
+import 'package:mailer/smtp_server/gmail.dart';
 
-void main() => runApp(MyApp5());
 
-class MyApp5 extends StatelessWidget {
+void main()
+{
+  runApp(MailerApp());
+}
 
+class MailerApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(
-        body: Container(
-          child: TODOApp(),
-        ),
+      title: 'Save app',
+      theme: ThemeData(
+          primaryColor: Color(0xFF21130D)
       ),
+
+      home:MyMailer(),
     );
   }
 }
 
-class TODOApp extends StatefulWidget {
-
-
+class MyMailer extends StatefulWidget {
   @override
-  _TODOAppState createState() => _TODOAppState();
+  _MyMailerState createState()
+  {
+    return _MyMailerState();
+  }
 }
 
-class _TODOAppState extends State<TODOApp> {
-  TextEditingController _todoController = TextEditingController();
-  List<String> todoList = [];
-  bool _isLoading = false;
+class _MyMailerState extends State<MyMailer> {
 
-  _saveList(list) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    prefs.setString("key", list);
 
-    return true;
-  }
 
-  _getSavedList() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    if (prefs.getStringList("key") != null)
-      todoList = prefs.getStringList("key")!;
-    setState(() {});
-  }
+  ///Mailer Functions
 
-  @override
-  void initState() {
+  SendEmail() async {
+    final username = 'klackroomessage@gmail.com';       ///PUT YOUR EMail
+    final password = 'klackroo12345';                /// Put your Password
 
-    super.initState();
+    /// Note!!! Make sure the Account is Less secure app access to work this app Please Turn on first LINK------> https://myaccount.google.com/lesssecureapps
+    /// Else Use gmailXoauth2 for TOKEN or Use gmailSaslXoauth2 for EMAIL & TOKEN
+    /// final smtpServer = gmailSaslXoauth2(email, Token);
+    /// final smtpServer = gmailXoauth2(Token);
+    /// final smtpServer = gmail(username, password);
+
+
+
+    final smtpServer = gmail(username, password);
+    // Use the SmtpServer class to configure an SMTP server:
+    // final smtpServer = SmtpServer('smtp.domain.com');
+    // See the named arguments of SmtpServer for further configuration
+    // options.
+
+
+
+
+    // Create our message.
+    final message = Message()
+      ..from = Address(username,"Klackr User")
+      ..recipients.add('klackroo@gmail.com')
+    ///  ..recipients.add(recipients.text)
+    //..ccRecipients.addAll([ccRecipients.text])
+    //..bccRecipients.add(Address(bccRecipients.text))
+      ..subject = 'Message from klackr user'
+      ..html = Body.text;
+
+    //   ..text = 'This is the plain text.This is line 2 of the text part.'
+
     setState(() {
-      _isLoading = true;
+      isLoading = true;
     });
-    _getSavedList();
-
+    await Future.delayed(const Duration(seconds: 10));
     setState(() {
-      _isLoading = false;
+      isLoading = false;
     });
+
+
+    try {
+      final sendReport = await send(message, smtpServer);
+      print('Message sent: ' + sendReport.toString());
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(" Sending Message"+ sendReport.toString()),
+      ));
+
+    } on MailerException catch (e) {
+      print('Message not sent.');
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Message not sent. Try again')  ));
+      for (var p in e.problems) {
+        print('Problem: ${p.code}: ${p.msg}');
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text("Problem: ${p.code}: ${p.msg}"),
+        ));
+      }
+    }
+
+
+
+
   }
 
-  Future<bool> _onWillPop() async {
-    return (await showDialog(
-      context: context,
-      builder: (context) => new AlertDialog(
-        title: new Text('Are you sure?'),
-        content: new Text('Do you want to exit an App'),
-        actions: <Widget>[
-          new FlatButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: new Text('No'),
-          ),
-          new FlatButton(
-            onPressed: () {
-              _saveList(todoList);
-              Navigator.of(context).pop(true);
-            },
-            child: new Text('Yes'),
-          ),
-        ],
-      ),
-    )) ??
-        false;
-  }
+  bool isLoading = false;
+  TextEditingController recipients = TextEditingController();
+  TextEditingController ccRecipients = TextEditingController();
+  TextEditingController bccRecipients = TextEditingController();
+  TextEditingController Subject = TextEditingController();
+  TextEditingController Body = TextEditingController();
+
+
+
+
+
+
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: _onWillPop,
-      child: SafeArea(
-        child: _isLoading
-            ? Center(
-          child: CircularProgressIndicator(),
-        )
-            : Container(
-          child: Column(
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextField(
-                  decoration: InputDecoration(
-                    hintText: 'Add Items',
-                  ),
-                  controller: _todoController,
-                  onSubmitted: (text) {
-                    // do what you want with the text
-                    todoList.add(_todoController.text);
-                    _todoController.clear();
+    return new Scaffold(
+      appBar: AppBar(
+        title: Text("Save Text App"),
+        backgroundColor: Colors.black,
+      ),
+      body:SingleChildScrollView(
+        child: Container(
+            margin: EdgeInsets.all(20),
+            child: Column(
+              children:[
 
-                    setState(() {});
-                  },
+                Row(
+                  children: [
+                    Text("To:",style: TextStyle(fontWeight: FontWeight.bold ,fontSize: 20),),
+                    Text(" klackroo@gmail.com'",style: TextStyle(color: Colors.blue,fontSize: 20),),
+                  ],
                 ),
-              ),
-              todoList == null
-                  ? Container(
-                child: Center(
-                  child: Text('Please Add the items'),
-                ),
-              )
-                  : ListView.builder(
-                shrinkWrap: true,
-                itemCount: todoList.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(todoList[index]),
+                /*
+
+                Text("mailer: ^5.1.0"),
+                TextFormField(
+                  controller: recipients,
+                  decoration: InputDecoration(
+                    contentPadding: EdgeInsets.fromLTRB(5.0, 1.0, 5.0, 1.0),
+                    hintText: 'To:',
+                    hintStyle: const TextStyle(fontSize: 14),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15),
                     ),
-                  );
-                },
-              ),
-              TextButton(onPressed: () {
-                todoList.add(_todoController.text);
-                _saveList(todoList);  }, child: Text("click me"),),
-            ],
-          ),
+                  ),
+                  autofocus: false,
+                ),
+                SizedBox(
+                  height:10,
+                ),
+
+                */
+
+
+                ///ccRecipients
+
+
+                /*
+                TextFormField(
+                  controller: ccRecipients,
+                  decoration: InputDecoration(
+                    contentPadding: EdgeInsets.fromLTRB(5.0, 1.0, 5.0, 1.0),
+                    hintText: 'ccRecipients',
+                    hintStyle: const TextStyle(fontSize: 14),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                  ),
+                  autofocus: false,
+                ),
+                */
+
+                ///ccRecipients
+
+                ///Subject
+
+/*
+                TextFormField(
+                  controller: Subject,
+                  decoration: InputDecoration(
+                    contentPadding: EdgeInsets.fromLTRB(5.0, 1.0, 5.0, 1.0),
+                    hintText: 'Subject:',
+                    hintStyle: const TextStyle(fontSize: 14),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                  ),
+                  autofocus: false,
+                ),
+
+
+                SizedBox(
+                  height:10,
+                ),
+            */
+                ///Subject
+
+                TextField(
+                  controller: Body,
+                  keyboardType: TextInputType.multiline,
+                  maxLines: 4,
+                  decoration: InputDecoration(
+                      hintText: "write something...",
+                      focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(width: 1, color: Colors.black)
+                      )
+                  ),
+
+                ),
+
+
+                SizedBox(
+                  height:10,
+                ),
+
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget> [
+                    SizedBox(
+                      width: 100,
+                    ),
+                    ElevatedButton(
+                      onPressed:(){
+                        SendEmail();
+                      },
+                      child:(isLoading)
+                          ? const SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 1.5,
+                          ))
+                          : Text('Reply' ),
+                    ),
+                  ],
+                ),
+
+              ],
+            )
         ),
       ),
     );
   }
+
+
 }

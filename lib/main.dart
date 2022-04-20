@@ -118,10 +118,10 @@ class _MyHomePageState extends State<MyHomePage> {
     request.fields['password'] = 'carlo12345';
     http.Response response = await http.Response.fromStream(await
     request.send());
+print(response.body+"sdasdasdasdasdasdasd");
     if (response.statusCode == 200) {
-      var pointer = response.body;
+      var pointer = response.body; 
       pointToken = jsonDecode(pointer)['tokens']['access'];
-
       Timer(Duration(seconds: 0), () {
         getRegion();
       });
@@ -335,10 +335,12 @@ class _MyHomePageState extends State<MyHomePage> {
       'Authorization': 'Bearer $pointToken',
     });
     pointerAll = response.body;
+    if(response.statusCode==200){
     setState(() {
       selectRegion();
       UselectRegion();
     });
+    }
   }
   void getProvince() async {
     Map<String, dynamic> res = jsonDecode(pointerAll)[sRegion]['province_list'];
@@ -446,7 +448,9 @@ class _MyHomePageState extends State<MyHomePage> {
     http.Response response = await http.Response.fromStream(await
     request.send());
     var pointer = response.body;
+    print(pointer);
     if (response.statusCode == 200) {
+      plattform="androidiphone";
       var pointToken = jsonDecode(pointer)['tokens']['access'];
       var pointUsername = jsonDecode(pointer)['username'];
       username = pointUsername;
@@ -474,6 +478,7 @@ class _MyHomePageState extends State<MyHomePage> {
         iconAdd=dark;
       });
     } else if(response.statusCode==400){
+
       pointer = response.body;
       setState(() {
         forgot="true";
@@ -743,11 +748,12 @@ birthday= UmonthValue.toString()+" "+UdayValue.toString()+", "+UyearValue.toStri
       }
     );
     if (response.statusCode == 200) {
-       _Places(region,province,citymunicipality,barangay);
+       
           ORegion=region;
       OProvince=province;
-      OCityMunicipality=citymunicipality;
+      OCityMunicipality=citymunicipality+",";
       Obarangay=barangay;
+      _Places(region,province,citymunicipality,barangay);
       fetchData1();
       getprofile();
       if(allow=="on"){
@@ -924,10 +930,21 @@ birthday= UmonthValue.toString()+" "+UdayValue.toString()+", "+UyearValue.toStri
       });
       for (var i = 0; i <= postLength1.length-1; i++) {
         _allUsers1.add(jsonDecode(data1)['results'][i]);
-       // _Video.add(VideoPlayerController.network("https://flutter.github.io/assets-for-api-docs/assets/videos/butterfly.mp4"));
-        //_Video[_Video.length-1].initialize();
+       // print(jsonDecode(data1)['results'][i]['video']);
+             if(jsonDecode(data1)['results'][i]['video']==null){
+        _Video.add(VideoPlayerController.network(jsonDecode(data1)['results'][i]['video'].toString()));
+       // _Video[_Video.length-1].initialize();
+       }
+       if(jsonDecode(data1)['results'][i]['video']!=null){
+          print(jsonDecode(data1)['results'][i]['video']);
+          _Video.add(VideoPlayerController.network(jsonDecode(data1)['results'][i]['video'].toString()));
+         _Video[_Video.length-1].initialize();
+       }
+      
       }
+        
       _foundUsers1 = _allUsers1;
+      
       refreshing="false";
 
     }
@@ -1479,6 +1496,11 @@ birthday= UmonthValue.toString()+" "+UdayValue.toString()+", "+UyearValue.toStri
     if(emailP.getString("email") == null||emailP.getString("password")==null){
       emailLogin.text="";
       passwordLogin.text="";
+     
+      setState(() {
+          plattform="androidiphone";
+      });
+     
     }else if (emailP.getString("email") != ""||emailP.getString("password") != "") {
       emailH = emailP.getString("email");
       passwordH = passwordP.getString("password");
@@ -1490,7 +1512,10 @@ birthday= UmonthValue.toString()+" "+UdayValue.toString()+", "+UyearValue.toStri
         login();
       });
 
-    }
+    }else{   
+      setState(() {
+          plattform="androidiphone";
+      });}
   }
   _Credentials(emailS,passwordS) async {
     SharedPreferences emailP = await SharedPreferences.getInstance();
@@ -1545,14 +1570,11 @@ birthday= UmonthValue.toString()+" "+UdayValue.toString()+", "+UyearValue.toStri
     final userAgent = html.window.navigator.userAgent.toString().toLowerCase();
     // smartphone
     if( userAgent.contains("android")||userAgent.contains("iphone")||userAgent.contains("ipad")) {
-      setState(() {
-        plattform="androidiphone";
-        allToken();
-        selectRegion();
-        UselectRegion();
-        getUser();
-        _getCredentials();
-        _getPlaces();
+      setState(() { 
+          allToken();
+      getUser();
+      _getCredentials();
+      _getPlaces();
       });
     }else{
       Navigator.pushAndRemoveUntil<dynamic>(
@@ -1570,7 +1592,8 @@ birthday= UmonthValue.toString()+" "+UdayValue.toString()+", "+UyearValue.toStri
   @override void initState() {
     super.initState();
     Timer(Duration(seconds: 0), () {
-    //  OSindentifyer();
+      OSindentifyer();
+    
     });
 
   }
@@ -1655,7 +1678,7 @@ birthday= UmonthValue.toString()+" "+UdayValue.toString()+", "+UyearValue.toStri
                                 },
                                 icon: Icon(Icons.settings,color:_colorFromHex(iconSetting),size:35),
                               ),
-                              Text("setting",style:TextStyle(color:_colorFromHex(themeInputText))),
+                              Text("settings",style:TextStyle(color:_colorFromHex(themeInputText))),
                             ],
                           ),
                         ),
@@ -1826,12 +1849,17 @@ if(plattform=="androidiphone")
                                      ),
                                    ),
                                  ]),
+                                 Container(
+                                   height:10,
+                                 ),
                                   Padding(
                                       padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                        child:Text("Profile",style:TextStyle(fontSize: 17,fontWeight: FontWeight.bold)),
+                                        child:Text("Profile",style:TextStyle(fontSize: 17,fontWeight: FontWeight.bold,color:_colorFromHex(themeInputText))),
                                   ),
-
-                                        
+ Container(
+                                   height:10,
+                                 ),
+                                        /*
                                         Container(
                                           height: 5,
                                         ),
@@ -2309,8 +2337,143 @@ if(plattform=="androidiphone")
                                           ]
                                           ),
                                         ),
+*/
 
-                                        Expanded(
+ Container(
+                                          height: 45,
+                                          child:   Padding(
+                                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                            child: TextField(
+                                             // controller: emailRegisterController,
+                                              decoration: InputDecoration(
+                                                filled: true,
+                                                fillColor: _colorFromHex(themeInput),
+                                                border: OutlineInputBorder(
+
+                                                ),
+                                                hintText: 'Email address',
+                                                hintStyle: TextStyle(color:_colorFromHex(themeContent)),
+                                              ),
+                                              style: TextStyle(color:  _colorFromHex(themeInputText)),
+                                            ),
+                                          ),
+                                        ),
+                                        Container(
+                                          height: 5,
+                                        ),
+                                        Container(
+                                          height: 45,
+                                          child:  Stack(
+                                            children: <Widget>[
+                                              Padding(
+                                                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                child: TextField(
+                                                  //controller: usernameRegisterController,
+                                                  decoration: InputDecoration(
+                                                    filled: true,
+                                                    fillColor: _colorFromHex(themeInput),
+                                                    border: OutlineInputBorder(
+
+                                                    ),
+                                                    hintText: 'Username',
+                                                    hintStyle: TextStyle(color:_colorFromHex(themeContent)),
+                                                  ),
+                                                  style: TextStyle(color: _colorFromHex(themeInputText)),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        Container(
+                                          height: 5,
+                                        ),
+                                        Container(
+                                          height: 45,
+                                          child:   Padding(
+                                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                            child: TextField(
+                                             // controller: passwordRegisterController,
+                                              keyboardType: TextInputType.visiblePassword,
+                                              obscureText: _obscured,
+                                              focusNode: textFieldFocusNode,
+                                              decoration: InputDecoration(
+                                                floatingLabelBehavior: FloatingLabelBehavior.never, //Hides label on focus or if filled
+                                                hintText: 'Password',
+                                                hintStyle: TextStyle(color:_colorFromHex(themeContent)),
+                                                filled: true, // Needed for adding a fill color
+                                                fillColor:  _colorFromHex(themeInput),
+                                                isDense: true,  // Reduces height a bit
+                                                border: OutlineInputBorder(
+                                                  // Apply corner radius
+                                                ),
+                                                suffixIcon: Padding(
+                                                  padding: const EdgeInsets.fromLTRB(0, 0, 4, 0),
+                                                  child: GestureDetector(
+                                                    onTap: _toggleObscured,
+                                                    child: Icon(
+                                                      _obscured ? Icons.visibility_off_rounded: Icons.visibility_rounded ,
+                                                      size: 24,
+                                                      color: _colorFromHex(themeContent),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                              style: TextStyle(color:  _colorFromHex(themeInputText)),
+                                            ),
+                                          ),
+                                        ),
+                                        Container(
+                                          height: 5,
+                                        ),
+                                        Container(
+                                          height: 45,
+                                          child:   Padding(
+                                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                            child: TextField(
+                                             // controller: confirmpasswordRegisterController,
+                                              keyboardType: TextInputType.visiblePassword,
+                                              obscureText: _obscured2,
+                                              focusNode: textFieldFocusNode2,
+                                              decoration: InputDecoration(
+                                                floatingLabelBehavior: FloatingLabelBehavior.never, //Hides label on focus or if filled
+                                                hintText: 'Confirm password',
+                                                hintStyle: TextStyle(color:_colorFromHex(themeContent)),
+                                                filled: true, // Needed for adding a fill color
+                                                fillColor:  _colorFromHex(themeInput),
+                                                isDense: true,  // Reduces height a bit
+                                                border: OutlineInputBorder(
+                                                  // Apply corner radius
+                                                ),
+                                                suffixIcon: Padding(
+                                                  padding: const EdgeInsets.fromLTRB(0, 0, 4, 0),
+                                                  child: GestureDetector(
+                                                    onTap: _toggleObscured2,
+                                                    child: Icon(
+                                                      _obscured2 ? Icons.visibility_off_rounded: Icons.visibility_rounded ,
+                                                      size: 24,
+                                                      color: _colorFromHex(themeContent),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                              style: TextStyle(color:  _colorFromHex(themeInputText)),
+                                            ),
+                                          ),
+                                        ),
+                                        Container(
+                                          height:10,
+                                        ),
+                                          Container(
+                                          alignment: Alignment.topLeft,
+                                          child:   Padding(
+                                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                            child:   Text("Address",style: TextStyle(color:_colorFromHex(themeContent),fontWeight:FontWeight.bold)),
+                                          ),
+                                        ),
+                                         Container(
+                                          height:10,
+                                        ),
+                                      Expanded(
                                           child: Container(
                                             height: 45,
                                             child:   Padding(
@@ -2327,7 +2490,7 @@ if(plattform=="androidiphone")
                                                         child: Text(
                                                           VRegion,
                                                           style: TextStyle(
-                                                              color: _colorFromHex( placeColor ),fontSize: 9
+                                                              color: _colorFromHex( themeInputText ),fontSize: 15
                                                           ),
                                                           overflow: TextOverflow.ellipsis,
                                                         ),
@@ -2341,7 +2504,7 @@ if(plattform=="androidiphone")
                                                         child: Text(
                                                           item,
                                                           style:  TextStyle(
-                                                              color:  _colorFromHex( themeInputText ),fontSize: 9
+                                                              color:  _colorFromHex( themeInputText ),fontSize: 15
                                                           ),
                                                           overflow: TextOverflow.ellipsis,
                                                         ),
@@ -2408,7 +2571,7 @@ if(plattform=="androidiphone")
                                           child: Stack(
                                             children:[
                                               Container(
-                                                height: 45,
+                                                height: 60,
                                                 child:   Padding(
                                                   padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
                                                   child: DropdownButtonHideUnderline(
@@ -2423,7 +2586,7 @@ if(plattform=="androidiphone")
                                                             child: Text(
                                                               VProvince,
                                                               style: TextStyle(
-                                                                  color: _colorFromHex( placeColor ),fontSize: 9
+                                                                  color: _colorFromHex( themeInputText),fontSize: 15
                                                               ),
                                                               overflow: TextOverflow.ellipsis,
                                                             ),
@@ -2436,7 +2599,7 @@ if(plattform=="androidiphone")
                                                             child: Text(
                                                               item,
                                                               style:  TextStyle(
-                                                                  color: _colorFromHex(themeInputText),fontSize: 9
+                                                                  color: _colorFromHex(themeInputText),fontSize: 15
                                                               ),
                                                               overflow: TextOverflow.ellipsis,
                                                             ),
@@ -2493,8 +2656,8 @@ if(plattform=="androidiphone")
                                                   ||UprovinceValue=="NATIONAL CAPITAL REGION - SECOND DISTRICT"||UprovinceValue=="NATIONAL CAPITAL REGION - THIRD DISTRICT"
                                                   ||UprovinceValue=="TAGUIG - PATEROS")
                                                 Padding(
-                                                  padding: EdgeInsets.only(left: 20, right: 0,top:30),
-                                                  child:Text(Ucitymunicipality.join(","),style:TextStyle(fontSize:6,color:_colorFromHex(themeInputText))),
+                                                  padding: EdgeInsets.only(left: 20, right: 0,top:40),
+                                                  child:Text(Ucitymunicipality.join(","),style:TextStyle(fontSize:8,color:_colorFromHex(themeInputText))),
                                                 ),
                                             ],
                                           ),
@@ -2522,7 +2685,7 @@ if(plattform=="androidiphone")
                                                           VCityMunicipality,
                                                           style: TextStyle(
 
-                                                              color: _colorFromHex( placeColor ),fontSize: 9
+                                                              color: _colorFromHex( themeInputText ),fontSize: 15
                                                           ),
                                                           overflow: TextOverflow.ellipsis,
                                                         ),
@@ -2537,7 +2700,7 @@ if(plattform=="androidiphone")
                                                           item,
                                                           style: TextStyle(
 
-                                                              color: _colorFromHex(themeInputText),fontSize: 9
+                                                              color: _colorFromHex(themeInputText),fontSize: 15
                                                           ),
                                                           overflow: TextOverflow.ellipsis,
                                                         ),
@@ -2613,7 +2776,7 @@ if(plattform=="androidiphone")
                                                         child: Text(
                                                           Vbarangay,
                                                           style: TextStyle(
-                                                              color: _colorFromHex(placeColor),fontSize: 9
+                                                              color: _colorFromHex(themeInputText),fontSize: 15
                                                           ),
                                                           overflow: TextOverflow.ellipsis,
                                                         ),
@@ -2628,7 +2791,7 @@ if(plattform=="androidiphone")
                                                           item,
                                                           style: TextStyle(
 
-                                                              color:  _colorFromHex(themeInputText),fontSize: 9
+                                                              color:  _colorFromHex(themeInputText),fontSize: 15
                                                           ),
                                                           overflow: TextOverflow.ellipsis,
                                                         ),
@@ -2719,10 +2882,173 @@ if(plattform=="androidiphone")
 
                                                 ),
                                                 hintText: '  Cellphone No.(optional)',
-                                                hintStyle: TextStyle(color:_colorFromHex(themeContent),fontSize: 9),
+                                                hintStyle: TextStyle(color:_colorFromHex(themeContent),fontSize: 15),
                                               ),
-                                              style: TextStyle(color:  _colorFromHex(themeInputText),fontSize: 9),
+                                              style: TextStyle(color:  _colorFromHex(themeInputText),fontSize: 15),
                                             ),
+                                          ),
+                                        ),
+                                          Container(
+                                          height: 15,
+                                        ),
+                                        Container(
+                                          alignment: Alignment.topLeft,
+                                          child:   Padding(
+                                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                            child:   Text("Will you have had at least your first dose before the day of the Makabayan Pilipino Bakuna Raffle Draws planned in May 2022 or later raffle draws?",style: TextStyle(color:_colorFromHex(themeContent))),
+                                          ),
+                                        ),
+                                        Row(children: [
+                                          Container(
+                                            width: 10,
+                                          ),
+                                          Flexible(
+                                            child:Theme(
+                                              data: ThemeData(
+                                                primarySwatch: Colors.blue,
+                                                unselectedWidgetColor: _colorFromHex(themeContent), // Your color
+                                              ),
+                                              child: Checkbox(
+                                                value: yesDraw,
+                                                checkColor: Colors.white,
+                                                activeColor: _colorFromHex(themeContent),
+                                                onChanged: (value) {
+                                                  setState(() {
+                                                    if(yesDraw==false){
+                                                      yesDraw=true;
+                                                      noDraw=false;
+                                                    }else{
+                                                      yesDraw=false;
+                                                    }
+                                                  });
+                                                },),
+                                            ),
+                                          ),
+
+                                          Flexible(
+                                          flex:9,
+                                            child: Text("Yes",style: TextStyle(color:_colorFromHex(themeContent))),
+                                          ),
+                                          Container(
+                                            width:10,
+                                          ),
+                                          Flexible(
+                                            child: Theme(
+                                              data: ThemeData(
+                                                primarySwatch: Colors.blue,
+                                                unselectedWidgetColor: _colorFromHex(themeContent), // Your color
+                                              ),
+                                              child: Checkbox(
+                                                value: noDraw,
+                                                checkColor: Colors.white,
+                                                activeColor:_colorFromHex(themeContent),
+                                                onChanged: (value) {
+                                                  setState(() {
+                                                    if(noDraw==false){
+                                                      noDraw=true;
+                                                      yesDraw=false;
+
+                                                    }else{
+                                                      noDraw=false;
+                                                    }
+                                                  });
+                                                },),
+                                            ),
+                                          ),
+
+                                          Flexible(
+                                            child: Text("No",style: TextStyle(color:_colorFromHex(themeContent))),
+                                          ),
+
+                                        ],
+                                        ),
+                                        Container(height: 10),
+                                        Row(children: [
+                                          Container(
+                                            width: 2,
+                                          ),
+                                          Flexible(
+                                            child:Column(children:[
+                                              Theme(
+                                                data: ThemeData(
+                                                  primarySwatch: Colors.blue,
+                                                  unselectedWidgetColor: _colorFromHex(themeContent), // Your color
+                                                ),
+                                                child: Checkbox(
+                                                  value: wouldFollow,
+                                                  checkColor: Colors.white,
+                                                  activeColor: _colorFromHex(themeContent),
+                                                  onChanged: (value) {
+                                                    setState(() {
+                                                      if(wouldFollow==false){
+                                                        wouldFollow=true;
+                                                      }else{
+                                                        wouldFollow=false;
+                                                      }
+                                                    });
+                                                  },),
+                                              ),
+                                              Container(
+                                                  height:50,
+                                              ),
+                                            ]),
+                                          ),
+
+                                          Flexible(
+                                            flex:9,
+                                            child:      Text("I would like to join and follow the Makabayan Pilipino Bakuna Raffle Draws for big cash and other prizes. All FREE! Bigger cash and prizes if I am vaccinated. Even if not vaccinated, I can still join and win.",style: TextStyle(color:_colorFromHex(themeContent))),
+                                          ),
+
+                                        ],
+                                        ),
+
+                                        Container(height: 10),
+                                        Row(children: [
+                                          Container(
+                                            width: 2,
+                                          ),
+                                          Flexible(
+                                            child:Column(
+                                                children:[
+                                              Theme(
+                                                data: ThemeData(
+                                                  primarySwatch: Colors.blue,
+                                                  unselectedWidgetColor: _colorFromHex(themeContent), // Your color
+                                                ),
+                                                child: Checkbox(
+                                                  value: wouldReview,
+                                                  checkColor: Colors.white,
+                                                  activeColor: _colorFromHex(themeContent),
+                                                  onChanged: (value) {
+                                                    setState(() {
+                                                      if(wouldReview==false){
+                                                        wouldReview=true;
+                                                      }else{
+                                                        wouldReview=false;
+                                                      }
+                                                    });
+                                                  },),
+                                              ),
+                                                      Container(
+                                                    height:20,
+                                                  ),
+                                            ]
+                                            )
+                                          ),
+
+                                          Flexible(
+                                            flex:9,
+                                            child:Text("I would like to review the terms, conditions, and rules of the Klackr.world  platform, then to sign up at the end.",style: TextStyle(color:_colorFromHex(themeContent))),
+                                          ),
+
+                                        ],
+                                        ),
+                                        Container(height: 10),
+                                        Container(
+                                          alignment: Alignment.topLeft,
+                                          child:   Padding(
+                                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                            child:   Text("Unclick any box if you do not agree. ",style: TextStyle(color:_colorFromHex(themeContent),fontSize: 10)),
                                           ),
                                         ),
                                        Container(
@@ -2768,6 +3094,7 @@ if(plattform=="androidiphone")
                             children: <Widget>[
                               Column(
                                 children: <Widget>[
+                                
                                   Container(
                                     child:Row(
                                         children:[
@@ -2788,7 +3115,7 @@ if(plattform=="androidiphone")
                                                     },
                                                     icon: Icon(Icons.add,color:_colorFromHex(iconAdd),size:35),
                                                   ),
-                                                  Text("add post",style:TextStyle(color:_colorFromHex(themeInputText))),
+                                                 
                                                 ],
                                               ),
                                             ),
@@ -2798,6 +3125,7 @@ if(plattform=="androidiphone")
                                             child:Container(
                                               child:Column(
                                                 children:[
+                                                  Container(height:4),
                                                   Material(
   type: MaterialType.transparency, //Makes it usable on any background color, thanks @IanSmith
   child: Ink(
@@ -2834,9 +3162,9 @@ if(plattform=="androidiphone")
                                                 
                                                   
                                                  
-Container(height:5),
+
                                                   
-                                                  Text("vicinity",style:TextStyle(color:_colorFromHex(themeInputText))),
+                                                 
                                                 ],
                                               ),
                                             ),
@@ -2857,7 +3185,7 @@ Container(height:5),
                                                     },
                                                     icon: Icon(Icons.settings,color:_colorFromHex(iconSetting2),size:35),
                                                   ),
-                                                  Text("setting",style:TextStyle(color:_colorFromHex(themeInputText))),
+                                            
                                                 ],
                                               ),
                                             ),
@@ -2875,11 +3203,11 @@ Container(height:5),
                                                        Timer(Duration(seconds: 2), () {
                                                          fetchData1();
                                                        });
-                                                      });
+                                                      }); 
                                                     },
                                                     icon: Icon(Icons.refresh,color:_colorFromHex(dark),size:35),
                                                   ),
-                                                  Text("Refresh",style:TextStyle(color:_colorFromHex(themeInputText))),
+                                                
                                                 ],
                                               ),
                                             ),
@@ -2900,7 +3228,66 @@ Container(height:5),
                                                         ),
                                                       ),
                                                     ),
-                                                    Text("Refresh",style:TextStyle(color:_colorFromHex(themeInputText))),
+                                                    
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                        ]
+                                    ),
+                                  ),
+                                   Container(
+                                    child:Row(
+                                        children:[
+                                          Expanded(
+                                            flex:3,
+                                            child:Container(
+                                              child:Column(
+                                                children:[
+                                                 
+                                                  Text("add post",style:TextStyle(color:_colorFromHex(themeInputText))),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                          Expanded(
+                                            flex:3,
+                                            child:Container(
+                                              child:Column(
+                                                children:[
+                                                  Text("vicinity",style:TextStyle(color:_colorFromHex(themeInputText))),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                          Expanded(
+                                            flex:3,
+                                            child:Container(
+                                              child:Column(
+                                                children:[
+                                                  Text("settings",style:TextStyle(color:_colorFromHex(themeInputText))),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                          if(refreshing=="false")
+                                          Expanded(
+                                            flex:3,
+                                            child:Container(
+                                              child:Column(
+                                                children:[
+                                                  Text("refresh",style:TextStyle(color:_colorFromHex(themeInputText))),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                          if(refreshing=="true")
+                                            Expanded(
+                                              flex:3,
+                                              child:Container(
+                                                child:Column(
+                                                  children:[
+                                                    Text("refresh",style:TextStyle(color:_colorFromHex(themeInputText))),
                                                   ],
                                                 ),
                                               ),
@@ -2989,7 +3376,7 @@ Container(
                                                                                     ),
                                                                                     Row(
                                                                                       children:[
-                                                                                        Container(width:5),
+                                                                                        Container(width:5),/*
  Container(
 
 
@@ -2998,7 +3385,7 @@ Container(
                                                                                               lobby="editprofile";
                                                                                             });
               } ),
-                                                                                     ),
+                                                                                     ),*/
                                                                                       ],
                                                                                     ),
                                                                                     
@@ -3035,12 +3422,13 @@ Container(
                                                                                  },
                                                                                   keyboardType: TextInputType.multiline,
                                                                                   maxLines: null,
+                                                                                  minLines:7,
                                                                                   decoration: InputDecoration(
                                                                                     border: InputBorder.none,
                                                                                    // filled: true,
                                                                                    // fillColor:Colors.white,
                       
-                                                                                    hintText: "Post in your vicinity [home barangay]",
+                                                                                    hintText: "Post in your vicinity (home barangay)",
                                                                                     hintStyle: TextStyle(color:Colors.black),
                                                                                   ),
                                                                                   style: TextStyle(color: Colors.black),
@@ -3100,12 +3488,13 @@ Container(
                                                                                   controller: postingRegisterController,
                                                                                   keyboardType: TextInputType.multiline,
                                                                                   maxLines: null,
+                                                                                  minLines:7,
                                                                                   decoration: InputDecoration(
                                                                                     border: InputBorder.none,
                                                                                    // filled: true,
                                                                                    // fillColor:Colors.white,
                       
-                                                                                    hintText: "Post in your vicinity [home barangay]",
+                                                                                    hintText: "Post in your vicinity (home barangay)",
                                                                                     hintStyle: TextStyle(color:Colors.black),
                                                                                   ),
                                                                                   style: TextStyle(color: Colors.black),
@@ -3114,33 +3503,7 @@ Container(
                                                                             ),
 
                                                                    
-                                                                        Padding(
-                                                                                padding: EdgeInsets.only(left: 6, top:0),
-                                                                            child:IntrinsicHeight(
-                                                                              child: Row(children: [
-                                                                                IconButton(
-                                                                                  onPressed: () {
-                                                                                    setState(() {
-                                                                                      isVideo = true;
-                                                                                      _onImageButtonPressed(ImageSource.gallery);
-                                                                                    });
-                                                                                  },
-                                                                                  icon:Icon(Icons.video_collection,color: Colors.black),
-                                                                                ),
-                                                                                IconButton(
-                                                                                  onPressed: () {
-                                                                                    setState(() {
-                                                                                      isVideo = false;
-                                                                                      _onImageButtonPressed(ImageSource.gallery, context: context);
-                                                                                    });
-                                                                                  },
-                                                                                  icon:Icon(Icons.photo,color: Colors.black),
-                                                                                ),
-
-                                                                              ]
-                                                                              ),
-                                                                            ),
-                                                                                   ),
+                                                                       
                                                                       if(loading=="true")
                                                                         Container(
                                                                           child:Column(
@@ -3208,6 +3571,35 @@ Container(
                                                                                   ),
                                                                                 ),
                                                                                ),
+
+                                                                               
+                                                                               Padding(
+                                                                                padding: EdgeInsets.only(left: 6, top:0),
+                                                                            child:IntrinsicHeight(
+                                                                              child: Row(children: [
+                                                                                IconButton(
+                                                                                  onPressed: () {
+                                                                                    setState(() {
+                                                                                      isVideo = true;
+                                                                                      _onImageButtonPressed(ImageSource.gallery);
+                                                                                    });
+                                                                                  },
+                                                                                  icon:Icon(Icons.video_collection,color: Colors.black),
+                                                                                ),
+                                                                                IconButton(
+                                                                                  onPressed: () {
+                                                                                    setState(() {
+                                                                                      isVideo = false;
+                                                                                      _onImageButtonPressed(ImageSource.gallery, context: context);
+                                                                                    });
+                                                                                  },
+                                                                                  icon:Icon(Icons.photo,color: Colors.black),
+                                                                                ),
+
+                                                                              ]
+                                                                              ),
+                                                                            ),
+                                                                                   ),
                                                                             ],
                                                                           ),
                                                                         ),
@@ -3218,7 +3610,7 @@ Container(
                                                                          ),
                                                                        ),
   ),
-                                                                     
+                                                                      
                                                                     
                                                                       Container(
                                                                         height: 10,
@@ -3257,6 +3649,8 @@ Container(
                                                                                       loading="true";
                                                                                       posting();
                                                                                     }
+                                                          
+                                                          
                                                                                   }
                                                                                 });
                                                                               },
@@ -3525,14 +3919,7 @@ Container(
                                                             if(info=="1")
                                                               Expanded(
                                                                 child:Container(
-                                                                  child: Column(children: [
-                                                                    SizedBox(
-                                                                      height: MediaQuery.of(context).size.height-95,
-                                                                      child:ListView.builder(
-                                                                        controller: ScrollController(),
-                                                                        itemCount: 1,
-                                                                        itemBuilder: (BuildContext context, int index) {
-                                                                          return Container(
+                                                                  child: Container(
                                                                             child:   IntrinsicHeight(
                                                                               child: Column( children: [
                                                                                 Expanded(
@@ -3557,7 +3944,9 @@ Container(
                                                                                                     width: 50,
                                                                                                     child:Image.asset('assets/logo/klackr_logo.png')),
                                                                                               ),
-                                                                                             
+                                                                                             Container(
+                                                                                                width:5,
+                                                                                              ),
                                                                                               Expanded(
                                                                                                 flex: 10,
                                                                                                 child: Column(
@@ -3570,7 +3959,7 @@ Container(
                                                                                               ),
 
                                                                                               Expanded(
-                                                                                                flex: 10,
+                                                                                                flex: 9,
                                                                                                 child: Column(
                                                                                                     crossAxisAlignment: CrossAxisAlignment.end,
                                                                                                     children: [
@@ -3729,26 +4118,12 @@ Container(
 
                                                                               ]),
                                                                             ),
-                                                                          );
-                                                                        },
-                                                                      ),
-                                                                    ),
-
-                                                                  ]
-                                                                  ),
+                                                                          ),
                                                                 ),
                                                               ),
                                                             if(info=="2")
                                                               Expanded(
                                                                 child:Container(
-                                                                  child: Column(children: [
-                                                                    SizedBox(
-                                                                      height: MediaQuery.of(context).size.height-95,
-                                                                      child:ListView.builder(
-                                                                        controller: ScrollController(),
-                                                                        itemCount: 1,
-                                                                        itemBuilder: (BuildContext context, int index) {
-                                                                          return Container(
                                                                             child:   IntrinsicHeight(
                                                                               child: Column( children: [
                                                                                 Expanded(
@@ -3773,6 +4148,9 @@ Container(
                                                                                                     width: 50,
                                                                                                     child:Image.asset('assets/logo/klackr_logo.png')),
                                                                                               ),
+                                                                                               Container(
+                                                                                                width:5,
+                                                                                              ),
                                                                                               Expanded(
                                                                                                 flex: 10,
                                                                                                 child: Column(
@@ -3784,7 +4162,7 @@ Container(
                                                                                                     ]),
                                                                                               ),
                                                                                               Expanded(
-                                                                                                flex: 10,
+                                                                                                flex: 9,
                                                                                                 child: Column(
                                                                                                     crossAxisAlignment: CrossAxisAlignment.end,
                                                                                                     children: [
@@ -3983,26 +4361,11 @@ Container(
 
                                                                               ]),
                                                                             ),
-                                                                          );
-                                                                        },
-                                                                      ),
-                                                                    ),
-
-                                                                  ]
-                                                                  ),
-                                                                ),
+                                                                          ),
                                                               ),
                                                             if(info=="3")
                                                               Expanded(
                                                                 child:Container(
-                                                                  child: Column(children: [
-                                                                    SizedBox(
-                                                                      height: MediaQuery.of(context).size.height-95,
-                                                                      child:ListView.builder(
-                                                                        controller: ScrollController(),
-                                                                        itemCount: 1,
-                                                                        itemBuilder: (BuildContext context, int index) {
-                                                                          return Container(
                                                                             child:   IntrinsicHeight(
                                                                               child: Column( children: [
                                                                                 Expanded(
@@ -4027,6 +4390,9 @@ Container(
                                                                                                     width: 50,
                                                                                                     child:Image.asset('assets/logo/klackr_logo.png')),
                                                                                               ),
+                                                                                              Container(
+                                                                                                width:5,
+                                                                                              ),
                                                                                               Expanded(
                                                                                                 flex: 10,
                                                                                                 child: Column(
@@ -4038,7 +4404,7 @@ Container(
                                                                                                     ]),
                                                                                               ),
                                                                                               Expanded(
-                                                                                                flex: 10,
+                                                                                                flex: 9,
                                                                                                 child: Column(
                                                                                                     crossAxisAlignment: CrossAxisAlignment.end,
                                                                                                     children: [
@@ -4068,34 +4434,82 @@ Container(
                                                                                         Container(
                                                                                           height: 10,
                                                                                         ),
-                                                                                        Row(children: [
+                                                                                     
+                                                                                       
+                                                                                         
+                                                                                        Container(
+                                                                               alignment: Alignment.topLeft,
+                                                                               child:   Padding(
+                                                                                   padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                                                   child:OutlineButton(
+                                                                                     shape: RoundedRectangleBorder(),
+                                                                                     textColor: Colors.grey,
+                                                                                     child:Column(
+                                                                                       children:[
+                                                                                         Container(
+                                                                                           height:10,
+                                                                                         ),
+                                                                                          Row(children: [
                                                                                           Flexible(
                                                                                             flex:7,
                                                                                             child:    Container(
                                                                                               alignment: Alignment.topLeft,
                                                                                               child:   Padding(
-                                                                                                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                                                                child:    Text("Construct your INFLUENCIAL PLACEMENT AREA/S (IPAs)",style: TextStyle(color:_colorFromHex(themeContent),fontWeight: FontWeight.w500)
+                                                                                                padding: EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+                                                                                                child:    Text("Construct your",style: TextStyle(color:_colorFromHex(themeContent),fontWeight: FontWeight.w500)
                                                                                                 ),
                                                                                               ),),
                                                                                           ),
 
                                                                                         ]
                                                                                         ),
-                                                                                        Row(children: [
+                                                                                          Row(children: [
+                                                                                          Flexible(
+                                                                                            flex:7,
+                                                                                            child:    Container(
+                                                                                              alignment: Alignment.topLeft,
+                                                                                              child:   Padding(
+                                                                                                padding: EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+                                                                                                child:    Text("INFLUENCIAL PLACEMENT AREA/s (IPAs)",style: TextStyle(color:_colorFromHex(themeContent),fontWeight: FontWeight.w500)
+                                                                                                ),
+                                                                                              ),),
+                                                                                          ),
+
+                                                                                        ]
+                                                                                        ),
+                                                                                          Row(children: [
                                                                                           Flexible(
 
                                                                                             child:    Container(
                                                                                               alignment: Alignment.topLeft,
                                                                                               child:   Padding(
-                                                                                                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                                                                child:    Text("IPA in play 3",style: TextStyle(color:_colorFromHex(themeContent),fontWeight: FontWeight.w500)
+                                                                                                padding: EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+                                                                                                child:    Text("IPA profile 3",style: TextStyle(color:_colorFromHex(themeContent),fontWeight: FontWeight.w500)
                                                                                                 ),
                                                                                               ),),
                                                                                           ),
 
                                                                                         ]
                                                                                         ),
+                                                                                        Container(
+                                                                                           height:10,
+                                                                                         ),
+                                                                                       ],
+                                                                                     ),
+                                                                                     borderSide: BorderSide(
+                                                                                         color: Colors.black, style: BorderStyle.solid,
+                                                                                         width: 2),
+                                                                                     onPressed: () {
+                                                                                       if(role=="influencer"){
+                                                                                         setState(() {
+                                                                                           info="1";
+                                                                                         });
+                                                                                       }
+                                                                                     },
+                                                                                   )
+                                                                               ),
+                                                                             ),
+                                                                                       
                                                                                         Container(
                                                                                           height: 20,
                                                                                         ),
@@ -4104,10 +4518,10 @@ Container(
                                                                                           child:   Padding(
                                                                                             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
                                                                                             child:   Text("Influencers (i.e., candidates and/or partlylist parties for the May 2022 elections) may publish their propaganda in their conracted area or any part inside thereof as Influencer placements.  ",style: TextStyle(color:_colorFromHex(themeContent))),
-                                                                                          ),
+                                                                                          ), 
                                                                                         ),
                                                                                         Container(
-                                                                                          height: 10,
+                                                                                          height: 10, 
                                                                                         ),
                                                                                         Container(
                                                                                           alignment: Alignment.topLeft,
@@ -4259,14 +4673,7 @@ Container(
 
                                                                               ]),
                                                                             ),
-                                                                          );
-                                                                        },
-                                                                      ),
-                                                                    ),
-
-                                                                  ]
-                                                                  ),
-                                                                ),
+                                                                          ),
                                                               ),
                                                             if(info=="4")
                                                               Expanded(
@@ -4874,14 +5281,16 @@ Container(
                                                                           alignment: Alignment.topLeft,
                                                                           child:Image.asset('assets/logo/klackr_logo.png')),
                                                                     ),
-                                                                    
+                                                                    Container(
+                                                                      width:5,
+                                                                    ),
                                                                     Expanded(
                                                                       flex:3,
                                                                       child:  Container(
                                                                         alignment: Alignment.topLeft,
                                                                         child:   Padding(
                                                                           padding: EdgeInsets.symmetric(horizontal: 1, vertical: 3),
-                                                                          child: Text("vicinity",style: TextStyle(fontSize: 20,color:Colors.blue)),
+                                                                          child: Text("vicinity",style: TextStyle(fontSize: 18,color:Colors.blue)),
                                                                         ),
                                                                       ),
                                                                     ),
@@ -4941,6 +5350,7 @@ Container(
                                                                                         itemBuilder: (BuildContext context, int index) {
                                                                                           final DateTime time1 = DateTime.parse(_foundUsers1[_foundUsers1.length-1-index]["date_posted"].toString());
                                                                                           String dt4 = timeago.format(time1);
+                                                                                      
                                                                                           return Container(
                                                                                             child:   IntrinsicHeight(
                                                                                               child: Column( children: [
@@ -4976,8 +5386,7 @@ Container(
                                                                                                                     alignment: Alignment.topLeft,
                                                                                                                     child: Row( children: [
                                                                                                                       Text(dt4,style: TextStyle(color: _colorFromHex(themeInputText))),
-                                                                                                                      Text(" · ",style: TextStyle(color:  _colorFromHex(themeInputText))),
-                                                                                                                      Icon(Icons.public,size: 15,color:  _colorFromHex(themeInputText)),
+                                                                                                                   
                                                                                                                     ],
                                                                                                                     ),
                                                                                                                   ),
@@ -5017,27 +5426,28 @@ Container(
                                                                                                         Container(
                                                                                                           height:10,
                                                                                                         ),
-                                                                                                        /* if(_foundUsers1[_foundUsers1.length-1-index]["image"]!=null)
+                                                                                                         if(_foundUsers1[_foundUsers1.length-1-index]["image"]!=null)
                                                                                                                 Container(
                                                                                                                   height:300,
-                                                                                                                  width:250,
-                                                                                                                  child:Image.network(_foundUsers1[_foundUsers1.length-1-index]["image"]),
+                                                                                                               //   width:250,
+                                                                                                                  child:Image.network(_foundUsers1[_foundUsers1.length-1-index]["image"].toString()),
                                                                                                                 ),
-                                                                                                              if(_foundUsers1[_foundUsers1.length-1-index]["video"]!=null)
+                                                                                                            if(_foundUsers1[_foundUsers1.length-1-index]["video"]!=null)
                                                                                                                 Stack(
                                                                                                                   children: <Widget>[
+                                                                                                                  
                                                                                                                     Center (
                                                                                                                       child: Container(
                                                                                                                         height: 300,
-                                                                                                                        width: 300,
+                                                                                                                      //  width: 300,
                                                                                                                         child:Padding(
                                                                                                                           padding: const EdgeInsets.only(
                                                                                                                               left: 0, right: 0, bottom: 10,top:0),
-                                                                                                                          child:VideoPlayer(_Video[_Video.length-1-index]),
+    child:VideoPlayer(_Video[_Video.length-1-index]),
                                                                                                                         ),
                                                                                                                       ),
                                                                                                                     ),
-                                                                                                                    Center(
+                                                                                                                   Center(
                                                                                                                       child: InkWell(
                                                                                                                         child:AnimatedOpacity(
 
@@ -5045,7 +5455,7 @@ Container(
                                                                                                                           duration: const Duration(milliseconds: 500),
                                                                                                                           child:Container(
                                                                                                                             height:300,
-                                                                                                                            width:300,
+                                                                                                                           // width:300,
                                                                                                                             child:  Icon(
                                                                                                                               Icons.play_arrow,
                                                                                                                               color: Colors.white,
@@ -5068,7 +5478,7 @@ Container(
                                                                                                                       ),
                                                                                                                     ),
                                                                                                                   ],
-                                                                                                                ),*/
+                                                                                                                ),
                                                                                                         Container(
                                                                                                           height:10,
                                                                                                         ),
@@ -5143,22 +5553,20 @@ Container(
                                                         child: Container(
                                                           child:   IntrinsicHeight(
                                                             child: Column( children: [
-                                                              Flexible(
-                                                                child:IntrinsicHeight(
-                                                                  child: Row( children: [
-                                                                    Container(
-                                                                      width:10,
-                                                                    ),
-
-                                                                    Theme(
+                                                Row(
+          children: [
+            Transform.scale(
+              scale: 1.3,
+              child: Theme(
                                                                       data: ThemeData(
                                                                         primarySwatch: Colors.blue,
                                                                         unselectedWidgetColor: _colorFromHex(themeContent), // Your color
                                                                       ),
                                                                       child: Checkbox(
                                                                         value: true,
-                                                                        checkColor: Colors.black,
-                                                                        activeColor: Colors.grey,
+                                                                    
+                                                                        checkColor: Colors.white,
+                                                                      //  activeColor: Colors.grey,
                                                                         // activeColor:_colorFromHex("#6688A0"),
                                                                         onChanged: (value) {
                                                                           setState(() {
@@ -5167,14 +5575,124 @@ Container(
                                                                               pilipino=false;
                                                                             }
                                                                           });
-                                                                        },),
+                                                                        },
+                                                                        ),
                                                                     ),
-                                                                    Text("English",style: TextStyle(color:_colorFromHex(themeInputText))),
-                                                                    Container(
-                                                                      width:20,
+            ),
+            Text(
+              "English",
+              style: TextStyle(fontSize: 18.0,color:_colorFromHex(themeInputText)),
+            ),
+            Container(
+              width:30,
+            ),
+             Transform.scale(
+              scale: 1.3,
+              child: Theme(
+                                                                      data: ThemeData(
+                                                                        primarySwatch: Colors.blue,
+                                                                        unselectedWidgetColor: _colorFromHex(themeContent), // Your color
+                                                                      ),
+                                                                      child: Checkbox(
+                                                                             value: themeColorWhite,
+                                                                    
+                                                                        checkColor: Colors.white,
+                                                                      //  activeColor: Colors.grey,
+                                                                        // activeColor:_colorFromHex("#6688A0"),
+                                                                         onChanged: (value) {
+                                                                          setState(() {
+                                                                            if(themeColorDark==true){
+                                                                              themeColorDark=false;
+                                                                              themeColorWhite=true;
+                                                                              whiteTheme();
+                                                                            }
+                                                                          });
+                                                                        },
+                                                                        ),
                                                                     ),
+            ),
+            Text(
+              "light theme",
+              style: TextStyle(fontSize: 18.0,color:_colorFromHex(themeInputText)),
+            )
+          ],
+        ),
+         Row(
+          children: [
+            Transform.scale(
+              scale: 1.3,
+              child: Theme(
+                                                                      data: ThemeData(
+                                                                        primarySwatch: Colors.blue,
+                                                                        unselectedWidgetColor: _colorFromHex(themeContent), // Your color
+                                                                      ),
+                                                                      child: Checkbox(
+                                                                        value: false,
+                                                                    
+                                                                        checkColor: Colors.white,
+                                                                      //  activeColor: Colors.grey,
+                                                                        // activeColor:_colorFromHex("#6688A0"),
+                                                                         onChanged: (value) {
+                                                                          setState(() {
+                                                                            if(pilipino==false){
+                                                                              pilipino=true;
+                                                                              english=false;
+                                                                            }
+                                                                          });
+                                                                        },
+                                                                        ),
+                                                                    ),
+            ),
+            Text(
+              "Tagalog",
+              style: TextStyle(fontSize: 18.0,color:_colorFromHex(themeInputText)),
+            ),
+            Container(
+              width:30,
+            ),
+             Transform.scale(
+              scale: 1.3,
+              child: Theme(
+                                                                      data: ThemeData(
+                                                                        primarySwatch: Colors.blue,
+                                                                        unselectedWidgetColor: _colorFromHex(themeContent), // Your color
+                                                                      ),
+                                                                      child: Checkbox(
+                                                           value: themeColorDark,
+                                                                    
+                                                                        checkColor: Colors.white,
+                                                                      //  activeColor: Colors.grey,
+                                                                        // activeColor:_colorFromHex("#6688A0"),
+                                                                         onChanged: (value) {
+                                                                          setState(() {
+                                                                            if(themeColorWhite==true){
+                                                                              themeColorWhite=false;
+                                                                              themeColorDark=true;
+                                                                              darkTheme();
+                                                                            }
+                                                                          });
+                                                                        },
+                                                                        ),
+                                                                    ),
+            ),
+            Text(
+              "dark theme",
+              style: TextStyle(fontSize: 18.0,color:_colorFromHex(themeInputText)),
+            )
+          ],
+        ),
 
-                                                                    Theme(
+                                                              Row(
+                                                                  children:[
+                                                                    
+                                                                     
+                                                                     /*  Flexible(
+                                                                        flex:9,
+                                                                      child:Row(
+                                                                        children:[
+                                                                          Flexible(
+                                                                            flex:3,
+                                                                           child:Theme(
                                                                       data: ThemeData(
                                                                         primarySwatch: Colors.blue,
                                                                         unselectedWidgetColor: _colorFromHex(themeContent), // Your color
@@ -5193,18 +5711,36 @@ Container(
                                                                           });
                                                                         },),
                                                                     ),
-                                                                    Text("light theme",style: TextStyle(color:_colorFromHex(themeContent))),
-                                                                  ]),
+                                                                          ),
+                                                                          Flexible(
+                                                                            flex:9,
+                                                                    child:Text("light theme",style: TextStyle(color:_colorFromHex(themeContent))),
+                                                                          ),
+                                                                        ],
+                                                                      )
+                                                                    ),*/
+                                             
+                                                                  ],
                                                                 ),
-                                                              ),
-                                                              Flexible(
-                                                                child:IntrinsicHeight(
-                                                                  child: Row( children: [
-                                                                    Container(
-                                                                      width:10,
-                                                                    ),
+                                                             
 
-                                                                    Theme(
+
+
+
+
+                                                             
+                                                              /* Padding(
+                                                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                             child: Container(
+                                                                child:Row(
+                                                                  children:[
+                                                                    Flexible(
+                                                                        flex:2,
+                                                                      child:Row(
+                                                                        children:[
+                                                                          Flexible(
+                                                                            flex:3,
+                                                                           child:Theme(
                                                                       data: ThemeData(
                                                                         primarySwatch: Colors.blue,
                                                                         unselectedWidgetColor: _colorFromHex(themeContent), // Your color
@@ -5222,11 +5758,21 @@ Container(
                                                                           });
                                                                         },),
                                                                     ),
-                                                                    Text("Tagalog",style: TextStyle(color:_colorFromHex(themeInputText))),
-                                                                    Container(
-                                                                      width:16,
+                                                                          ),
+                                                                          Flexible(
+                                                                            flex:9,
+                                                                    child:Text("Tagalog",style: TextStyle(color:_colorFromHex(themeContent))),
+                                                                          ),
+                                                                        ],
+                                                                      )
                                                                     ),
-                                                                    Theme(
+                                                                       Flexible(
+                                                                        flex:2,
+                                                                      child:Row(
+                                                                        children:[
+                                                                          Flexible(
+                                                                            flex:3,
+                                                                           child:Theme(
                                                                       data: ThemeData(
                                                                         primarySwatch: Colors.blue,
                                                                         unselectedWidgetColor: _colorFromHex(themeContent), // Your color
@@ -5245,27 +5791,56 @@ Container(
                                                                           });
                                                                         },),
                                                                     ),
-                                                                    Text("dark theme",style: TextStyle(color:_colorFromHex(themeContent))),
-                                                                  ]),
+                                                                          ),
+                                                                          Flexible(
+                                                                            flex:0,
+                                                                    child:Text("dark theme",style: TextStyle(color:_colorFromHex(themeContent))),
+                                                                          ),
+                                                                        ],
+                                                                      )
+                                                                    ),
+                                                                      Flexible(
+                                                                        flex:6,
+                                                                      child:Row(
+                                                                        children:[
+                                                                          Flexible(
+                                                                            flex:3,
+                                                                           child:Container(
+
+                                                                           ),
+                                                                          ),
+                                                                          Flexible(
+                                                                            flex:9,
+                                                                    child:Container(
+                                                                             
+                                                                           ),
+                                                                          ),
+                                                                        ],
+                                                                      )
+                                                                    ),
+                                                                  ],
                                                                 ),
                                                               ),
+                                                               ),*/
+
+                                                                
                                                               Container(height:30),
                                                                 Row(children:[
                                      Container(
                                                   alignment: Alignment.topLeft,
                                                   child:   Padding(
-                                                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
-                                                    child:  Text("Vicinity (View)",style: TextStyle(color:_colorFromHex(themeContent),fontWeight: FontWeight.bold,fontSize: 15)),
+                                                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                    child:  Text("Vicinity (view)",style: TextStyle(color:_colorFromHex(themeContent),fontWeight: FontWeight.bold,fontSize: 15)),
                                                   ),
                                                 ),
                                                
                                   ]),
-                                         Container(height:20),
+                                         Container(height:10),
                                     Row(children:[
                                      Container(
                                                   alignment: Alignment.topRight,
                                                   child:   Padding(
-                                                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                                                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
                                                     child:  Text("home barangay",style: TextStyle(color:_colorFromHex(themeContent),fontWeight: FontWeight.bold,fontSize: 15)),
                                                   ),
                                                 ),
@@ -5277,7 +5852,7 @@ Container(
                                      Container(
                                                   alignment: Alignment.topLeft,
                                                   child:   Padding(
-                                                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                                                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
                                                     child:  Text(Obarangay,style: TextStyle(color:_colorFromHex(themeContent),fontWeight: FontWeight.bold,fontSize: 10)),
                                                   ),
                                                 ),
@@ -5287,8 +5862,8 @@ Container(
                                      Container(
                                                   alignment: Alignment.topLeft,
                                                   child:   Padding(
-                                                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
-                                                    child:  Text(OCityMunicipality+", "+ORegion,style: TextStyle(color:_colorFromHex(themeContent),fontWeight: FontWeight.bold,fontSize: 10)),
+                                                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                    child:  Text(OCityMunicipality+" "+ORegion,style: TextStyle(color:_colorFromHex(themeContent),fontWeight: FontWeight.bold,fontSize: 10)),
                                                   ),
                                                 ),
                                                
@@ -5299,12 +5874,14 @@ Container(
                                                                 height: 45,
                                                                 alignment: Alignment.topRight,
                                                                 child:   Padding(
-                                                                  padding: EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+                                                                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
                                                                   child:ElevatedButton(
-                                                                    child: Text('Reset',style:TextStyle(color: Colors.yellow)),
+                                                                    child: Text('Edit profile',style:TextStyle(color: Colors.yellow)),
                                                                     onPressed: () {
                                                                       setState(() {
-                                                                       resetVicinity();
+                                                                           lobby="editprofile";
+                                                                     
+                                                                     /*  resetVicinity();
                                                                      Timer(Duration(seconds: 0), () {
                                                         UselectRegion();
                                                         Uprovince.clear();
@@ -5319,7 +5896,7 @@ Container(
                                                          Vbarangay="Barangay (or nearest barangay)";
                                                         UbarangayTypeRegisterController.text="";
                                                       });
-                                                     // UregionValue = value as String;
+                                                     // UregionValue = value as String;*/
                                                                       });
                                                                     },
                                                                     style: ElevatedButton.styleFrom(
@@ -5338,7 +5915,7 @@ Container(
                                                   alignment: Alignment.topLeft,
                                                   child:   Padding(
                                                     padding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
-                                                    child:  Text("OutVicinity+ view",style: TextStyle(color:_colorFromHex(themeContent),fontWeight: FontWeight.bold,fontSize: 15)),
+                                                    child:  Text("OutVicinity+ ",style: TextStyle(color:_colorFromHex(themeContent),fontWeight: FontWeight.bold,fontSize: 15)),
                                                   ),
                                                 ),
                                                
@@ -5361,7 +5938,7 @@ Container(
                                                         child: Text(
                                                           VRegion,
                                                           style: TextStyle(
-                                                              color: _colorFromHex( placeColor ),fontSize: 9
+                                                              color: _colorFromHex( themeInputText ),fontSize: 15
                                                           ),
                                                           overflow: TextOverflow.ellipsis,
                                                         ),
@@ -5375,7 +5952,7 @@ Container(
                                                         child: Text(
                                                           item,
                                                           style:  TextStyle(
-                                                              color:  _colorFromHex( themeInputText ),fontSize: 9
+                                                              color:  _colorFromHex( themeInputText ),fontSize: 15
                                                           ),
                                                           overflow: TextOverflow.ellipsis,
                                                         ),
@@ -5442,7 +6019,7 @@ Container(
                                           child: Stack(
                                             children:[
                                               Container(
-                                                height: 45,
+                                                height: 60,
                                                 child:   Padding(
                                                   padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
                                                   child: DropdownButtonHideUnderline(
@@ -5457,7 +6034,7 @@ Container(
                                                             child: Text(
                                                               VProvince,
                                                               style: TextStyle(
-                                                                  color: _colorFromHex( placeColor ),fontSize: 9
+                                                                  color: _colorFromHex(themeInputText ),fontSize: 15
                                                               ),
                                                               overflow: TextOverflow.ellipsis,
                                                             ),
@@ -5470,7 +6047,7 @@ Container(
                                                             child: Text(
                                                               item,
                                                               style:  TextStyle(
-                                                                  color: _colorFromHex(themeInputText),fontSize: 9
+                                                                  color: _colorFromHex(themeInputText),fontSize: 15
                                                               ),
                                                               overflow: TextOverflow.ellipsis,
                                                             ),
@@ -5528,8 +6105,8 @@ Container(
                                                   ||UprovinceValue=="NATIONAL CAPITAL REGION - SECOND DISTRICT"||UprovinceValue=="NATIONAL CAPITAL REGION - THIRD DISTRICT"
                                                   ||UprovinceValue=="TAGUIG - PATEROS")
                                                 Padding(
-                                                  padding: EdgeInsets.only(left: 20, right: 0,top:30),
-                                                  child:Text(Ucitymunicipality.join(","),style:TextStyle(fontSize:6,color:_colorFromHex(themeInputText))),
+                                                  padding: EdgeInsets.only(left: 20, right: 0,top:40),
+                                                  child:Text(Ucitymunicipality.join(", "),style:TextStyle(fontSize:7,color:_colorFromHex(themeInputText))),
                                                 ),
                                             ],
                                           ),
@@ -5557,7 +6134,7 @@ Container(
                                                           VCityMunicipality,
                                                           style: TextStyle(
 
-                                                              color: _colorFromHex( placeColor ),fontSize: 9
+                                                              color: _colorFromHex(themeInputText),fontSize: 15
                                                           ),
                                                           overflow: TextOverflow.ellipsis,
                                                         ),
@@ -5572,7 +6149,7 @@ Container(
                                                           item,
                                                           style: TextStyle(
 
-                                                              color: _colorFromHex(themeInputText),fontSize: 9
+                                                              color: _colorFromHex(themeInputText),fontSize: 15
                                                           ),
                                                           overflow: TextOverflow.ellipsis,
                                                         ),
@@ -5648,7 +6225,7 @@ Container(
                                                         child: Text(
                                                           Vbarangay,
                                                           style: TextStyle(
-                                                              color: _colorFromHex(placeColor),fontSize: 9
+                                                              color: _colorFromHex(themeInputText),fontSize: 15
                                                           ),
                                                           overflow: TextOverflow.ellipsis,
                                                         ),
@@ -5663,7 +6240,7 @@ Container(
                                                           item,
                                                           style: TextStyle(
 
-                                                              color:  _colorFromHex(themeInputText),fontSize: 9
+                                                              color:  _colorFromHex(themeInputText),fontSize: 15
                                                           ),
                                                           overflow: TextOverflow.ellipsis,
                                                         ),
@@ -5709,12 +6286,13 @@ Container(
 
 
                                         ),
+
                                         Container(height:20),
                                         Container(
                                                                 height: 45,
                                                                 alignment: Alignment.topRight,
                                                                 child:   Padding(
-                                                                  padding: EdgeInsets.symmetric(horizontal: 15, vertical: 0),
+                                                                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
                                                                   child:ElevatedButton(
                                                                     child: Text('Set other barangay',style:TextStyle(color: Colors.yellow)),
                                                                     onPressed: () {
@@ -5735,7 +6313,7 @@ Container(
                                                                 height: 45,
                                                                 alignment: Alignment.topRight,
                                                                 child:   Padding(
-                                                                  padding: EdgeInsets.symmetric(horizontal: 15, vertical: 0),
+                                                                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
                                                                   child:ElevatedButton(
                                                                     child: Text('logout',style:TextStyle(color: Colors.white)),
                                                                     onPressed: () {
@@ -5753,6 +6331,7 @@ Container(
                                                                   ),
                                                                 ),
                                                               ),
+                                                                 Container(height:30),
                                                             ]),
                                                           ),
                                                         ),
@@ -5824,7 +6403,9 @@ Container(
                                                   child:Image.asset('assets/logo/klackr_logo.png')
                                               ),
                                             ),
-                                           
+                                            Container(
+                                                                                                width:5,
+                                                                                              ),
                                             Flexible(
                                               flex:5,
                                               child: Column(
@@ -5854,19 +6435,11 @@ Container(
                                             alignment: Alignment.topLeft,
                                             child:   Padding(
                                               padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                              child:   Text("The confirmation e-mail was sent to verceles@hotmail.com. If that e-mail address is not correct, you can change it in the account settings.",style: TextStyle(color:_colorFromHex(themeContent),fontWeight: FontWeight.bold)),
+                                              child:   Text("The confirmation e-mail was sent to "+emailRegisterController.text+". If that e-mail address is not correct, you can change it, in your account settings.",style: TextStyle(color:_colorFromHex(themeContent),fontWeight: FontWeight.bold)),
                                             ),
                                           ),
-                                          Container(
-                                            height: 15,
-                                          ),
-                                          Container(
-                                            alignment: Alignment.topLeft,
-                                            child:   Padding(
-                                              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                              child:   Text("Account settings",style: TextStyle(color:_colorFromHex(themeContent),fontWeight: FontWeight.bold)),
-                                            ),
-                                          ),
+                                      
+                                      
                                           Container(
                                             height: 15,
                                           ),
@@ -5977,7 +6550,9 @@ Container(
                                                       width: 50,
                                                       child:Image.asset('assets/logo/klackr_logo.png')),
                                                 ),
-                                                
+                                                 Container(
+                                                                                                width:5,
+                                                                                              ),
                                                 Expanded(
                                                   flex: 10,
                                                   child: Column(
@@ -6280,12 +6855,14 @@ Container(
                                           Container(
                                             height: 20,
                                           ),
-                                          Row(children: [
-                                            Flexible(
-                                              flex:4,
-                                              child: Container(
+                                           IntrinsicHeight(
+                                                                                                child: Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+                                                                                                  Expanded(
+                                                                                                    flex:0,
+                                                                                                    child: Column(children: [
+                                                                                                      Container(
                                                 height: 40,
-                                                width:150,
+                                                width:100,
                                                 child:   Padding(
                                                   padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
                                                   child:ElevatedButton(
@@ -6299,19 +6876,24 @@ Container(
                                                         primary: _colorFromHex("#2786C9"),
                                                         padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
                                                         textStyle: TextStyle(
-                                                            fontWeight: FontWeight.bold)),
+                                                      fontWeight: FontWeight.bold)),
                                                   ),
                                                 ),
                                               ),
-                                            ),
-                                            Flexible(
-                                              flex:9,
-                                              child: Text("I agree and will abide by the above terms and conditions for the use of the Klackr.world  platform and, therefore, am signing up.    ",style: TextStyle(color:_colorFromHex(themeContent))),
-                                            ),
+                                                                                                    ]),
+                                                                                                  ),
+                                                                                                  Expanded(
+                                                                                                      flex:1,
+                                                                                                      child: Container(
 
-                                            //  Container(height: 100.0, color: Colors.cyan),
-                                          ]
-                                          ),
+                                                                                                        child:Padding(
+                                                                                                          padding: EdgeInsets.symmetric(horizontal: 5, vertical: 0),
+                                                                                                          child: Text("I agree and will abide by the above terms and conditions for the use of the Klackr.world  platform and, therefore, am signing up.    ",style: TextStyle(color:_colorFromHex(themeContent))),
+                                                                                                        ),
+                                                                                                      )),
+                                                                                                ]),
+                                                                                              ),
+                                  
                                           Container(
                                             height: 35,
                                           ),
@@ -6394,120 +6976,215 @@ Container(
                           Container(
                               height:20,
                           ),
-                          if(clickContinue=="setting")
+                          if(clickContinue=="message")
                             Padding(
                               padding: EdgeInsets.symmetric(horizontal: 8 , vertical: 0),
                               child: Container(
                                 child:   IntrinsicHeight(
                                   child: Column( children: [
-                                    Flexible(
-                                    child:IntrinsicHeight(
-                                      child: Row( children: [
-                                        Container(
-                                          width:10,
-                                        ),
-                                     
-                                        Theme(
-                                          data: ThemeData(
-                                            primarySwatch: Colors.blue,
-                                            unselectedWidgetColor: _colorFromHex(themeContent), // Your color
-                                          ),
-                                          child: Checkbox(
-                                            value: true,
-                                            checkColor: Colors.black,
-                                            activeColor: Colors.grey,
-                                            // activeColor:_colorFromHex("#6688A0"),
-                                            onChanged: (value) {
-                                              setState(() {
-                                                if(english==false){
-                                                  english=true;
-                                                  pilipino=false;
-                                                }
-                                              });
-                                            },),
-                                        ),
-   Text("English",style: TextStyle(color:_colorFromHex(themeInputText))),
-                                        Container(
-                                        width:20,
-                                        ),
-                                       
-                                        Theme(
-                                          data: ThemeData(
-                                            primarySwatch: Colors.blue,
-                                            unselectedWidgetColor: _colorFromHex(themeContent), // Your color
-                                          ),
-                                          child: Checkbox(
-                                            value: themeColorWhite,
-                                            checkColor: Colors.black,
-                                            activeColor: Colors.grey,
-                                            onChanged: (value) {
-                                              setState(() {
-                                                if(themeColorDark==true){
-                                                  themeColorDark=false;
-                                                  themeColorWhite=true;
-                                                  whiteTheme();
-                                                }
-                                              });
-                                            },),
-                                        ),
- Text("light theme",style: TextStyle(color:_colorFromHex(themeContent))),
-                                      ]),
-                                    ),
-                                    ),
-                                    Flexible(
-                                    child:IntrinsicHeight(
-                                      child: Row( children: [
-                                        Container(
-                                          width:9.8,
-                                        ),
-                                       
-                                        Theme(
-                                          data: ThemeData(
-                                            primarySwatch: Colors.blue,
-                                            unselectedWidgetColor: _colorFromHex(themeContent), // Your color
-                                          ),
-                                          child: Checkbox(
-                                            value: false,
-                                            checkColor: Colors.black,
-                                            activeColor: Colors.grey,
-                                            onChanged: (value) {
-                                              setState(() {
-                                                if(pilipino==false){
-                                                  pilipino=true;
-                                                  english=false;
-                                                }
-                                              });
-                                            },),
-                                        ),
- Text("Tagalog",style: TextStyle(color:_colorFromHex(themeInputText))),
-                                        Container(
-                                          width:15.5,
-                                        ),
-                                        Theme(
-                                          data: ThemeData(
-                                            primarySwatch: Colors.blue,
-                                            unselectedWidgetColor: _colorFromHex(themeContent), // Your color
-                                          ),
-                                          child: Checkbox(
-                                            value: themeColorDark,
-                                            checkColor: Colors.black,
-                                            activeColor:_colorFromHex("#6688A0"),
-                                            onChanged: (value) {
-                                              setState(() {
-                                                if(themeColorWhite==true){
-                                                  themeColorWhite=false;
-                                                  themeColorDark=true;
-                                                  darkTheme();
-                                                }
-                                              });
-                                            },),
-                                        ),
-                                        Text("dark theme",style: TextStyle(color:_colorFromHex(themeContent))),
-                                      ]),
-                                    ),
-                                    ),
-                                    Container(height:20),
-                                
+                                           Container(
+                                             color:Colors.white,
+                                              
+                                                                              child:   Padding(
+                                                                                padding: EdgeInsets.symmetric(horizontal: 15, vertical: 0),
+                                                                                child: TextField(
+                                                                                  controller: messageRegisterController,
+                                                                                  keyboardType: TextInputType.multiline,
+                                                                                  maxLines: null,
+                                                                                  minLines:7,
+                                                                                  decoration: InputDecoration(
+                                                                                    border: InputBorder.none,
+                                                                                   // filled: true,
+                                                                                   // fillColor:Colors.white,
+                      
+                                                                                    hintText: "Send a message...",
+                                                                                    hintStyle: TextStyle(color:Colors.black),
+                                                                                  ),
+                                                                                  style: TextStyle(color: Colors.black),
+                                                                                ),
+                                                                              ),
+                                                                            ),
+                             Container(
+                                                                          height: 45,
+                                                                          alignment: Alignment.topRight,
+                                                                          child:   Padding(
+                                                                            padding: EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+                                                                            child:ElevatedButton(
+                                                                              child: Text('Send',style:TextStyle(color: _colorFromHex("#FFF200"))),
+                                                                              onPressed: () {
+                                                                                setState(() {
+                                                                                 
+                                                                                });
+                                                                              },
+                                                                              style: ElevatedButton.styleFrom(
+                                                                                  primary: _colorFromHex("#2786C9"),
+                                                                                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                                                                                  textStyle: TextStyle(
+                                                                                      fontWeight: FontWeight.bold)),
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                        Container(
+                                                                          height:40,
+                                                                        ),
+                                                                        Container(
+                                                                          height: 45,
+                                                                          alignment: Alignment.topRight,
+                                                                          child:   Padding(
+                                                                            padding: EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+                                                                            child:ElevatedButton(
+                                                                              child: Text('Back',style:TextStyle(color: _colorFromHex("#FFF200"))),
+                                                                              onPressed: () {
+                                                                                setState(() {
+                                                                                 clickContinue="login";
+                                                                                });
+                                                                              },
+                                                                              style: ElevatedButton.styleFrom(
+                                                                                  primary: _colorFromHex("#2786C9"),
+                                                                                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                                                                                  textStyle: TextStyle(
+                                                                                      fontWeight: FontWeight.bold)),
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                  ]),
+                                ),
+                              ),
+                            ),
+                                                   if(clickContinue=="setting")
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 8 , vertical: 0),
+                              child: Container(
+                                child:   IntrinsicHeight(
+                                  child: Column( children: [
+                                   Row(
+          children: [
+            Transform.scale(
+              scale: 1.3,
+              child: Theme(
+                                                                      data: ThemeData(
+                                                                        primarySwatch: Colors.blue,
+                                                                        unselectedWidgetColor: _colorFromHex(themeContent), // Your color
+                                                                      ),
+                                                                      child: Checkbox(
+                                                                        value: true,
+                                                                    
+                                                                        checkColor: Colors.white,
+                                                                      //  activeColor: Colors.grey,
+                                                                        // activeColor:_colorFromHex("#6688A0"),
+                                                                        onChanged: (value) {
+                                                                          setState(() {
+                                                                            if(english==false){
+                                                                              english=true;
+                                                                              pilipino=false;
+                                                                            }
+                                                                          });
+                                                                        },
+                                                                        ),
+                                                                    ),
+            ),
+            Text(
+              "English",
+              style: TextStyle(fontSize: 18.0,color:_colorFromHex(themeInputText)),
+            ),
+            Container(
+              width:30,
+            ),
+             Transform.scale(
+              scale: 1.3,
+              child: Theme(
+                                                                      data: ThemeData(
+                                                                        primarySwatch: Colors.blue,
+                                                                        unselectedWidgetColor: _colorFromHex(themeContent), // Your color
+                                                                      ),
+                                                                      child: Checkbox(
+                                                                             value: themeColorWhite,
+                                                                    
+                                                                        checkColor: Colors.white,
+                                                                      //  activeColor: Colors.grey,
+                                                                        // activeColor:_colorFromHex("#6688A0"),
+                                                                         onChanged: (value) {
+                                                                          setState(() {
+                                                                            if(themeColorDark==true){
+                                                                              themeColorDark=false;
+                                                                              themeColorWhite=true;
+                                                                              whiteTheme();
+                                                                            }
+                                                                          });
+                                                                        },
+                                                                        ),
+                                                                    ),
+            ),
+            Text(
+              "light theme",
+              style: TextStyle(fontSize: 18.0,color:_colorFromHex(themeInputText)),
+            )
+          ],
+        ),
+         Row(
+          children: [
+            Transform.scale(
+              scale: 1.3,
+              child: Theme(
+                                                                      data: ThemeData(
+                                                                        primarySwatch: Colors.blue,
+                                                                        unselectedWidgetColor: _colorFromHex(themeContent), // Your color
+                                                                      ),
+                                                                      child: Checkbox(
+                                                                        value: false,
+                                                                    
+                                                                        checkColor: Colors.white,
+                                                                      //  activeColor: Colors.grey,
+                                                                        // activeColor:_colorFromHex("#6688A0"),
+                                                                         onChanged: (value) {
+                                                                          setState(() {
+                                                                            if(pilipino==false){
+                                                                              pilipino=true;
+                                                                              english=false;
+                                                                            }
+                                                                          });
+                                                                        },
+                                                                        ),
+                                                                    ),
+            ),
+            Text(
+              "Tagalog",
+              style: TextStyle(fontSize: 18.0,color:_colorFromHex(themeInputText)),
+            ),
+            Container(
+              width:30,
+            ),
+             Transform.scale(
+              scale: 1.3,
+              child: Theme(
+                                                                      data: ThemeData(
+                                                                        primarySwatch: Colors.blue,
+                                                                        unselectedWidgetColor: _colorFromHex(themeContent), // Your color
+                                                                      ),
+                                                                      child: Checkbox(
+                                                           value: themeColorDark,
+                                                                    
+                                                                        checkColor: Colors.white,
+                                                                      //  activeColor: Colors.grey,
+                                                                        // activeColor:_colorFromHex("#6688A0"),
+                                                                         onChanged: (value) {
+                                                                          setState(() {
+                                                                            if(themeColorWhite==true){
+                                                                              themeColorWhite=false;
+                                                                              themeColorDark=true;
+                                                                              darkTheme();
+                                                                            }
+                                                                          });
+                                                                        },
+                                                                        ),
+                                                                    ),
+            ),
+            Text(
+              "dark theme",
+              style: TextStyle(fontSize: 18.0,color:_colorFromHex(themeInputText)),
+            )
+          ],
+        ),
                                   ]),
                                 ),
                               ),
@@ -6686,17 +7363,11 @@ Container(
                                                             alignment: Alignment.topLeft,
                                                             child:   Padding(
                                                               padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                              child:  Text("Inventor & Administrator",style: TextStyle(color:_colorFromHex(themeContent),fontWeight: FontWeight.bold,fontSize: 17)),
+                                                              child:  Text("Architect & Administrator",style: TextStyle(color:_colorFromHex(themeContent),fontWeight: FontWeight.bold,fontSize: 17)),
                                                             ),
                                                           ),
                                                           Container(height: 5),
-                                                          Container(
-                                                            alignment: Alignment.topLeft,
-                                                            child:   Padding(
-                                                              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                              child:  Text("Running the Klackr platform and managing the Makabayan Pilipino Bakuna Raffle Draws:",style: TextStyle(color:_colorFromHex(themeContent))),
-                                                            ),
-                                                          ),
+                                                         
 
                                                          Container(
 
@@ -6735,17 +7406,27 @@ Container(
                                                                 alignment: Alignment.topLeft,
                                                                 child:   Padding(
                                                                   padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                                  child:  Text("verceles@hotmail.com",style: TextStyle(color:_colorFromHex(themeContent))),
+                                                                  child:  Text("klackroo@gmail.com",style: TextStyle(color:_colorFromHex(themeContent))),
                                                                 ),
                                                               ),
     ]),
                                                       
                                                           ]),
                                                           onTap:(){
-                                                         
+                                                      setState(() {
+                                                          clickContinue="message";
+                                                    });
+                                                    
                                                           }
     ),
                                                          ),
+                                                          Container(
+                                                            alignment: Alignment.topLeft,
+                                                            child:   Padding(
+                                                              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                                              child:  Text("Running the Klackr platform and managing the Makabayan Pilipino Bakuna Raffle Draws.",style: TextStyle(color:_colorFromHex(themeContent))),
+                                                            ),
+                                                          ),
                                                           Container(height: 5),
                                                           Container(
                                                             height:70,
@@ -7521,7 +8202,7 @@ Container(
                                                         child: Text(
                                                           'Region',
                                                           style: TextStyle(
-                                                            color: _colorFromHex(themeContent),fontSize: 9
+                                                            color: _colorFromHex(themeContent),fontSize: 15
                                                           ),
                                                           overflow: TextOverflow.ellipsis,
                                                         ),
@@ -7535,7 +8216,7 @@ Container(
                                                         child: Text(
                                                           item,
                                                           style:  TextStyle(
-                                                            color:  _colorFromHex(themeInputText),fontSize: 9
+                                                            color:  _colorFromHex(themeInputText),fontSize: 15
                                                           ),
                                                           overflow: TextOverflow.ellipsis,
                                                         ),
@@ -7598,7 +8279,7 @@ Container(
                                           child: Stack(
                                             children:[
                                             Container(
-                                              height: 45,
+                                              height: 60,
                                               child:   Padding(
                                                 padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
                                                 child: DropdownButtonHideUnderline(
@@ -7613,7 +8294,7 @@ Container(
                                                           child: Text(
                                                             'Province',
                                                             style: TextStyle(
-                                                                color: _colorFromHex(themeContent),fontSize: 9
+                                                                color: _colorFromHex(themeContent),fontSize: 13
                                                             ),
                                                             overflow: TextOverflow.ellipsis,
                                                           ),
@@ -7626,7 +8307,7 @@ Container(
                                                           child: Text(
                                                             item,
                                                             style:  TextStyle(
-                                                                color: _colorFromHex(themeInputText),fontSize: 9
+                                                                color: _colorFromHex(themeInputText),fontSize: 13
                                                             ),
                                                             overflow: TextOverflow.ellipsis,
                                                           ),
@@ -7681,8 +8362,8 @@ Container(
                                               ||provinceValue=="NATIONAL CAPITAL REGION - SECOND DISTRICT"||provinceValue=="NATIONAL CAPITAL REGION - THIRD DISTRICT"
                                               ||provinceValue=="TAGUIG - PATEROS")
                                           Padding(
-                                            padding: EdgeInsets.only(left: 20, right: 0,top:30),
-                                              child:Text(citymunicipality.join(","),style:TextStyle(fontSize:6,color:_colorFromHex(themeInputText))),
+                                            padding: EdgeInsets.only(left: 20, right: 0,top:40),
+                                              child:Text(citymunicipality.join(","),style:TextStyle(fontSize:8,color:_colorFromHex(themeInputText))),
                                           ),
                                           ],
                                           ),
@@ -7710,7 +8391,7 @@ Container(
                                                                 'City/Municipality',
                                                                 style: TextStyle(
 
-                                                                    color: _colorFromHex(themeContent),fontSize: 9
+                                                                    color: _colorFromHex(themeContent),fontSize: 15
                                                                 ),
                                                                 overflow: TextOverflow.ellipsis,
                                                               ),
@@ -7725,7 +8406,7 @@ Container(
                                                                 item,
                                                                 style: TextStyle(
 
-                                                                  color: _colorFromHex(themeInputText),fontSize: 9
+                                                                  color: _colorFromHex(themeInputText),fontSize: 15
                                                                 ),
                                                                 overflow: TextOverflow.ellipsis,
                                                               ),
@@ -7799,7 +8480,7 @@ Container(
                                                         child: Text(
                                                           'Barangay (or nearest barangay)',
                                                           style: TextStyle(
-                                                            color: _colorFromHex(themeContent),fontSize: 9
+                                                            color: _colorFromHex(themeContent),fontSize: 15
                                                           ),
                                                           overflow: TextOverflow.ellipsis,
                                                         ),
@@ -7814,7 +8495,7 @@ Container(
                                                           item,
                                                           style: TextStyle(
 
-                                                            color:  _colorFromHex(themeInputText),fontSize: 9
+                                                            color:  _colorFromHex(themeInputText),fontSize: 15
                                                           ),
                                                           overflow: TextOverflow.ellipsis,
                                                         ),
@@ -7905,9 +8586,9 @@ Container(
 
                                                 ),
                                                 hintText: '  Cellphone No.(optional)',
-                                                hintStyle: TextStyle(color:_colorFromHex(themeContent),fontSize: 9),
+                                                hintStyle: TextStyle(color:_colorFromHex(themeContent),fontSize: 15),
                                               ),
-                                              style: TextStyle(color:  _colorFromHex(themeInputText),fontSize: 9),
+                                              style: TextStyle(color:  _colorFromHex(themeInputText),fontSize: 15),
                                             ),
                                           ),
                                         ),
@@ -7956,6 +8637,7 @@ Container(
                                             width:10,
                                           ),
                                           Flexible(
+    
                                             child: Theme(
                                               data: ThemeData(
                                                 primarySwatch: Colors.blue,
@@ -8302,6 +8984,7 @@ final birthdayRegisterController = TextEditingController();
 final barangayTypeRegisterController = TextEditingController();
 final cellphoneRegisterController = TextEditingController();
 final postingRegisterController = TextEditingController();
+final messageRegisterController = TextEditingController();
 final searchRegisterController = TextEditingController();
 
 String noPost = "false";
@@ -8412,3 +9095,4 @@ String plattform = "web";
 String lobbyselect = "lobbygetpost";//lobbygetpost
 String lobby = "main";//main,lobby,editprofile
 double lobbySize = 75;//75
+String message = "false";
